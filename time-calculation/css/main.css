@@ -1,0 +1,100 @@
+html,
+body {
+  margin: 0px;
+  padding: 0px;
+  font-family: "微软雅黑";
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.time {
+  width: 50%;
+  box-sizing: border-box;
+  margin: 10px auto;
+  border: 1px solid lightgrey;
+  box-shadow: 5px 5px 5px gray;
+  border-radius: 5px;
+  padding: 20px;
+  background: #c5d8f1;
+  opacity: 0.7;
+}
+.time h1 {
+  text-align: center;
+  text-shadow: 5px 5px 3px grey;
+}
+.time .time-select-pre,
+.time .time-select-next {
+  padding: 10px;
+}
+.time .time-select-pre input,
+.time .time-select-next input {
+  border: none;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  width: 50px;
+  height: 20px;
+  padding-left: 5px;
+}
+.time .submit {
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.time .submit button {
+  border: none;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background-color: #291cf7;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+.time .result {
+  width: 100%;
+}
+.time .result table {
+  width: 100%;
+  border-radius: 5px;
+}
+.time .result table td {
+  width: 50%;
+  padding: 5px;
+}
+.time .result table td span {
+  padding: 2px 4px;
+  color: blue;
+}
+#message {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}
+#message span {
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  margin-left: -100px;
+  margin-right: -100px;
+  background: #FFF;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #FFF;
+  text-align: center;
+  padding: 10px;
+}
+@media only screen and (max-width: 1024px) {
+  .time {
+    width: 60%;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .time {
+    margin: 0px;
+    width: 100%;
+  }
+}

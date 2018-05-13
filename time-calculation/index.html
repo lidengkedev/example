@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>时间计算</title>
+		<link rel="stylesheet" type="text/css" href="./css/main.css"/>
+	</head>
+	<body>
+		<div class="time">
+			<h1>时间计算器</h1>
+			<div class="time-select-pre">
+				<label>开始时间：</label>
+				<input type="number" name="preyear" id="preyear" value="2018" min="1979" max="2099"/>
+				<label>年</label>
+				<input type="number" name="premonth" id="premonth" value="01" min="1" max="12"/>
+				<label>月</label>
+				<input type="number" name="preday" id="preday" value="01" min="1" max="31"/>
+				<label>日</label>
+				<input type="number" name="prehour" id="prehour" value="00" min="0" max="23"/>
+				<label>时</label>
+				<input type="number" name="preminute" id="preminute" value="00" min="0" max="59"/>
+				<label>分</label>
+				<input type="number" name="presecond" id="presecond" value="00" min="0" max="59"/>
+				<label>秒</label>
+			</div>
+			<div class="time-select-next">
+				<label>结束时间：</label>
+				<input type="number" name="nextyear" id="nextyear" value="2018" min="1979" max="2099"/>
+				<label>年</label>
+				<input type="number" name="nextmonth" id="nextmonth" value="01" min="1" max="12"/>
+				<label>月</label>
+				<input type="number" name="nextday" id="nextday" value="01" min="1" max="31"/>
+				<label>日</label>
+				<input type="number" name="nexthour" id="nexthour" value="00" min="0" max="23"/>
+				<label>时</label>
+				<input type="number" name="nextminute" id="nextminute" value="00" min="0" max="59"/>
+				<label>分</label>
+				<input type="number" name="nextsecond" id="nextsecond" value="00" min="0" max="59"/>
+				<label>秒</label>
+			</div>
+			<div class="submit"><button id="submit" type="button">开始计算时间差</button></div>
+			<div class="result">
+				<table border="1" cellspacing="0" cellpadding="0">
+					<tr><td>两段时间相差的时间</td><td></td></tr>
+					<tr><td>两段时间相差的天数</td><td></td></tr>
+					<tr><td>两段时间相差的小时</td><td></td></tr>
+					<tr><td>两段时间相差的分钟</td><td></td></tr>
+					<tr><td>两段时间相差的秒数</td><td></td></tr>
+				</table>
+			</div>
+		</div>
+		<div id="message">
+			<span>前一个时间应小于后一个时间</span>
+		</div>
+		<script src="js/main.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>
