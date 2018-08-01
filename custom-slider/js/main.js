@@ -1,0 +1,1 @@
+var slider = new CustomSlider('container','content','slider','chute');
