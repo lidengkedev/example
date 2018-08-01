@@ -13,3 +13,7 @@ time-calculation是一个小工具，功能：
 - 按小时计算时间差
 - 按分钟计算时间差
 - 按秒计算时间差
+# custom-slider
+custom-slider 是一个小demo，功能：
+- 自定义纵向滚动条
+- 内容跟随滑块滚动
