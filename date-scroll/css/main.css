@@ -1,0 +1,39 @@
+#container {
+	width: 400px;
+	margin: 0 auto;
+	border: 1px solid black;
+	position: relative;
+	display: flex;
+	flex-direction:row;
+	flex-wrap:nowrap;
+}
+.column {
+	width: 100%;
+	height: 60px;
+	overflow: hidden;
+	margin: 20px 0;
+	background: transparent;
+}
+.scroll {
+	padding: 0;
+	margin: 0;
+	text-align: center;
+	position: relative;
+	user-select:none;
+}
+.scroll li {
+	height: 20px;
+	font-size: 14px;
+	line-height: 20px;
+	list-style: none;
+	cursor: pointer;
+}
+
+#select {
+    position: absolute;
+    height: 20px;
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    top: 50%;
+    margin-top: -10px;
+}
