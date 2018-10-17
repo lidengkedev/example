@@ -1,2 +1,4 @@
 # hbuilder
 .project
+.vscode
+node_modules/
