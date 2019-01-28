@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>复杂的表格处理</title>
+		<link rel="stylesheet" type="text/css" href="./css/complex-table.css"/>
+	</head>
+	<body>
+		<h1>复杂的表格处理集合</h1>
+		<div class="table-tools">
+			<input type="button" name="" id="add-rows" value="增行" />
+			<input type="button" name="" id="" value="增列" />
+			<input type="button" name="" id="" value="删行" />
+			<input type="button" name="" id="" value="删列" />
+			<input type="button" name="" id="" value="拖动行" />
+			<input type="button" name="" id="" value="拖动列" />
+			<input type="button" name="" id="" value="拖动行高" />
+			<input type="button" name="" id="" value="拖动列宽" />
+		</div>
+		<table id="complex-table" border="1" cellspacing="0" cellpadding="0">
+			<thead>
+				<tr>
+					<th>Header1</th>
+					<th>Header2</th>
+					<th>Header3</th>
+					<th>Header4</th>
+					<th>Header5</th>
+					<th>Header6</th>
+					<th>Header7</th>
+					<th>Header8</th>
+					<th>Header9</th>
+					<th>Header10</th>
+				</tr>	
+			</thead>
+			<tbody>
+				<tr>
+					<td>Data1</td>
+					<td>Data2</td>
+					<td>Data3</td>
+					<td>Data4</td>
+					<td>Data5</td>
+					<td>Data6</td>
+					<td>Data7</td>
+					<td>Data8</td>
+					<td>Data9</td>
+					<td>Data10</td>
+				</tr>
+				<tr>
+					<td>Data1</td>
+					<td>Data2</td>
+					<td>Data3</td>
+					<td>Data4</td>
+					<td>Data5</td>
+					<td>Data6</td>
+					<td>Data7</td>
+					<td>Data8</td>
+					<td>Data9</td>
+					<td>Data10</td>
+				</tr>
+				<tr>
+					<td>Data1</td>
+					<td>Data2</td>
+					<td>Data3</td>
+					<td>Data4</td>
+					<td>Data5</td>
+					<td>Data6</td>
+					<td>Data7</td>
+					<td>Data8</td>
+					<td>Data9</td>
+					<td>Data10</td>
+				</tr>
+				<tr>
+					<td>Data1</td>
+					<td>Data2</td>
+					<td>Data3</td>
+					<td>Data4</td>
+					<td>Data5</td>
+					<td>Data6</td>
+					<td>Data7</td>
+					<td>Data8</td>
+					<td>Data9</td>
+					<td>Data10</td>
+				</tr>
+				<tr>
+					<td>Data1</td>
+					<td>Data2</td>
+					<td>Data3</td>
+					<td>Data4</td>
+					<td>Data5</td>
+					<td>Data6</td>
+					<td>Data7</td>
+					<td>Data8</td>
+					<td>Data9</td>
+					<td>Data10</td>
+				</tr>
+				<tr>
+					<td>Data1</td>
+					<td>Data2</td>
+					<td>Data3</td>
+					<td>Data4</td>
+					<td>Data5</td>
+					<td>Data6</td>
+					<td>Data7</td>
+					<td>Data8</td>
+					<td>Data9</td>
+					<td>Data10</td>
+				</tr>
+			</tbody>
+		</table>
+		<script src="./js/complex-table.js" type="text/javascript" charset="utf-8"></script>
+		<!--<script src="" type="text/javascript" charset="utf-8"></script>
+		<script src="" type="text/javascript" charset="utf-8"></script>-->
+		<script>
+			window.onload = function () {
+				var add_rows_btn = document.getElementById('add-rows');
+				add_rows_btn.onclick = function () {
+					add_rows('complex-table', ['newRow1','newRow2','newRow3','newRow4','newRow5','newRow6','newRow7','newRow8','newRow9','newRow10'])
+				}
+			}
+		</script>
+	</body>
+</html>
