@@ -9,8 +9,8 @@
 		<h1>复杂的表格处理集合</h1>
 		<div class="table-tools">
 			<input type="button" name="" id="add-rows" value="增行" />
-			<input type="button" name="" id="" value="增列" />
-			<input type="button" name="" id="" value="删行" />
+			<input type="button" name="" id="add-cols" value="增列" />
+			<input type="button" name="" id="delete-rows" value="删行" />
 			<input type="button" name="" id="" value="删列" />
 			<input type="button" name="" id="" value="拖动行" />
 			<input type="button" name="" id="" value="拖动列" />
@@ -112,9 +112,17 @@
 		<script src="" type="text/javascript" charset="utf-8"></script>-->
 		<script>
 			window.onload = function () {
-				var add_rows_btn = document.getElementById('add-rows');
+				var add_rows_btn = document.getElementById('add-rows'),
+					delete_row_btn = document.getElementById('delete-rows'),
+					add_cols_btn = document.getElementById('add-cols');
 				add_rows_btn.onclick = function () {
 					add_rows('complex-table', ['newRow1','newRow2','newRow3','newRow4','newRow5','newRow6','newRow7','newRow8','newRow9','newRow10'])
+				};
+				delete_row_btn.onclick = function () {
+					delete_rows('complex-table', 1);
+				};
+				add_cols_btn.onclick = function () {
+					add_cols('complex-table', 1, 'new head', ['col1', 'col2', 'col3', 'col4', 'col5', 'col6']);
 				}
 			}
 		</script>
