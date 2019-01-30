@@ -101,3 +101,35 @@ var add_cols = (function () {
 	}
 	return addCols;
 })();
+var delete_cols = (function () {
+	var table 		= null,
+		table_head 	= null,
+		table_tbody = null;
+	var deleteCols = function (id, index) {
+		if (typeof id === "string"){
+			table 		= document.getElementById(id);
+			table_head 	= table.getElementsByTagName('thead')[0];
+			table_body 	= table.getElementsByTagName('tbody')[0];
+			setDeleteCols(index);
+		} else {
+			console.error('id is not string');
+		};
+	}
+	var setDeleteCols = function (index) {
+		if (typeof index !== "number" || !/^[0-9]+$/.test(index)) {
+			console.error('index is not number');
+			return;
+		}
+		var head_row = table_head.rows[0],
+			body_rows = table_body.rows,
+			head_th = head_row.cells[index];
+		if (!head_th) return;
+		head_row.removeChild(head_th);
+		for (let i = 0, len = body_rows.length; i < len; i++) {
+			let row = body_rows[i],
+				body_td = row.cells[index];
+			row.removeChild(body_td);
+		}
+	}
+	return deleteCols;
+})();
