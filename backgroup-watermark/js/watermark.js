@@ -60,7 +60,7 @@ var watermark = (function () {
 	        y = defaultSettings.watermark_y + (defaultSettings.watermark_y_space + defaultSettings.watermark_height) * i;
 	        for (var j = 0; j < defaultSettings.watermark_cols; j++) {
 	            x = defaultSettings.watermark_x + (defaultSettings.watermark_width + defaultSettings.watermark_x_space) * j;
-	
+
 	            var mask_div = document.createElement('div');
 	            mask_div.id = 'mask_div' + i + j;
 	            mask_div.className = 'mask_div';
