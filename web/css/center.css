@@ -1,0 +1,126 @@
+.banner {
+    width: 100%;
+    height: 265px;
+}
+.banner .img {
+    width: 100%;
+    height: 100%;
+}
+.filter {
+    width: 1200px;
+    margin: 0 auto;
+}
+.filter .filter-options {
+    margin-top: 21px;
+    padding: 32px 45px;
+    padding-bottom: 6px;
+    background-color: #f7f8f9;
+}
+.filter .filter-options .filter-list {
+    margin-bottom: 26px;
+}
+.filter .filter-options .filter-list .filter-item {
+    width: 114px;
+    display: inline-block;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+}
+.filter .filter-options .filter-list .filter-item-title {
+    width: 42px;
+    text-align-last: justify;
+    margin-right: 44px;
+    color: #999;
+    cursor: default;
+}
+.filter-all {
+    width: 118px;
+}
+.filter .filter-options .filter-list .filter-item.active {
+    color: #4471d4;
+}
+.filter .loan-list .link-info {
+    padding-top: 36px;
+    padding-left: 42px;
+    padding-bottom: 40px;
+    display: block;
+}
+.filter .loan-list .list-item {
+    cursor: pointer;
+}
+.filter .loan-list .list-item:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+}
+.filter .loan-list .list-item:nth-of-type(even) {
+    background-color: #f7f8f9;
+}
+.filter .loan-list .list-item .list-image {
+    width: 82px;
+    height: 82px;
+    margin-right: 14px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.filter .loan-list .list-item .list-image .img {
+    width: 100%;
+    height: 100%;
+}
+.filter .loan-list .list-item .loan-left,
+.filter .loan-list .list-item .loan-center,
+.filter .loan-list .list-item .loan-right {
+    display: inline-block;
+    vertical-align: middle;
+    color: #999;
+}
+.filter .loan-list .list-item .loan-left {
+    width: 368px;
+}
+.filter .loan-list .list-item .loan-center {
+    width: 570px;
+    margin-top: 44px;
+}
+.filter .loan-list .list-item .loan-right {
+    margin-top: 44px;
+}
+.filter .loan-list .list-item .loan-center span {
+    font-size: 18px;
+    color: #ff9711;
+}
+.filter .loan-list .list-item .loan-left .list-title {
+    font-size: 23px;
+    margin-bottom: 17px;
+    color: #222;
+}
+.filter .loan-list .list-item .loan-left .list-desc {
+    color: #999;
+}
+.filter .page {
+    position: relative;
+    height: 40px;
+    margin-top: 32px;
+    margin-bottom: 103px;
+}
+.filter .page-list {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.filter .page-list .page-item {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    border: 1px solid #eaeaea;
+    cursor: pointer;
+}
+.filter .page-list .page-item.active {
+    background-color: #f6f6f6;
+}
+.filter .page-list .page-item.next {
+    width: 100px;
+}
+.filter .page-list .page-item.other {
+    border: none;
+}

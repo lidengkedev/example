@@ -1,0 +1,129 @@
+.banner {
+    width: 100%;
+    height: 450px;
+}
+.banner .img {
+    width: 100%;
+    height: 100%;
+}
+.news {
+    position: relative;
+    width: 988px;
+    margin: 0 auto;
+    margin-top: 84px;
+    margin-bottom: 100px;
+}
+.news h2,
+.partner h2 {
+    margin-bottom: 50px;
+    font-size: 26px;
+    font-weight: normal;
+    text-align: center;
+}
+.news .link-more {
+    position: absolute;
+    top: 26px;
+    right: 0;
+    font-size: 14px;
+    color: #222;
+}
+.news .link-more i {
+    font-size: 12px;
+    margin-left: 4px;
+}
+.news .news-left {
+    margin-right: 24px;
+    display: inline-block;
+    vertical-align: top;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+}
+.news .news-right {
+    width: 604px;
+    padding: 18px 30px 18px 34px;
+    display: inline-block;
+    vertical-align: top;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+}
+.news .news-left .image-box {
+    width: 360px;
+    height: 228px;
+    margin-bottom: 14px;
+}
+.news .news-left .news-title {
+    text-align: center;
+    padding-bottom: 12px;
+}
+.news .news-left .image-box .img {
+    width: 100%;
+    height: 100%;
+}
+.news .news-right .news-item {
+    border-bottom: 1px solid #eaeaea;
+}
+.news .news-right .news-item:last-child {
+    border-bottom: 0;
+}
+.news .news-right .news-item .image-box {
+    width: 150px;
+    height: 96px;
+    margin-bottom: 24px;
+    margin-right: 20px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.news .news-right .news-item .image-box .img {
+    width: 100%;
+    height: 100%;
+}
+.news .news-right .news-item .news-content {
+    width: 360px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.news .news-right .news-item .news-content .news-title {
+    margin-bottom: 22px;
+    white-space: nowrap;
+    font-size: 16px;
+    color: #222;
+}
+.news .news-right .news-item .news-content .news-desc {
+    line-height: 24px;
+    font-size: 12px;
+    color: #999;
+}
+.partner {
+    width: 100%;
+    background-color: #fafbfc;
+}
+.partner h2 {
+    padding-top: 52px;
+}
+.partner .swiper-box {
+    width: 1200px;
+    margin: 0 auto;
+}
+.partner .swiper-wrapper {
+    width: 988px;
+    margin: 0 auto;
+}
+.partner .swiper-button-prev {
+    width: 32px;
+    color: #999;
+}
+.partner .swiper-button-next {
+    width: 32px;
+    color: #999;
+}
+.swiper-button-prev, 
+.swiper-container-rtl .swiper-button-next,
+.swiper-button-next, 
+.swiper-container-rtl .swiper-button-prev {
+    background-image: none;
+}
+
+.swiper-button-prev i,
+.swiper-button-next i {
+    font-size: 40px;
+}

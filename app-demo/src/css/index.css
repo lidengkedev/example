@@ -1,0 +1,192 @@
+@charset "utf-8";
+html,
+body,
+ul,
+li,
+ol,
+p,
+input,
+select,
+button,
+dl,
+dt,
+dd,
+a,
+span {
+  text-decoration: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  list-style: none;
+  box-sizing: border-box;
+  font-family: '微软雅黑';
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-size: 37.5px;
+}
+.container {
+  background-color: #f1f3f6;
+}
+.container .section-banner {
+  position: relative;
+  width: 100%;
+  height: 6.02666667rem;
+}
+.container .section-banner .img {
+  width: 100%;
+}
+.container .section-banner .swiper-pagination {
+  position: absolute;
+  top: 3.8rem;
+  left: 0.66666667rem;
+}
+.container .section-banner .swiper-pagination .swiper-pagination-bullet {
+  width: 0.16rem;
+  height: 0.16rem;
+  margin-right: 0.18666667rem;
+  border-radius: 50%;
+  background-color: #929dbb;
+  transition-duration: 0.3s;
+}
+.container .section-banner .swiper-pagination .swiper-pagination-bullet-active {
+  width: 0.29333333rem;
+  background-color: #FFF;
+  border-radius: 0.08rem;
+}
+.container .section-banner-list {
+  position: absolute;
+  top: 4.53333333rem;
+  left: o;
+  margin: 0 0.42666667rem;
+  z-index: 10;
+}
+.container .banner-list {
+  width: 9.14666667rem;
+  margin: 0 auto;
+  border-radius: 0.26666667rem;
+  background-color: #FFF;
+}
+.container .banner-list .banner-item {
+  width: 33.33%;
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+}
+.container .banner-list .banner-item .img-box {
+  height: 0.96rem;
+  padding-top: 0.8rem;
+  padding-bottom: 0.57333333rem;
+  padding-left: 0.44888889rem;
+  padding-right: 0.44888889rem;
+}
+.container .banner-list .banner-item .img-box .img {
+  width: 1.25333333rem;
+  float: left;
+}
+.container .banner-list .banner-item .banner-item-desc {
+  font-size: 0.37333333rem;
+  margin-bottom: 0.70666667rem;
+}
+.container .list-box {
+  width: 9.14666667rem;
+  margin: 0 auto;
+  margin-top: 2.53333333rem;
+}
+.container .list-box .list-filter {
+  width: 100%;
+  padding-left: 0.37333333rem;
+  margin-bottom: 0.4rem;
+}
+.container .list-box .list-filter .filter-item {
+  width: 33.33%;
+  display: inline-block;
+  font-size: 0.32rem;
+  color: #cacaca;
+  transition-duration: 0.3s;
+}
+.container .list-box .list-filter .filter-item .filter-selected {
+  color: #cacaca;
+}
+.container .list-box .list-filter .filter-item .filter-selected::after {
+  content: '';
+  display: inline-block;
+  width: 0.13333333rem;
+  height: 0.06666667rem;
+  vertical-align: middle;
+  margin-left: 0.13333333rem;
+  background: url('../images/icon_arrow_down.png') no-repeat center center;
+}
+.container .list-box .list-filter .filter-item:nth-of-type(2) {
+  text-align: center;
+}
+.container .list-box .list-filter .filter-item:last-of-type {
+  text-align: right;
+}
+.container .list-box .list-item {
+  position: relative;
+  width: 100%;
+  margin-bottom: 0.26666667rem;
+  padding-top: 0.66666667rem;
+  padding-bottom: 0.66666667rem;
+  border-radius: 0.26666667rem;
+  background-color: #FFF;
+}
+.container .list-box .list-item .img-box,
+.container .list-box .list-item .list-item-desc,
+.container .list-box .list-item .list-item-price {
+  display: inline-block;
+  vertical-align: top;
+}
+.container .list-box .list-item .img-box {
+  width: 1.33333333rem;
+  height: 1.33333333rem;
+  margin-right: 0.26666667rem;
+  margin-left: 0.4rem;
+}
+.container .list-box .list-item .img-box .img {
+  width: 100%;
+  height: 100%;
+}
+.container .list-box .list-item .list-item-desc {
+  width: 3.73333333rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.container .list-box .list-item .list-item-desc .title {
+  font-size: 0.4rem;
+  font-weight: bold;
+  margin-top: 0.13333333rem;
+  margin-bottom: 0.37333333rem;
+}
+.container .list-box .list-item .list-item-desc .content {
+  font-size: 0.29333333rem;
+  color: #cacaca;
+}
+.container .list-box .list-item .list-item-price {
+  position: absolute;
+  top: 0.66666667rem;
+  right: 0.44rem;
+  text-align: right;
+}
+.container .list-box .list-item .list-item-price .price-desc {
+  font-size: 0.29333333rem;
+  margin-bottom: 0.45333333rem;
+}
+.container .list-box .list-item .list-item-price .price-desc .price-num {
+  color: #ff9711;
+}
+.container .list-box .list-item .list-item-price .time-desc {
+  font-size: 0.26666667rem;
+  color: #cacaca;
+}
+.container .list-box .loading-end {
+  padding-top: 0.29333333rem;
+  padding-bottom: 0.8rem;
+  text-align: center;
+  font-size: 0.29333333rem;
+  color: #cacaca;
+}
