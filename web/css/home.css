@@ -10,6 +10,7 @@
 }
 .banner .swiper-pagination-bullets {
     position: absolute;
+	top: 420px;
     bottom: 80px;
     left: 18.75%;
     width: 100px;
@@ -74,6 +75,7 @@
 .advantage .adv-item {
     position: relative;
     display: inline-block;
+	overflow: hidden;
     width: 376px;
     border-radius: 5px;
     margin-right: 35px;
@@ -200,6 +202,7 @@
 .about .more {
     width: 140px;
     height: 38px;
+	display: inline-block;
     margin-bottom: 98px;
     text-align: center;
     line-height: 38px;
