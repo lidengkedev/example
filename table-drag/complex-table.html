@@ -16,6 +16,8 @@
 			<input type="button" name="" id="" value="拖动列" />
 			<input type="button" name="" id="" value="拖动行高" />
 			<input type="button" name="" id="" value="拖动列宽" />
+			<input type="button" name="" id="download-table" value="下载xls" />
+			<input type="button" name="" id="print-table" value="打印" />
 		</div>
 		<table id="complex-table" border="1" cellspacing="0" cellpadding="0">
 			<thead>
@@ -115,7 +117,9 @@
 				var add_rows_btn 	= document.getElementById('add-rows'),
 					delete_row_btn 	= document.getElementById('delete-rows'),
 					add_cols_btn 	= document.getElementById('add-cols'),
-					delete_cols_btn = document.getElementById('delete-cols');
+					delete_cols_btn = document.getElementById('delete-cols'),
+					download_table_btn = document.getElementById('download-table'),
+					print_table_btn 	= document.getElementById('print-table');
 				add_rows_btn.onclick = function () {
 					add_rows('complex-table', ['newRow1','newRow2','newRow3','newRow4','newRow5','newRow6','newRow7','newRow8','newRow9','newRow10'])
 				};
@@ -127,6 +131,31 @@
 				}
 				delete_cols_btn.onclick = function () {
 					delete_cols('complex-table', 1);
+				}
+				download_table_btn.onclick = function () {
+					tableToExcel('complex-table');
+				}
+				print_table_btn.onclick = function () {
+					var thead = [
+						{ title: 'thead1', key: 'a' },
+						{ title: 'thead2', key: 'b' },
+						{ title: 'thead3', key: 'c' },
+						{ title: 'thead4', key: 'd' },
+						{ title: 'thead5', key: 'e' },
+						{ title: 'thead6', key: 'f' }
+					],
+						tbody = [
+						{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f' },
+						{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f' },
+						{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f' },
+						{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f' },
+						{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f' },
+						{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f' },
+						{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f' }
+					]
+					tableToPrint(thead, tbody, '复杂的表格操作', (
+						'table thead tr th { background-color: #52ccba; }'
+					));
 				}
 			}
 		</script>
