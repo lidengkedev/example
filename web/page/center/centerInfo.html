@@ -62,11 +62,25 @@
                 </div><div class="main-right">
                     <form class="request-form">
                         <div class="form-item">
-                            <input type="text" name="" id="" placeholder="最高金额5000元">
-                            <span class="form-unit">万元</span>
+                            <!--<input type="text" name="" id="" placeholder="最高金额5000元">-->
+                            <select class="select" id="price" name="state" data-value="0">
+								<option value="0">1000</option>
+								<option value="1">2000</option>
+								<option value="2">3000</option>
+								<option value="3">4000</option>
+								<option value="4">5000</option>
+							</select>
+                            <span class="form-unit">元</span>
                         </div>
                         <div class="form-item">
-                            <input type="text" name="" id="" placeholder="最长期限15天">
+                            <!--<input type="text" name="" id="" placeholder="最长期限15天">-->
+                            <select class="select" id="datetime" name="state" data-value="0">
+								<option value="0">3</option>
+								<option value="1">5</option>
+								<option value="2">8</option>
+								<option value="3">12</option>
+								<option value="4">15</option>
+							</select>
                             <span class="form-unit">天</span>
                         </div>
                         <div class="form-item">
@@ -123,5 +137,13 @@
         </div>
         <p class="footer-bottom">Copy rights @2019 备案号备案号备案号备案号备案号备案号备案号备案号</p>
     </footer>
+   	<script src="../../js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+   	<script src="../../js/jquery.select.js" type="text/javascript" charset="utf-8"></script>
+   	<script type="text/javascript">
+   		$(function(){
+            $('#price').select();
+            $('#datetime').select();
+        });
+   	</script>
 </body>
 </html>
