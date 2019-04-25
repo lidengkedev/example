@@ -143,6 +143,9 @@
    		$(function(){
             $('#price').select();
             $('#datetime').select();
+            $('.select_ul').on('click', function (event) {
+            	alert(event.target.dataset.value)
+            })
         });
    	</script>
 </body>

@@ -95,18 +95,34 @@
 }
 .partner {
     width: 100%;
+    padding-bottom: 45px;
     background-color: #fafbfc;
 }
 .partner h2 {
     padding-top: 52px;
 }
 .partner .swiper-box {
-    width: 1200px;
+	position: relative;
+    /*width: 1200px;*/
+   width: 988px;
     margin: 0 auto;
 }
 .partner .swiper-wrapper {
-    width: 988px;
+    /*width: 988px;*/
     margin: 0 auto;
+}
+.partner .partner-list {
+	width: 100%;
+}
+.partner .partner-list-item {
+	display: inline-block;
+	padding: 25px 0;
+	margin: 0 auto;
+	width: 25%;
+	text-align: center;
+}
+.partner .partner-list-item .item-image {
+	height: 36px;
 }
 .partner .swiper-button-prev {
     width: 32px;
@@ -121,8 +137,14 @@
 .swiper-button-next, 
 .swiper-container-rtl .swiper-button-prev {
     background-image: none;
+    outline: none;
 }
-
+.partner .swiper-button-next, .swiper-container-rtl .swiper-button-prev {
+	right: -80px;
+}
+.partner .swiper-button-prev, .swiper-container-rtl .swiper-button-next {
+	left: -80px;
+}
 .swiper-button-prev i,
 .swiper-button-next i {
     font-size: 40px;
