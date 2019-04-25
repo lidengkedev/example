@@ -1,0 +1,68 @@
+* {
+    font-size: 16px;
+    font-family: '微软雅黑';
+    margin: 0;
+    padding: 0;
+}
+.container {
+    width: 100%;
+}
+.container .section-left {
+    width: 50%;
+    display: inline-block;
+    vertical-align: top;
+}
+.container .section-right {
+    width: 50%;
+    display: inline-block;
+    vertical-align: top;
+}
+.container .section-left .table-thead .table-th,
+.container .section-right .table-thead .table-th {
+    height: 40px;
+    border: 1px solid #eaeaea;
+    text-align: center;
+}
+.container .section-left .table-thead .table-th:nth-child(1) {
+    width: 60px;
+}
+.container .section-left .table-thead .table-th:nth-child(2) {
+    width: 100px;
+}
+.container .section-left .table-thead .table-th:nth-child(3) {
+    width: 200px;
+}
+.container .section-left .table-tbody .table-td,
+.container .section-right .table-tbody .table-td {
+    height: 40px;
+    border: 1px solid #eaeaea;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+}
+.container .section-left .table-tbody .table-td .input-checkbox {
+    width: 18px;
+    height: 18px;
+}
+.container .section-left .table-tbody .table-td .input-text,
+.container .section-right .table-tbody .table-td .input-text,
+.container .section-right .table-tbody .table-td .input-select {
+    width: 80%;
+    height: 28px;
+    border: 1px solid #eaeaea;
+    padding: 0 12px;
+}
+
+/* 拆分的工序 */
+.container .section-right .table {
+    margin-bottom: 20px;
+}
+.container .section-right .table-tbody .table-tr .table-td:nth-child(1) {
+    width: 100px;
+}
+.container .section-right .table-tbody .table-tr .table-td:nth-child(2) {
+    width: 150px;
+}
+.container .section-right .table-tbody .table-tr .table-td:nth-child(3) {
+    width: 200px;
+}

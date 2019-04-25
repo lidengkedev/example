@@ -1,0 +1,14 @@
+{
+  "name": "working-procedure",
+  "version": "1.0.0",
+  "description": "this is a working procedure.",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lidengke",
+  "license": "MIT",
+  "dependencies": {
+    "vue": "^2.6.10"
+  }
+}

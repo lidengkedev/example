@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>工序拆分</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <div id="app">
+        <section class="container">
+            <section class="section-left">
+                <table class="table" border="0" cellspacing="0" cellpadding="0">
+                    <thead class="table-thead">
+                        <tr>
+                            <th class="table-th" v-for="item in thead" :key="item.id">{{ item.title }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-tbody">
+                        <tr class="table-tr" v-for="item in tbody" :key="item.id">
+                            <td class="table-td"><input class="input-checkbox" type="checkbox" :value="item.radio"></td>
+                            <td class="table-td">{{ item.name }}</td>
+                            <td class="table-td"><input class="input-text" type="text" :value="item.value"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section><section class="section-right">
+                    <table class="table" border="0" cellspacing="0" cellpadding="0">
+                        <thead class="table-thead">
+                            <tr>
+                                <th class="table-th" v-for="item in work_thead" :key="item.id">{{ item.title }}</th>
+                            </tr>
+                        </thead>
+                        <!-- SMT -->
+                        <tbody class="table-tbody">
+                            <tr class="table-tr" v-for="item in SMT" :key="item.id">
+                                <td class="table-td">{{ item.name }}</td>
+                                <td class="table-td"><input class="input-text" type="text" :value="item.num"></td>
+                                <td class="table-td">
+                                    <select name="" id="" class="input-select" :value="item.value">
+                                        <option value="0">A</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- DIP -->
+                    <table class="table" border="0" cellspacing="0" cellpadding="0">
+                        <tbody class="table-tbody">
+                            <tr class="table-tr" v-for="item in DIP" :key="item.id">
+                                <td class="table-td">{{ item.name }}</td>
+                                <td class="table-td"><input class="input-text" type="text" :value="item.num"></td>
+                                <td class="table-td">
+                                    <select name="" id="" class="input-select" :value="item.value">
+                                        <option value="0">A</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- 功能测试 -->
+                    <table class="table" border="0" cellspacing="0" cellpadding="0">
+                        <tbody class="table-tbody">
+                            <tr class="table-tr" v-for="item in TEST" :key="item.id">
+                                <td class="table-td">{{ item.name }}</td>
+                                <td class="table-td"><input class="input-text" type="text" :value="item.num"></td>
+                                <td class="table-td">
+                                    <select name="" id="" class="input-select" :value="item.value">
+                                        <option value="0">A</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- 三防漆 -->
+                    <table class="table" border="0" cellspacing="0" cellpadding="0">
+                        <tbody class="table-tbody">
+                            <tr class="table-tr" v-for="item in PAINT" :key="item.id">
+                                <td class="table-td">{{ item.name }}</td>
+                                <td class="table-td"><input class="input-text" type="text" :value="item.num"></td>
+                                <td class="table-td">
+                                    <select name="" id="" class="input-select" :value="item.value">
+                                        <option value="0">A</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- 组装 -->
+                    <table class="table" border="0" cellspacing="0" cellpadding="0">
+                        <tbody class="table-tbody">
+                            <tr class="table-tr" v-for="item in ASE" :key="item.id">
+                                <td class="table-td">{{ item.name }}</td>
+                                <td class="table-td"><input class="input-text" type="text" :value="item.num"></td>
+                                <td class="table-td">
+                                    <select name="" id="" class="input-select" :value="item.value">
+                                        <option value="0">A</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </section>
+        </section>
+    </div>
+    <script src="../js/vue.js"></script>
+    <script src="../main.js"></script>
+</body>
+</html>
