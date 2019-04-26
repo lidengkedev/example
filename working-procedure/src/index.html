@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>工序拆分</title>
+    <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+    <div id="app">
+        <section class="container">
+            <section class="section-left">
+                <table class="table" border="0" cellspacing="0" cellpadding="0">
+                    <thead class="table-thead">
+                        <tr>
+                            <th class="table-th" v-for="item in thead" :key="item.id">{{ item.title }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-tbody">
+                        <tr class="table-tr" v-for="item in tbody" :key="item.id">
+                            <td class="table-td"><input class="input-checkbox" type="checkbox" :checked="item.value" :value="item.value" @change="checkboxChange(item.value, item.name)"></td>
+                            <td class="table-td">{{ item.name }}</td>
+                            <td class="table-td"><input class="input-text" type="number" v-model="item.branch" :disabled="item.branch < 1" @input="inputBatchchange(item.name, item.branch)"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section><section class="section-right">
+                <table class="table" border="0" cellspacing="0" cellpadding="0">
+                    <thead class="table-thead">
+                        <tr>
+                            <th class="table-th" v-for="item in work_thead" :key="item.id">{{ item.title }}</th>
+                        </tr>
+                    </thead>
+                </table>
+                <!-- SMT -->
+                <table class="table" border="0" cellspacing="0" cellpadding="0">
+                	<tbody class="table-tbody">
+                        <tr class="table-tr" v-for="item in SMT" :key="item.id">
+                            <td class="table-td">{{ item.name }}</td>
+                            <td class="table-td"><input class="input-text" type="number" :min="0" :max="item.total" v-model="item.num" @input="procedureNumberChange(item.name, item.value)"></td>
+                            <td class="table-td">
+                                <select name="" id="" class="input-select" v-model="item.value" @change="factoryChange(item)">
+                                    <option v-for="factory in tbody[0].factory" :key="factory.id" :value="factory.id" :data-disabled="factory.disable">{{ factory.name }}</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- DIP -->
+                <table class="table" border="0" cellspacing="0" cellpadding="0">
+                    <tbody class="table-tbody">
+                        <tr class="table-tr" v-for="item in DIP" :key="item.id">
+                            <td class="table-td">{{ item.name }}</td>
+                            <td class="table-td"><input class="input-text" type="number" :min="0" :max="item.total" v-model="item.num"></td>
+                            <td class="table-td">
+                                <select name="" id="" class="input-select" v-model="item.value" @change="factoryChange(item.name, item.value)">
+                                    <option v-for="factory in tbody[1].factory" :key="factory.id" :value="factory.id" :disabled="factory.disable">{{ factory.name }}</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- 功能测试 -->
+                <table class="table" border="0" cellspacing="0" cellpadding="0">
+                    <tbody class="table-tbody">
+                        <tr class="table-tr" v-for="item in TEST" :key="item.id">
+                            <td class="table-td">{{ item.name }}</td>
+                            <td class="table-td"><input class="input-text" type="number" :min="0" :max="item.total" v-model="item.num"></td>
+                            <td class="table-td">
+                                <select name="" id="" class="input-select" v-model="item.value" @change="factoryChange(item.name, item.value)">
+                                    <option v-for="factory in tbody[2].factory" :key="factory.id" :value="factory.id" :disabled="factory.disable">{{ factory.name }}</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- 三防漆 -->
+                <table class="table" border="0" cellspacing="0" cellpadding="0">
+                    <tbody class="table-tbody">
+                        <tr class="table-tr" v-for="item in PAINT" :key="item.id">
+                            <td class="table-td">{{ item.name }}</td>
+                            <td class="table-td"><input class="input-text" type="number" :min="0" :max="item.total" v-model="item.num"></td>
+                            <td class="table-td">
+                                <select name="" id="" class="input-select" v-model="item.value" @change="factoryChange(item.name, item.value)">
+                                    <option v-for="factory in tbody[3].factory" :key="factory.id" :value="factory.id" :disabled="factory.disable">{{ factory.name }}</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- 组装 -->
+                <table class="table" border="0" cellspacing="0" cellpadding="0">
+                    <tbody class="table-tbody">
+                        <tr class="table-tr" v-for="item in ASE" :key="item.id">
+                            <td class="table-td">{{ item.name }}</td>
+                            <td class="table-td"><input class="input-text" type="number" :min="0" :max="item.total" v-model="item.num"></td>
+                            <td class="table-td">
+                                <select name="" id="" class="input-select" v-model="item.value" @change="factoryChange(item.name, item.value)">
+                                    <option v-for="factory in tbody[4].factory" :key="factory.id" :value="factory.id" :disabled="factory.disable">{{ factory.name }}</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+	        <section class="section-footer">
+	        	<input class="submit" type="button" value="提交" @click="procedureSubmmit" />
+	        	<input class="go-back" type="button" value="返回" @click="goBack"/>
+	        </section>
+        </section>
+    </div>
+    <script src="./js/vue.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+</html>

@@ -5,7 +5,8 @@
     padding: 0;
 }
 .container {
-    width: 100%;
+    width: 800px;
+    margin: 0 auto;
 }
 .container .section-left {
     width: 50%;
@@ -17,11 +18,21 @@
     display: inline-block;
     vertical-align: top;
 }
+.container .section-left .table,
+.container .section-right .table {
+	border: 1px solid #eaeaea;
+	border-bottom: 0;
+}
 .container .section-left .table-thead .table-th,
 .container .section-right .table-thead .table-th {
     height: 40px;
-    border: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
     text-align: center;
+}
+.container .section-left .table-thead .table-th:first-child,
+.container .section-right .table-thead .table-th:first-child {
+	border-left: 0;
 }
 .container .section-left .table-thead .table-th:nth-child(1) {
     width: 60px;
@@ -35,10 +46,15 @@
 .container .section-left .table-tbody .table-td,
 .container .section-right .table-tbody .table-td {
     height: 40px;
-    border: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
     text-align: center;
     vertical-align: middle;
     font-size: 14px;
+}
+.container .section-left .table-tbody .table-td:first-child,
+.container .section-right .table-tbody .table-td:first-child {
+	border-left: 0;
 }
 .container .section-left .table-tbody .table-td .input-checkbox {
     width: 18px;
@@ -47,7 +63,7 @@
 .container .section-left .table-tbody .table-td .input-text,
 .container .section-right .table-tbody .table-td .input-text,
 .container .section-right .table-tbody .table-td .input-select {
-    width: 80%;
+    width: 60%;
     height: 28px;
     border: 1px solid #eaeaea;
     padding: 0 12px;
@@ -57,12 +73,37 @@
 .container .section-right .table {
     margin-bottom: 20px;
 }
+.container .section-right .table-thead .table-th:nth-child(1),
 .container .section-right .table-tbody .table-tr .table-td:nth-child(1) {
     width: 100px;
 }
+.container .section-right .table-thead .table-th:nth-child(2),
 .container .section-right .table-tbody .table-tr .table-td:nth-child(2) {
     width: 150px;
 }
+.container .section-right .table-thead .table-th:nth-child(3),
 .container .section-right .table-tbody .table-tr .table-td:nth-child(3) {
     width: 200px;
+}
+/* 提交 */
+.container .section-footer {
+	text-align: center;
+	height: 40px;
+	margin-top: 40px;
+}
+.container .section-footer .submit,
+.container .section-footer .go-back {
+	width: 80px;
+	height: 32px;
+	margin: 0 20px;
+	border: 1px solid #eaeaea;
+	line-height: 32px;
+	font-size: 14px;
+	outline: none;
+	background-color: #FFF;
+	cursor: pointer;
+}
+.container .section-footer .submit:active,
+.container .section-footer .go-back:active {
+	font-size: 12px;
 }
