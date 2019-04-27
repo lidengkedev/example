@@ -20,21 +20,11 @@ window.onload = function () {
                 { id: 2, title: '数量' },
                 { id: 3, title: '指派工厂' }
             ],
-            SMT: [
-                { id: 1, name: 'SMT', total: 5000, branch: 1, num: 5000, value: '' }
-            ],
-            DIP: [
-                { id: 1, name: 'DIP', total: 5000, branch: 1, num: 5000, value: 0 }
-            ],
-            TEST: [
-                { id: 1, name: '功能测试', total: 5000, branch: 1, num: 5000, value: 0 }
-            ],
-            PAINT: [
-                { id: 1, name: '三防漆', total: 5000, branch: 1, num: 5000, value: 0 }
-            ],
-            ASE: [
-                { id: 1, name: '组装', total: 5000, branch: 1, num: 5000, value: 0 }
-            ]
+            SMT: [],
+            DIP: [],
+            TEST: [],
+            PAINT: [],
+            ASE: []
         },
         methods: {
         	// checkbox改变选择
@@ -65,7 +55,7 @@ window.onload = function () {
         		for (let i = 0; i < value; i++) {
         			if (i < value) {
         				let procedure = this.setProcedureNumber(type, value, i);
-        				new_data.push({ id: i, name: type, total: procedure.total, num: procedure.num, branch: procedure.branch, value: 0 })
+        				new_data.push({ id: i, name: type, total: procedure.total, num: parseInt(procedure.num || 0), branch: procedure.branch, value: 0 })
         			}
         		}
         		if (type === "SMT") {
@@ -97,7 +87,8 @@ window.onload = function () {
         	},
         	// 拆分工序批次
         	inputBatchchange (type, value) {
-        		var value = parseInt(value || 1);
+				var value = parseInt(value || 1);
+				clearTimeout(timer);
         		timer = setTimeout(() => {
         			if (value > 0 && value < 3) {
         				this.setAddProcedure(type, value);
@@ -117,19 +108,24 @@ window.onload = function () {
         		for (let i = 0, len = data.length; i < len; i++) {
         			// 如果当前工序的拆分批次为1,则工序数量不拆分
         			if (type === data[i].name && value == 1) {
-        				num = data[i].num;
+						num = data[i].num;
+						total = data[i].num;
+						branch = data[i].branch;
         			// 如果当前工序的拆分批次为2,则工序数量拆分
         			} else if (type === data[i].name && value == 2 ) {
         				// 拆分数量,第一个值下取整,第二个值向上取整
         				num = index == 0 ? Math.floor(parseInt(data[i].num)/2) : Math.ceil(parseInt(data[i].num)/2);
+						total = data[i].num;
+						branch = data[i].branch;
         			}
-        			total = data[i].total;
-        			branch = data[i].branch;
         		}
         		return {total, num, branch};
         	},
         	// 设置工序数量选择
         	procedureNumberChange (item) {
+				if (!item.num) {
+					item.num = 0;
+				}
         		if (item.name === "SMT") {
         			this.checkProcedureNumber(this.SMT, item);
         		} else if (item.name === "DIP") {
@@ -144,17 +140,23 @@ window.onload = function () {
         	},
         	// 检查同一工序的数量
         	checkProcedureNumber (data, item) {
-        		let value = 0;
-        		for (let i = 0, len = data.length; i < len; i++) {
-        			value += item.id == data[i].id ? item.value : data[i].value;
-        			if (item.id != data[i].id) {
-        				data[i].value = Math.ceil(data[i].total/data[i].branch) - item.value;
-        			}
-        		}
+				clearTimeout(timer)
+				timer = setTimeout(() => {
+					if (item.num > item.total) {
+						item.num = item.total;
+					} else if (item.num < 0) {
+						item.num = 0;
+					}
+					// 同一个工序最多只有两个工厂可用此方法
+					for (let i = 0, len = data.length; i < len; i++) {
+						if (item.id != data[i].id) {
+							data[i].num = parseInt(data[i].total) - parseInt(item.num || 0);
+						}
+					}
+				},0);
         	},
         	// 指派工厂
         	factoryChange (options) {
-        		var value = options.value || 0;
         		if (options.name === "SMT") {
         			this.checkFactory(this.SMT, options);
         		} else if (options.name === "DIP") {
@@ -188,7 +190,15 @@ window.onload = function () {
         		for (let i = 0, len = data.length; i < len; i++) {
         			data[i].factory = factoryList;
         		}
-        	},
+			},
+			// 初始化默认工序
+			initProcedure () {
+				this.SMT = [{ id: 1, name: 'SMT', total: 5000, branch: 1, num: 5000, value: '' }];
+				this.DIP = [{ id: 1, name: 'DIP', total: 5000, branch: 1, num: 5000, value: '' }];
+				this.TEST = [{ id: 1, name: '功能测试', total: 5000, branch: 1, num: 5000, value: '' }];
+				this.PAINT = [{ id: 1, name: '三防漆', total: 5000, branch: 1, num: 5000, value: '' }];
+				this.ASE = [{ id: 1, name: '组装', total: 5000, branch: 1, num: 5000, value: '' }];
+			},
         	// 工序提交
         	procedureSubmmit () {
         		// [{ process: 1, new_process: 1, num: 3000, factory_id: 1, batch: 1 }]
@@ -197,34 +207,48 @@ window.onload = function () {
         		// num: 工序数量
         		// factory: 指派工厂
         		// batch: 拆分批次
-        		let tbody = this.tbody, new_data = [];
+        		let tbody = this.tbody, new_data = [], flag = true;
         		for (let i = 0, len = tbody.length; i < len; i++) {
         			// 判断用户是否选择工序,未选择的工序不提交
         			if (tbody[i].value) {
         				if (tbody[i].name === "SMT") {
-		        			this.dealProcedure(new_data, tbody[i], this.SMT);
+							flag = this.dealProcedure(new_data, tbody[i], this.SMT);
+							if (!flag) break;
 		        		} else if (tbody[i].name === "DIP") {
-		        			this.dealProcedure(new_data, tbody[i], this.DIP);
+							flag = this.dealProcedure(new_data, tbody[i], this.DIP);
+							if (!flag) break;
 		        		} else if (tbody[i].name === "功能测试") {
-		        			this.dealProcedure(new_data, tbody[i], this.TEST);
+							flag = this.dealProcedure(new_data, tbody[i], this.TEST);
+							if (!flag) break;
 		        		} else if (tbody[i].name === "三防漆") {
-		        			this.dealProcedure(new_data, tbody[i], this.PAINT);
+							flag = this.dealProcedure(new_data, tbody[i], this.PAINT);
+							if (!flag) break;
 		        		} else if (tbody[i].name === "组装") {
-		        			this.dealProcedure(new_data, tbody[i], this.ASE);
+							flag = this.dealProcedure(new_data, tbody[i], this.ASE);
+							if (!flag) break;
 		        		}
         			}
-        		}
-        		console.log(new_data)
+				}
+				if (!flag) {
+					alert('请检查工序是否填写完整！')
+				} else {
+					console.log(new_data)
+				}
         	},
         	// 整理提交的工序
         	dealProcedure (old, data, procedure) {
-        		let new_data = [], new_procedure = [];
+        		let new_procedure = [], flag = true;
         		for (let i = 0, len = procedure.length; i < len; i++) {
         			new_procedure.push({ num: procedure[i].num, factory: procedure[i].value })
-        		}
+				}
         		for (let i = 0; i < data.branch; i++) {
-        			old.push({ process: data.id, new_process: data.id, num: new_procedure[i].num, factory: new_procedure[i].factory, batch: data.branch })
-        		}
+					if (!new_procedure[i].factory) {
+						flag = false;
+						break;
+					}
+					old.push({ process: data.id, new_process: data.id, num: new_procedure[i].num, factory_id: new_procedure[i].factory, batch: data.branch })
+				}
+				return flag;
         	},
         	// 返回
         	goBack () {
@@ -232,6 +256,7 @@ window.onload = function () {
         	}
         },
         mounted () {
+			this.initProcedure();
         	this.getFactoryList();
         }
     });
