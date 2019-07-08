@@ -1,0 +1,137 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: '微软雅黑';
+}
+ul,
+li {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+  color: #333;
+}
+html {
+  font-size: 10px;
+}
+.clearfix::after {
+  content: '';
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+}
+.clearfix {
+  zoom: 1;
+}
+#container {
+  width: 100%;
+}
+#container .header {
+  height: 4rem;
+  font-size: 0;
+}
+#container .header .logo {
+  width: 20rem;
+  height: 4rem;
+  vertical-align: middle;
+  background-color: #f8f8f8;
+}
+#container .header .user {
+  float: right;
+  display: block;
+  width: 4rem;
+  height: 4rem;
+  display: block;
+  background-color: #f8f8f8;
+}
+#container .main {
+  width: 100%;
+  padding: 0 2%;
+}
+#container .main .list {
+  width: 100%;
+}
+#container .main .list .item {
+  width: 20%;
+  float: left;
+  text-align: center;
+  cursor: pointer;
+}
+#container .main .list .item .link-img {
+  display: block;
+  width: 5.4rem;
+  height: 5.4rem;
+  background-color: #f8f8f8;
+}
+#container .main .list .item .link {
+  display: inline-block;
+}
+#container .main .tabs-warpper {
+  margin-top: 1rem;
+}
+#container .main .tabs-warpper .tabs {
+  width: 100%;
+}
+#container .main .tabs-warpper .tabs .tab {
+  display: inline-block;
+  height: 3rem;
+  width: 8rem;
+  line-height: 3rem;
+  text-align: center;
+}
+#container .main .tabs-warpper .tabs .tab .link {
+  width: 100%;
+  display: inline-block;
+  border: 1px solid #eaeaea;
+  border-radius: 3px;
+}
+#container .main .tabs-warpper .more {
+  float: right;
+  padding-top: 1rem;
+}
+#container .main .tabs-warpper .content-warpper {
+  width: 100%;
+}
+#container .main .tabs-warpper .content-warpper .list {
+  width: 100%;
+}
+#container .main .tabs-warpper .content-warpper .list .item {
+  margin-top: 1rem;
+  width: 49%;
+  float: left;
+  text-align: center;
+}
+#container .main .tabs-warpper .content-warpper .list .item:nth-child(2n) {
+  margin-left: 2%;
+}
+#container .main .tabs-warpper .content-warpper .list .item .link {
+  display: inline-block;
+  width: 100%;
+}
+#container .main .tabs-warpper .content-warpper .list .item .link .link-img {
+  width: 100%;
+  height: 10.6rem;
+  border-radius: 0.5rem;
+  background-color: #f8f8f8;
+}
+#container .main .tabs-warpper .content-warpper .list .item .link .title {
+  text-align: left;
+  font-size: 1.6rem;
+}
+#container .main .tabs-warpper .content-warpper .list .item .link .summary {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  font-size: 1.6rem;
+}
+#container .main .tabs-warpper .content-warpper .list .item .link .price-warpper {
+  text-align: left;
+  font-size: 1.6rem;
+}
+#container .main .tabs-warpper .content-warpper .list .item .link .price-warpper .price {
+  font-size: 2rem;
+  color: #ff7400;
+}
