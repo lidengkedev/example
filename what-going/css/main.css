@@ -135,3 +135,59 @@ html {
   font-size: 2rem;
   color: #ff7400;
 }
+#container .main .banner {
+  margin-top: 1rem;
+}
+#container .main .banner .banner-img {
+  height: 10rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  background-color: #f8f8f8;
+}
+#container .main .list-warpper {
+  width: 100%;
+}
+#container .main .list-warpper .list {
+  width: 100%;
+}
+#container .main .list-warpper .list .item {
+  margin-top: 1rem;
+  width: 49%;
+  float: left;
+  text-align: center;
+}
+#container .main h2 {
+  margin-top: 1rem;
+}
+#container .main .list-warpper .list .item:nth-child(2n) {
+  margin-left: 2%;
+}
+#container .main .list-warpper .list .item .link {
+  display: inline-block;
+  width: 100%;
+}
+#container .main .list-warpper .list .item .link .link-img {
+  width: 100%;
+  height: 10.6rem;
+  border-radius: 0.5rem;
+  background-color: #f8f8f8;
+}
+#container .main .list-warpper .list .item .link .title {
+  text-align: left;
+  font-size: 1.6rem;
+}
+#container .main .list-warpper .list .item .link .summary {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  font-size: 1.6rem;
+}
+#container .main .list-warpper .list .item .link .price-warpper {
+  text-align: left;
+  font-size: 1.6rem;
+}
+#container .main .list-warpper .list .item .link .price-warpper .price {
+  font-size: 2rem;
+  color: #ff7400;
+}
