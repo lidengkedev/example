@@ -1,0 +1,97 @@
+#container {
+  width: 100%;
+  max-width: 720px;
+  min-height: 500px;
+  margin: 0 auto;
+  background-color: #f8f8f8;
+}
+.header {
+  position: relative;
+  height: 3.666666665rem;
+  line-height: 3.666666665rem;
+  font-size: 1.33333333rem;
+  background-color: #18a9b9;
+}
+.header .goback {
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  width: 5rem;
+  display: inline-block;
+  color: #fff;
+}
+.header .title {
+  margin: 0 5rem;
+  text-align: center;
+  color: #fff;
+}
+.register {
+  margin-top: 1rem;
+  padding-left: 1rem;
+  border-top: 1px solid #eaeaea;
+  border-bottom: 1px solid #eaeaea;
+  background-color: #fff;
+}
+.register .form-warpper .form-item {
+  border-bottom: 1px solid #eaeaea;
+  height: 3.75rem;
+  line-height: 3.75rem;
+  font-size: 1.33333rem;
+  display: flex;
+  flex-direction: row;
+}
+.register .form-warpper .form-item:last-child {
+  border-bottom-width: 0;
+}
+.register .form-warpper .form-item .title {
+  display: block;
+  width: 7.5rem;
+}
+.register .form-warpper .form-item .input {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+.register .form-warpper .form-item .input .value {
+  border-width: 0;
+  display: flex;
+  flex: 1;
+}
+.register .form-warpper .form-item .input .img-code {
+  border: 1px solid #eaeaea;
+  border-radius: 5px;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  margin: 0.58333333rem;
+  width: 8.3333rem;
+  text-align: center;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.register .form-warpper .form-item .input .img-code .img {
+  width: 100%;
+  height: 100%;
+}
+.register .form-warpper .form-item .input .sms-code {
+  border: 1px solid #eaeaea;
+  border-radius: 5px;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  margin: 0.58333333rem;
+  width: 8.3333rem;
+  text-align: center;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.form-button {
+  margin-top: 1rem;
+  padding: 0 1rem;
+}
+.form-button .submit {
+  width: 100%;
+  height: 4.1666666rem;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  color: #fff;
+  background-color: #25a4bb;
+}

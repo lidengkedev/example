@@ -27,6 +27,8 @@ html {
 }
 #container {
   width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
 }
 #container .header {
   height: 4rem;
