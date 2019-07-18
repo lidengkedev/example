@@ -56,3 +56,9 @@ backgroup-watermark 是一个水印效果
 what-going 是去哪了仿页
 
 [链接地址](https://lidengkedev.github.io/example-demo/what-going/index.html)
+
+## web
+
+web 是一个贷款网站视效图
+
+[链接地址](https://lidengkedev.github.io/example-demo/web/page/index.html)
