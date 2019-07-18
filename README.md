@@ -62,3 +62,9 @@ what-going 是去哪了仿页
 web 是一个贷款网站视效图
 
 [链接地址](https://lidengkedev.github.io/example-demo/web/page/index.html)
+
+## working-procedure
+
+working-procedure 是工厂拆分工序功能
+
+[链接地址](https://lidengkedev.github.io/example-demo/working-procedure/src/index.html)
