@@ -43,3 +43,10 @@ date-scroll 是一个时间纵向滚动条的小demo，功能：
 - 暂不支持三列联动效果
 
 [链接地址](https://lidengkedev.github.io/example-demo/date-scroll/)
+
+# backgroup-watermark
+backgroup-watermark 是一个水印效果
+
+- 自定义水印文本
+
+[链接地址](https://lidengkedev.github.io/example-demo/backgroup-watermark/watermark.html)
