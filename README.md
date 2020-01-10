@@ -2,6 +2,15 @@
 
 this is workbook
 
+## scroll-floor
+
+scroll-floor 是一个楼层导航示例，功能：
+
+- 浏览器滚动，楼层导航定位高亮
+- 手动触发楼层导航，定位滚动到指定楼层
+
+[链接地址](https://lidengkedev.github.io/example-demo/scroll-floor/)
+
 ## vue-webpack-todo
 
 vue-webpack-todo是一个小demo，功能：
