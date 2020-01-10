@@ -1,36 +1,39 @@
+html, body { margin: 0; padding: 0; }
+/* 滑槽 */
 #chute {
-	width: 15px;
-	height: 300px;
-	background: #CCC;
 	position: absolute;
-	top:0;
-	right:0;
+	top: 0;
+	right: 0;
 	z-index: 999;
+	width: 10px;
+	height: 300px;
+	border-radius: 10px;
+	background: #f8f8f8;
 }
-
+/* 滑块 */
 #slider {
-	width:15px;
-	height:40px;
-	background:red;
 	position: absolute;
 	left: 0;
 	top: 0;
+	width: 10px;
+	height: 40px;
 	border-radius: 10px;
+	background: #eaeaea;
 	cursor: pointer;
 }
-
+/* 包裹元素 */
 #container {
+	position: relative;
 	width: 400px;
 	height: 300px;
-	border: 1px solid black;
-	position: relative;
+	border: 1px solid #eaeaea;
 	overflow: hidden;
 }
-
+/* 内容 */
 #content {
 	position: absolute;
 	top: 0;
 	left: 0;
 	padding: 10px 30px 10px 10px;
-	text-indent:32px;
+	text-indent: 32px;
 }

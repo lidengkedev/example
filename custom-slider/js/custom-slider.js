@@ -57,6 +57,9 @@
 			//注销事件绑定
 			document.onmousemove = null;
 			document.onmouseup = null;
+		},
+		wheelListen: function(e) {
+			console.log(e)
 		}
 	}
 	window.CustomSlider = CustomSlider;
