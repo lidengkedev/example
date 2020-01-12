@@ -37,6 +37,7 @@ html {
 #container .header .logo {
   width: 20rem;
   height: 4rem;
+  display: inline-block;
   vertical-align: middle;
   background-color: #f8f8f8;
 }
@@ -141,6 +142,7 @@ html {
   margin-top: 1rem;
 }
 #container .main .banner .banner-img {
+  display: block;
   height: 10rem;
   width: 100%;
   border-radius: 0.5rem;
