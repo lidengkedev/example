@@ -2,12 +2,16 @@ html, body {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    background-color: rosybrown;
 }
 .container {
     position: relative;
     width: 100vw;
     height: 100vh;
     background-color: transparent;
+    transform-style: preserve-3d;
+    transform-origin: center center;
+    animation: fu-rotate 4s ease infinite;
 }
 .container .common {
     position: absolute;
@@ -49,13 +53,38 @@ html, body {
     margin-top: -200px;
     z-index: 10;
     transform-style: preserve-3d;
-    transform-origin: center center;
-    animation: fu-rotate 4s ease infinite;
 }
 .container .fu-inner:hover {
     animation-play-state: paused;
 }
-
+/* 左 */
+.container .fu-inner:nth-child(1) {
+    transform: rotateY(90deg) translateZ(-200px);
+}
+.container .fu-inner:nth-child(1) .common {
+    background-color: thistle;
+    border-color: thistle;
+}
+/* 右 */
+.container .fu-inner:nth-child(2) {
+    transform: rotateY(90deg) translateZ(200px);
+}
+.container .fu-inner:nth-child(2) .common {
+    background-color: violet;
+    border-color: violet;
+}
+/* 后 */
+.container .fu-inner:nth-child(3) {
+    transform: translateZ(-200px);
+}
+.container .fu-inner:nth-child(3) .common {
+    background-color: pink;
+    border-color: pink;
+}
+/* 前 */
+.container .fu-inner:nth-child(4) {
+    transform: translateZ(200px);
+}
 /* 左半部分 */
 .container .fu-left {
     position: relative;
