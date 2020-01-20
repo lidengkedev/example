@@ -1,0 +1,74 @@
+.container {
+    position: relative;
+    left: 100px;
+    top: 100px;
+    width: 100px;
+    height: 100px;
+    transform-origin: center;
+    transform-style: preserve-3d;
+    transform: rotateX(-45deg);
+    animation: rorate 3s infinite;
+}
+.container .left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    transform: rotateX(90deg) translateZ(50px);
+}
+.container .top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: pink;
+    transform: rotateY(-90deg) translateZ(50px);
+}
+.container .right {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    transform: rotateX(90deg) translateZ(-50px);
+}
+.container .bottom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    transform: rotateY(90deg) translateZ(50px);
+}
+.container .prev {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: yellow;
+    transform: translateZ(50px);
+}
+.container .next {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: tan;
+    transform: translateZ(-50px);
+}
+
+@keyframes rorate {
+    form {
+        transform: rotateX(0) rotateY(0);
+    }
+    to {
+        transform: rotateX(360deg) rotateY(360deg);
+    }
+}

@@ -2,6 +2,10 @@
 
 this is workbook
 
+## 3d 福字
+
+[链接地址](https://lidengkedev.github.io/example-demo/blessing/)
+
 ## scroll-floor
 
 scroll-floor 是一个楼层导航示例，功能：
