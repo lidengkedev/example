@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间计算</title>
+    <link rel="stylesheet" href="../../assets/css/common.css">
+    <style>
+        .container {
+            width: 800px;
+            margin: auto;
+            display: flex;
+        }
+        .form-item {
+            margin-right: 10px;
+        }
+        .form-label {
+            font-size: 14px;
+        }
+        .form-input {
+            border: 1px solid #eaeaea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-item">
+            <label for="" class="form-label">开始时间：</label>
+            <input id="startDateTime" type="datetime-local" class="form-input">
+        </div>
+        <div class="form-item">
+            <label for="" class="form-label">结束时间：</label>
+            <input id="endDateTime" type="datetime-local" class="form-input">
+        </div>
+    </div>
+    <div class="container">
+        <div class="day-clac">
+            <span id="day">0</span>天
+        </div>
+    </div>
+    <script>
+        window.onload = function() {
+            const startDateTimeElem = document.getElementById('startDateTime')
+            const endDateTimeElem = document.getElementById('endDateTime')
+            startDateTimeElem.onchange = handleStartDateTime
+            endDateTimeElem.onchange = handleEndDateTime
+            // 开始时间
+            function handleStartDateTime() {
+                dateTimeToDay({
+                    startDateTime: startDateTimeElem.value,
+                    endDateTime: endDateTimeElem.value
+                })
+            }
+            // 结束时间
+            function handleEndDateTime() {
+                dateTimeToDay({
+                    startDateTime: startDateTimeElem.value,
+                    endDateTime: endDateTimeElem.value
+                })
+            }
+            // 天数计算
+            /**
+             * 不跨天
+             * 开始时间在9:30之前，结束时间在12:00之后16:00之前，按4小时计算
+             * 开始时间在14:30之前，结束时间在16:00之前，按4小时计算
+             * 开始时间在9:30之前，结束时间在16:00之后，按8小时计算
+             * 跨天
+             * 开始时间在9:00之前，结束时间在16:00之后，按天数*8小时计算
+             * 开始时间在9:30之前，结束时间在14:30到16:00之间，当天按4小时计算再加上天数*8小时
+             * 开始时间在9:00之后14:30之前，结束时间在16:00之后，当天按4小时计算再加上天数*8小时
+             * 开始时间在9:00之前，结束时间在10:30之前，当天按0小时计算再加上天数*8小时
+             * 开始时间在9:00到14:30之间，结束时间在10:30到14:30之间，当天按8小时计算再加上天数*8小时
+             * 开始时间在14:30之后，结束时间在16:00之后，当天按8小时计算再加上天数*8小时
+             * 开始时间在9:30到14:30之间，结束时间在9:00之前，当天按4小时计算再加上天数*8小时
+             * 开始时间在16:00之后，结束时间在10:30之前，当天按4小时计算在加上天数*8小时
+             * 
+             */
+            // 不跨天
+            // startDateTime < 9:30 && (endDateTime > 12:00 && endDateTime < 16:00) 4h
+            // startDateTime < 2:30 && endDateTime < 16:00 4h
+            // startDateTime < 9:30 && endDateTime > 16:00 8h
+            // 跨天
+            // startDateTime < 9:00 && endDateTime > 16:00 day*8h
+            // startDateTime < 9:30 && endDateTime > 14:30 && endDateTime < 16:00 day*8+4h
+            // startDateTime > 9:00 && startDateTime < 14:30 && endDateTime > 16:00 day*8+4h
+            // startDateTime < 9:00 && endDateTime < 10:30 day*8
+            // startDateTime > 9:00 && startDateTime < 14:30 && endDateTime > 10:30 && endDateTime < 14:30
+            // startDateTime > 14:30 && endDateTime > 16:00
+            // 
+            function dateTimeToDay(dateTime) {
+                const { startDateTime, endDateTime } = dateTime
+                console.log(dateTime)
+                if (!startDateTime || !endDateTime) return
+                const s_datetime = new Date(startDateTime);     // 开始时间
+                const s_date = s_datetime.getDate();            // 开始时间的日期
+                const s_hour = s_datetime.getHours();           // 开始时间的小时
+                const s_minute = s_datetime.getMinutes();       // 开始时间的分钟
+                const e_datetime = new Date(endDateTime);       // 结束时间
+                const e_date = e_datetime.getDate();            // 结束时间的日期
+                const e_hour = e_datetime.getHours();           // 结束时间的小时
+                const e_minute = e_datetime.getMinutes();       // 结束时间的分钟
+                console.log({s_hour, e_hour})
+                let hours = 0
+                if (s_date === e_date) {
+                    // 不跨天
+                    hours = sameDayTimeCalc({
+                        s_datetime,
+                        s_date,
+                        s_hour,
+                        s_minute,
+                        e_datetime,
+                        e_date,
+                        e_hour,
+                        e_minute
+                    })
+                    console.log(hours)
+                    document.getElementById('day').innerText = hours
+                } else {
+                    // 跨天
+                    hours = notSameDayTimeCalc({
+                        s_datetime,
+                        s_date,
+                        s_hour,
+                        s_minute,
+                        e_datetime,
+                        e_date,
+                        e_hour,
+                        e_minute
+                    })
+                }
+            }
+            function sameDayTimeCalc(date) {
+                const {
+                    s_datetime,
+                    s_date,
+                    s_hour,
+                    s_minute,
+                    e_datetime,
+                    e_date,
+                    e_hour,
+                    e_minute
+                } = date
+                let hours = 0
+                if (s_hour<=9 && s_minute <= 30 && e_hour>12&e_hour<=16) {
+                    hours = 4
+                } else if (s_hour<=14&&s_minute<=30&&e_hour<=16) {
+                    hours = 4
+                } else if (s_hour<=9&&s_minute<=30&&e_hour>16) {
+                    hours = 8
+                }
+                return hours
+            }
+            function notSameDayTimeCalc(date) {}
+        }
+    </script>
+</body>
+</html>

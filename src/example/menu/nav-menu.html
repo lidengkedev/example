@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>滑动菜单指示器特效</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #090a20;
+        }
+        nav {
+            position: relative;
+            display: flex;
+        }
+        nav a {
+            position: relative;
+            margin: 0 20px;
+            font-size: 2em;
+            color: #fff;
+            text-decoration: none;
+        }
+        nav #marker {
+            position: absolute;
+            height: 4px;
+            width: 93px;
+            background-color: #e35188;
+            left: 0;
+            bottom: -8px;
+            transition: 0.5s;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div id="marker"></div>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">News</a>
+        <a href="#">Banner</a>
+        <a href="#">Team</a>
+    </nav>
+    <script>
+        window.onload = function () {
+            const marker = document.getElementById('marker')
+            const href = document.querySelectorAll('nav a')
+            function indicator(e) {
+                const { offsetLeft, offsetWidth } = e.target
+                marker.style.left = `${offsetLeft}px`
+                marker.style.width = `${offsetWidth}px`
+            }
+            href.forEach(link => {
+                link.addEventListener('click', indicator)
+            });
+        }
+    </script>
+</body>
+</html>

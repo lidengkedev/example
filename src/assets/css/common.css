@@ -1,0 +1,22 @@
+html,body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+ul,li,ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+input,button,textarea,select {
+    outline: none;
+    background-color: transparent;
+}
+a {
+    color: #404040;
+    text-decoration: none;
+}
+table,tr,th,td {
+    margin: 0;
+    padding: 0;
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" manifest="permanote.appcache">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线离线笔记</title>
+    <style>
+        #toolbar {}
+        #save-button {}
+        #sync-note {}
+        #editor { width: 100%; height: 250px; }
+        #statusline { width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <button id="save-button">Save</button>
+        <button id="sync-note">Sync Note</button>
+        <button>Update Application</button>
+    </div>
+    <textarea name="" id="editor" cols="30" rows="10"></textarea>
+    <div id="statusline"></div>
+    <script src="./permanote.js"></script>
+</body>
+</html>
