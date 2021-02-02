@@ -32,7 +32,7 @@ window.onoffline = function() {
 window.ononline = function() {
     sync();
 }
-
+// Chrome 已经弃用 applicationCache 对象
 // window.applicationCache.onupdateready = function() {
 //     status('A new version of this application is availble. Reload to run it.');
 // }
