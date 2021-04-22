@@ -3,19 +3,41 @@ const addBtn = document.querySelector('.add-button');
 const notifications = document.getElementById('notifications');
 const noticeBtn = document.querySelector('.notice-button');
 
-if ('serviceWorker' in navigator) {
+addBtn.style.display = 'none';
+
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+    var publicKey = 'BOEQSjdhorIf8M0XFNlwohK3sTzO9iJwvbYU-fuXRF0tvRpPPMGO6d_gJC_pUQwBT7wD8rKutpNTFHOHN3VqJ0A';
     // 注册 sw
     navigator.serviceWorker
         .register('/sw.js')
-        .then(() => {
+        .then((registration) => {
             notifications.innerHTML = 'Service Worker 注册成功'
             console.log('Service Worker Registered'); 
+            // 开启该客户端的消息推送订阅功能
+            return subscribeUserToPush(registration, publicKey);
+        }).then(subscription => {
+            const body = { subscription }
+            body.uniqueid = Date.now()
+            console.log(`uniqueid: ${body.uniqueid}`)
+            // 将生成的客户端订阅信息存储在自己的服务器上
+            // return sendSubscriptionToServer(JSON.stringify(body));
         });
 } else {
     notifications.innerHTML = '浏览器不支持 service worker 功能'
+    // return;
 }
 
-addBtn.style.display = 'none';
+function subscribeUserToPush(registration, publicKey) {
+    const subscribeOptions = {
+        userVisibleOnly: true,
+        // applicationServerKey: window.Uint8Array(publicKey)
+        applicationServerKey: publicKey
+    }
+    return registration.pushManager.subscribe(subscribeOptions).then(pushSubscription => {
+        console.log('Received PushSubscription: ', JSON.stringify(pushSubscription));
+        return pushSubscription;
+    })
+}
 
 // 发送通知
 noticeBtn.onclick = function() {

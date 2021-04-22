@@ -49,3 +49,14 @@ self.addEventListener('fetch', (e) => {
 self.onmessage = function(e) {
     console.log(['sw:onmessage', e])
 }
+
+self.addEventListener('push', (e) => {
+    let data;
+    if (data) {
+        data = e.data.json();
+        console.log(`push 的数据是：${data}`);
+        self.registration.showNotification(data.text)
+    } else {
+        console.log('没有推送任何消息。')
+    }
+})
