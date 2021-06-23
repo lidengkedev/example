@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #addNewObserver {
+            padding: 10px 15px;
+            border: 1px solid #eaeaea;
+            border-radius: 4px;
+            background-color: transparent;
+            cursor: pointer;
+        }
+        #addNewObserver:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #addNewObserver:active {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <button id="addNewObserver">Add New Observer checkbox</button>
+    <input type="checkbox" id="mainCheckbox"/>
+    <div id="observersContainer"></div>
+    <script src="./observer.js"></script>
+    <script>
+        var controlCheckbox = document.getElementById('mainCheckbox'),
+        addBtn = document.getElementById('addNewObserver'),
+        container = document.getElementById('observersContainer')
+
+        extend(new Subject(), controlCheckbox)
+
+        controlCheckbox.onclick = new Function('controlCheckbox.Notify(controlCheckbox.checked)')
+
+        function AddNewObserver() {
+            var check = document.createElement('input')
+            check.type = 'checkbox'
+
+            extend(new Observer(), check)
+
+            check.Update = function(value) {
+                this.checked = value
+            }
+
+            controlCheckbox.AddObserver(check)
+
+            container.appendChild(check)
+        }
+
+        addBtn.onclick = AddNewObserver
+    </script>
+</body>
+</html>
