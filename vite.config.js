@@ -27,7 +27,8 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html'),
-          'example/indexedDB': resolve(__dirname, 'example/indexedDB.html')
+          'example/indexedDB': resolve(__dirname, 'example/indexedDB.html'),
+          'example/flex': resolve(__dirname, 'example/flex.html')
         }
       }
     }

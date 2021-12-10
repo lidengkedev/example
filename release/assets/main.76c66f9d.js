@@ -1,1 +1,0 @@
-import"./modulepreload-polyfill.b7f2da20.js";import{o as a,c as n,a as _}from"./vendor.4c5c96bc.js";var p=(e,r)=>{const c=e.__vccOpts||e;for(const[o,t]of r)c[o]=t;return c};const l={};function s(e,r){return a(),n("div",null,"APP")}var v=p(l,[["render",s]]);_(v).mount("#app");
