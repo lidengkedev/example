@@ -24,7 +24,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        example: resolve(__dirname, 'example/indexedDB/index.html')
+        example: resolve(__dirname, 'example/indexedDB.html')
       }
     }
   }

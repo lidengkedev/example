@@ -1,3 +1,5 @@
+import '../css/common.css'
+import '../css/indexedDB.css'
 
 class Sql {
     constructor() {

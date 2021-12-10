@@ -1,0 +1,108 @@
+
+body {
+    width: 1080px;
+    margin: 20px auto;
+    padding: 20px;
+    height: calc(100vh - 40px);
+    border: 1px solid #52ccba;
+    border-radius: 10px;
+    box-shadow: inset 0 0 3px 1px rgba(0,0,0,0.7);
+}
+h2 {
+    margin-bottom: 40px;
+    text-align: center;
+    font-size: 28px;
+    color: #404040;
+    text-shadow: 0 3px 3px rgba(0,0,0,0.7);
+}
+.warpper {
+    display: flex;
+}
+.warpper .form-warpper {
+    padding: 20px;
+    margin: 0 auto;
+    margin-left: 20px;
+    width: 280px;
+    height: 260px;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    flex: 1;
+}
+label {
+    display: inline-block;
+    width: 40px;
+    margin-bottom: 15px;
+}
+input {
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid #eaeaea;
+    border-radius: 5px;
+    outline: none;
+    margin-bottom: 15px;
+}
+button {
+    background-color: transparent;
+    padding: 5px 23px;
+    border-radius: 5px;
+    border: 1px solid #eaeaea;
+    outline: none;
+    cursor: pointer;
+}
+button:hover {
+    opacity: 0.8;
+}
+button[type='primary'] {
+    color: #ffffff;
+    border-color: #409EFF;
+    background-color: #409EFF;
+}
+button[type='success'] {
+    color: #ffffff;
+    border-color: #67C23A;
+    background-color: #67C23A;
+}
+button[type='danger'] {
+    color: #ffffff;
+    border-color: #F56C6C;
+    background-color: #F56C6C;
+}
+.search-warpper input {
+    width: 110px;
+}
+.warpper .table-warpper {
+    width: 100%;
+    flex: 3;
+}
+.table-inner {
+    overflow: hidden;
+}
+.warpper .table-tbody {
+    height: 370px;
+    margin-right: -7px;
+    overflow-y: scroll;
+    border-bottom: 1px solid #eaeaea;
+}
+.warpper .table-warpper th {
+    padding: 5px;
+    font-size: 15px;
+    font-family: 'Consolas';
+    background-color: rgb(235, 235, 232);
+}
+.warpper .table-warpper td {
+    padding: 5px;
+    font-size: 14px;
+    font-family: 'Consolas';
+}
+#table-header,
+#table-tbody {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+#table-tbody {
+    border-bottom: 1px solid #eaeaea;
+}
+#table-tbody td {
+    border-bottom: 1px solid #eaeaea;
+}
