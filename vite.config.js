@@ -7,6 +7,7 @@ const port = process.env.VITE_APP_PORT
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: process.env.NODE_ENV === 'production' ? 'https://lidengkedev.github.io/example/release/' : '/',
   plugins: [vue()],
   server: {
     host,
@@ -22,7 +23,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        example: resolve(__dirname, './example/indexedDB/index.html')
+        example: resolve(__dirname, 'example/indexedDB/index.html')
       }
     }
   }
