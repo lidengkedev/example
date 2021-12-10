@@ -1,8 +1,7 @@
 {
-  "name": "example-demo",
-  "version": "1.0.0",
+  "name": "example",
+  "version": "2.0.0",
   "description": "this is web demo!",
-  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,7 +23,7 @@
   "author": "lidengkedev",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lidengkedev/example-demo/issues"
+    "url": "https://github.com/lidengkedev/example/issues"
   },
-  "homepage": "https://github.com/lidengkedev/example-demo#readme"
+  "homepage": "https://github.com/lidengkedev/example#readme"
 }
