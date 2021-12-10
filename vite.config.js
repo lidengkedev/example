@@ -8,7 +8,8 @@ export default defineConfig(({ command, mode }) => {
     host = 'localhost',
     port = 9000
   if (command === 'build' && mode === 'production') {
-    base = 'https://lidengkedev.github.io/example/release/'
+    // base = 'https://lidengkedev.github.io/example/release/'
+    base = './'
   }
   return {
     base,
