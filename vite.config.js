@@ -2,8 +2,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 
-const host = process.env.NODE_ENV.VITE_APP_HOST
-const port = process.env.NODE_ENV.VITE_APP_PORT
+const host = process.env.VITE_APP_HOST
+const port = process.env.VITE_APP_PORT
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,14 +12,18 @@ export default defineConfig({
     host,
     port
   },
+  preview: {
+    host,
+    port
+  },
   build: {
-    outDir: 'dist',
+    outDir: 'release',
     manifest: false,
     rollupOptions: {
       input: {
-        'example/indexedDB': resolve(__dirname, 'example/indexedDB/index.html')
-      },
-      output: {}
+        main: resolve(__dirname, 'index.html'),
+        example: resolve(__dirname, './example/indexedDB/index.html')
+      }
     }
   }
 })
