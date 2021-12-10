@@ -3,6 +3,9 @@
   "version": "2.0.0",
   "description": "this is web demo!",
   "scripts": {
+    "serve": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,5 +28,13 @@
   "bugs": {
     "url": "https://github.com/lidengkedev/example/issues"
   },
-  "homepage": "https://github.com/lidengkedev/example#readme"
+  "homepage": "https://github.com/lidengkedev/example#readme",
+  "dependencies": {
+    "echarts": "^5.2.2",
+    "vue": "^3.2.24"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.10.2",
+    "vite": "^2.7.1"
+  }
 }
