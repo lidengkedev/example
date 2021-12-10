@@ -4,10 +4,11 @@ import { resolve } from 'path'
 
 const host = process.env.VITE_APP_HOST
 const port = process.env.VITE_APP_PORT
+const base = process.env.VITE_APP_BASE
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? 'https://lidengkedev.github.io/example/release/' : '/',
+  base,
   plugins: [vue()],
   server: {
     host,
