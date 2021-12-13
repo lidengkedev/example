@@ -9,8 +9,7 @@ import '../css/page-03.css'
  * 
  * 解决方式为：将绑定器配置为别名“vue”为“vue/dist/vue.esm bundler.js”。
  * */ 
-// import { createApp } from 'vue/dist/vue.esm-bundler'
-import Vue from 'vue'
+import { createApp } from 'vue/dist/vue.esm-bundler'
 
 var timer = null
 
