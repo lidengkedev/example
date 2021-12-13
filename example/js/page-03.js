@@ -1,5 +1,17 @@
 import '../css/page-03.css'
 
+/**
+ * 此处不能直接以`import { createApp } from 'vue'`的方式引入vue，
+ * 因为组件提供了模板选项，但在此版本的Vue中不支持运行时编译。
+ * 
+ * 此处也不能使用 `import Vue from 'vue'`的方式引入Vue，
+ * 原因是：请求的模块 vue 不提供名为'default'的导出
+ * 
+ * 解决方式为：将绑定器配置为别名“vue”为“vue/dist/vue.esm bundler.js”。
+ * */ 
+// import { createApp } from 'vue/dist/vue.esm-bundler'
+import Vue from 'vue'
+
 var timer = null
 
 const Counter = {
@@ -271,4 +283,4 @@ const Counter = {
     }
 }
 
-Vue.createApp(Counter).mount('#app')
+createApp(Counter).mount('#app')
