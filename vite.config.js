@@ -58,6 +58,7 @@ export default defineConfig(({ command, mode }) => {
           'example/indexedDB': resolve(__dirname, 'example/indexedDB.html'),
           'example/flex': resolve(__dirname, 'example/flex.html'),
           'example/page-03': resolve(__dirname, 'example/page-03.html'),
+          'example/page-04': resolve(__dirname, 'example/page-04.html'),
         }
       }
     }
