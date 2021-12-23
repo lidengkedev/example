@@ -1,3 +1,7 @@
+// import './css/index.css';
+// import './pwa.webmanifest';
+// import './favicon.ico';
+
 let deferredPrompt;
 const addBtn = document.querySelector('.add-button');
 const notifications = document.getElementById('notifications');
