@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创建文字</title>
+    <style>
+        body { margin: 0; }
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            display: block;
+            color: red;
+        }
+    </style>
+    <script src="./three-v136.js"></script>
+    <!-- <script src="../../node_modules/three/examples/jsm/geometries/TextGeometry.js"></script> -->
+    <!-- <script src="../../node_modules/three/build/three.js"></script> -->
+</head>
+<body>
+    <div id="info">Description</div>
+    <script>
+        // 1. 创建场景
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0x000000 );
+        scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
+
+        // 2. 创建相机
+        const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 );
+        camera.position.set( 0, 400, 700 );
+
+        // 3. 创建渲染器
+        const renderer = new THREE.WebGLRenderer();
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+        // 4. 生成画布
+        document.body.appendChild( renderer.domElement );
+
+        /************************************************************
+         ************************* 创建文字 **************************
+         ************************************************************/
+        /** 第一种方法：DOM + CSS
+         * 
+         * 使用HTML通常是最简单、最快速的添加文本的方法，这是大多数的Three.js示例中用于添加描述性叠加文字的方法。
+         * 然后使用CSS来将其绝对定位在其它具有z-index的元素之上，尤其是当你全屏运行three.js的时候。
+         */
+
+        /** 第二种方法：将文字绘制到画布中，并将其用作Texture（纹理）
+         * 
+         * 构造函数
+         * Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding )
+         */
+
+        // 创建一个纹理贴图，将其应用到一个表面，或者作为反射/折射贴图。
+        // const texture = new THREE.TextureLoader().load( "textures/water.jpg" );
+        // const texture = new THREE.TextureLoader().load( '../images/avator.jpeg' );
+        // texture.wrapS = THREE.RepeatWrapping;
+        // texture.wrapT = THREE.RepeatWrapping;
+        // texture.repeat.set( 4, 4 );
+
+        cameraTarget = new THREE.Vector3( 0, 150, 0 );
+        const dirLight = new THREE.DirectionalLight( 0xffffff, 0.125 );
+        dirLight.position.set( 0, 0, 1 ).normalize();
+        scene.add( dirLight );
+
+        const pointLight = new THREE.PointLight( 0xffffff, 1.5 );
+        pointLight.position.set( 0, 100, 90 );
+        scene.add( pointLight );
+
+        const materials = [
+            new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } ), // front
+            new THREE.MeshPhongMaterial( { color: 0xffffff } ) // side
+        ];
+        const group = new THREE.Group();
+        group.position.y = 100;
+
+        scene.add( group );
+
+        createText()
+
+        function createText() {
+            const textGeo = new THREE.TextGeometry( 'three.js', {
+                font: undefined,
+                size: 70,
+                height: 20,
+                curveSegments: 4,
+                bevelThickness: 2,
+                bevelSize: 1.5,
+                bevelEnabled: true
+            })
+            textGeo.computeBoundingBox();
+            const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+            textMesh1 = new THREE.Mesh( textGeo, materials );
+            textMesh1.position.x = centerOffset;
+            textMesh1.position.y = 30;
+            textMesh1.position.z = 0;
+
+            textMesh1.rotation.x = 0;
+            textMesh1.rotation.y = Math.PI * 2;
+
+            group.add( textMesh1 );
+        }
+        
+
+        // 第三种方法：在你所喜欢的3D软件里创建模型，并导出给three.js
+
+        /** 第四种方法：three.js自带的文字几何体
+         * 
+         * 用纯three.js来工作，或者创建能够由程序改变的、动态的3D文字，
+         * 你可以创建一个其几何体为THREE.TextGeometry的实例的网格
+         * new THREE.TextGeometry( text, parameters );
+         * 然而，为了使得它能够工作，你的TextGeometry需要在其“font”参数上设置一个THREE.Font的实例。
+         */
+
+        /** 第五种方法：位图字体
+         * 
+         * BMFonts (位图字体) 可以将字形批处理为单个BufferGeometry。
+         * BMFont的渲染支持自动换行、字母间距、字句调整、
+         * signed distance fields with standard derivatives、
+         * multi-channel signed distance fields、
+         * 多纹理字体等特性。
+         */
+        
+    </script>
+</body>
+</html>
