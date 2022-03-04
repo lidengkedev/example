@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echarts-Example</title>
+    <script src="../../js/modules/echarts@5.3.0.js"></script>
+</head>
+<body>
+    <div id="echarts" style="width: 100%; height: 500px;"></div>
+    <script type="module">
+
+        const seriesData = [
+            { name: '斗罗大陆', value: 1 },
+            { name: '斗破苍穹第一季', value: 2 },
+            { name: '斗破苍穹第二季', value: 1 },
+            { name: '斗破苍穹第三季', value: 3 },
+            { name: '斗破苍穹第四季', value: 2 },
+            { name: '斗破苍穹之三年之约', value: 1 },
+            { name: '斗破苍穹之缘起', value: 2 },
+            { name: '星辰变之逆鞅仙境', value: 1 },
+            { name: '星辰变之暴乱星海', value: 3 },
+            { name: '星辰变之九剑仙府', value: 1 },
+            { name: '星辰变之流星泪', value: 3 },
+            { name: '独步逍遥', value: 2 },
+            { name: '武神主宰', value: 1 },
+            { name: '万界神主', value: 3 },
+            { name: '绝世武魂', value: 1 },
+            { name: '无上神帝', value: 3 },
+            { name: '秦时明月之帝子降兮', value: 1 },
+            { name: '秦时明月之天行九歌', value: 2 },
+            { name: '秦时明月之百步飞剑', value: 1 },
+            { name: '秦时明月之夜尽天明', value: 3 },
+            { name: '秦时明月之诸子百家', value: 1 },
+            { name: '秦时明月之万里长城', value: 1 },
+            { name: '秦时明月之君临天下', value: 2 },
+            { name: '秦时明月之沧海横流', value: 1 },
+            { name: '秦时明月之亡秦必楚', value: 3 },
+            { name: '灵笼', value: 1 },
+            { name: '灵剑尊', value: 3 },
+            { name: '书灵记', value: 2 },
+            { name: '首席御灵师', value: 1 },
+            { name: '完美世界', value: 3 },
+            { name: '凡人修仙传', value: 1 },
+            { name: '元龙', value: 2 },
+        ]
+
+        const myEchart = echarts.init(document.getElementById('echarts'))
+        myEchart.setOption({
+            title: {
+                text: '万元',
+                top: 10
+            },
+            grid: {
+                left: 40,
+                right: 40,
+            },
+            legend: {
+                data: ['曲线图'],
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            grid: {
+                left: 60,
+                right: 60,
+                bottom: 150
+            },
+            yAxis: {
+                type: 'value',
+                axisLine: {
+                    show: true
+                },
+                axisTick: {
+                    inside: true,
+                    show: true
+                },
+            },
+            xAxis: {
+                type: 'category',
+                data: seriesData.map(item => item.name),
+                axisLine: {
+                    show: true
+                },
+                axisTick: {
+                    inside: true,
+                    show: true
+                },
+                axisLabel: {
+                    height: 200,
+                    width: 10,
+                    formatter: function (params) {
+                        return params.split('').map(item => `${item}\n`).join('')
+                    }
+                }
+            },
+            series: [
+                {
+                    type: 'line',
+                    symbol: 'none',
+                    name: '曲线图',
+                    markArea: {
+                        data: [
+                            [
+                                { x: 65, itemStyle: { color: '#72F4ED' } },
+                                { x: '33%', itemStyle: { color: '#72F4ED' } }
+                            ],
+                            [
+                                { x: '33%', itemStyle: { color: '#F7F3B2' } },
+                                { x: '66%', itemStyle: { color: '#F7F3B2' } }
+                            ],
+                            [
+                                { x: '66%', itemStyle: { color: '#C8ECEC' } },
+                                { x: '95.5%', itemStyle: { color: '#C8ECEC' } }
+                            ]
+                        ]
+                    },
+                    data: seriesData
+                }
+            ]
+        })
+        myEchart.on('click', function (params) {
+            console.log(params)
+            alert(JSON.stringify(params.$vars))
+        })
+    </script>
+</body>
+</html>
