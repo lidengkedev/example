@@ -59,7 +59,8 @@ export default defineConfig(({ command, mode }) => {
           'example/flex': resolve(__dirname, 'example/flex.html'),
           'example/page-03': resolve(__dirname, 'example/page-03.html'),
           'example/page-04': resolve(__dirname, 'example/page-04.html'),
-          'example/pwa': resolve(__dirname, 'example/pwa/index.html')
+          'example/pwa': resolve(__dirname, 'example/pwa/index.html'),
+          'example/echarts/0001': resolve(__dirname, 'example/echarts/complex/0001.html')
         }
       }
     }

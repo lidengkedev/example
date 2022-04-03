@@ -6,7 +6,8 @@
     "serve": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "typescript-video:serve": "cd typescript-video && npm run serve",
+    "typescript-video:build": "cd typescript-video && npm run build"
   },
   "repository": {
     "type": "git",

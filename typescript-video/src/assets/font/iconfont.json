@@ -1,0 +1,44 @@
+{
+  "id": "3294281",
+  "name": "临时仓库",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "5019617",
+      "name": "视频播放器-播放",
+      "font_class": "play",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "6776387",
+      "name": "声音开",
+      "font_class": "volume",
+      "unicode": "eca6",
+      "unicode_decimal": 60582
+    },
+    {
+      "icon_id": "8132373",
+      "name": "暂停播放",
+      "font_class": "pause",
+      "unicode": "e676",
+      "unicode_decimal": 58998
+    },
+    {
+      "icon_id": "15838444",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "15838498",
+      "name": "fullscreen-expand",
+      "font_class": "fullscreen",
+      "unicode": "e675",
+      "unicode_decimal": 58997
+    }
+  ]
+}
