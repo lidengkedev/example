@@ -1,0 +1,457 @@
+<template>
+  <div class="warpper">
+    <canvas id="canvas" style="pointer-events: none;"></canvas>
+    <div id="echarts" style="width: 100%; height: 100%;"></div>
+    <img src="/img/004.jpg" style="display: none" alt="" id="map-bg">
+    <div id="dialog-box" v-show="is_show_dialog_city">
+      <div class="dialog-close" @click="is_show_dialog_city = false">&times;</div>
+      <div id="dialog-warpper"></div>
+    </div>
+  </div>
+</template>
+
+<script>
+import '../../../assets/js/echarts/echarts@5.2.2'
+// import 'https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js'
+import jiangsu from '../../../assets/json/jiangsu.json'
+
+import icon_03 from '../../../assets/images/001.png'
+import icon_04 from '../../../assets/images/002.png'
+
+const data = [
+  { name: '南京市', value: 3802 },
+  { name: '无锡市', value: 3802 },
+  { name: '徐州市', value: 3412 },
+  { name: '常州市', value: 3421 },
+  { name: '苏州市', value: 3802 },
+  { name: '南通市', value: 3432 },
+  { name: '连云港市', value: 3512 },
+  { name: '淮安市', value: 3802 },
+  { name: '盐城市', value: 3802 },
+  { name: '扬州市', value: 3802 },
+  { name: '镇江市', value: 3802 },
+  { name: '泰州市', value: 3612 },
+  { name: '宿迁市', value: 3802 },
+]
+
+const gdGeoCoordMap = {
+  "南京市": [118.767413,32.041544],
+  "无锡市": [120.301663,31.574729],
+  "徐州市": [117.184811,34.261792],
+  "常州市": [119.946973,31.772752],
+  "苏州市": [120.619585,31.299379],
+  "南通市": [120.864608,32.016212],
+  "连云港市": [119.178821,34.600018],
+  "淮安市": [119.021265,33.597506],
+  "盐城市": [120.139998,33.377631],
+  "扬州市": [119.421003,32.393159],
+  "镇江市": [119.452753,32.204402],
+  "泰州市": [119.915176,32.484882],
+  "宿迁市": [118.275162,33.963008],
+}
+
+const convertData = function(data) {
+  var res = []
+  for (var i = 0; i < data.length; i++) {
+    var geoCoord = gdGeoCoordMap[data[i].name]
+    if (geoCoord) {
+      res.push({
+        name: data[i].name,
+        value: geoCoord.concat(data[i].value)
+      })
+    }
+  }
+  return res
+}
+
+const options = {
+  geo: [
+    {
+      type: 'map',
+      map: '江苏',
+      aspectScale: 0.75,
+      zoom: 1,
+      z: 1,
+      layoutCenter: ['49%', '51%'],
+      layoutSize: '90%',
+      show: true,
+      roam: false,
+      silent: true, // 图形是否不响应和触发鼠标事件
+      itemStyle: {
+        opacity: 1,
+        // color: 'rgb(5,101,123)', // 地图颜色
+        color: 'transparent',
+        borderWidth: 1, // 分界线wdith
+        borderColor: '#459bca', // 分界线颜色
+        // shadowColor: 'rgba(255,255,255,0.7)',
+        // shadowBlur: 8,
+        // shadowOffsetX: 0,
+        // shadowOffsetY: 0
+      },
+      emphasis: {
+        label: {
+          show: false
+        },
+        itemStyle: {
+          color: 'transparent'
+        }
+      },
+    }, {
+      type: 'map',
+      map: '江苏',
+      aspectScale: 0.75,
+      zoom: 1,
+      z: 2,
+      layoutCenter: ['49.5%', '50.5%'],
+      layoutSize: '90%',
+      show: true,
+      roam: false,
+      silent: true, // 图形是否不响应和触发鼠标事件
+      itemStyle: {
+        opacity: 1,
+        // color: 'rgb(5,101,123)', // 地图颜色
+        color: 'transparent',
+        borderWidth: 1, // 分界线wdith
+        borderColor: '#459bca', // 分界线颜色
+        // shadowColor: 'rgba(255, 255, 255, 0.5)',
+        // shadowBlur: 10
+      },
+      emphasis: {
+        label: {
+          show: false
+        },
+        itemStyle: {
+          color: 'transparent'
+        }
+      },
+    }, {
+      type: 'map',
+      map: '江苏',
+      aspectScale: 0.75,
+      zoom: 1,
+      z: 3,
+      layoutCenter: ['50%', '50%'],
+      layoutSize: '90%',
+      show: true,
+      roam: false,
+      itemStyle: {
+        opacity: 1,
+        color: 'rgb(5,101,123)', // 地图颜色
+        borderWidth: 0.5, // 分界线wdith
+        borderColor: '#ffffff', // 分界线颜色
+        borderJoin: 'round',
+        borderCap: 'round',
+      },
+      label: {
+        color: '#fff'
+      },
+      emphasis: {
+        label: {
+          color: '#fff'
+        },
+        itemStyle: {
+          color: '#409EFF'
+        }
+      },
+      regions: [],
+    }
+  ],
+  series: [
+    {
+      tooltip: {
+        show: false,
+      },
+      type: 'effectScatter',
+      coordinateSystem: 'geo',
+      rippleEffect: {
+        scale: 10,
+        brushType: 'stroke',
+      },
+      showEffectOn: 'render',
+      itemStyle: {
+        normal: {
+          color: '#00FFFF',
+        }
+      },
+      label: {
+        normal: {
+          color: '#fff',
+        },
+      },
+      symbol: 'circle',
+      symbolSize: [10, 5],
+      data: convertData(data),
+      zlevel: 1,
+    }, {
+      type: 'scatter',
+      coordinateSystem: 'geo',
+      itemStyle: {
+        color: '#00FFF6',
+      },
+      symbol: 'image://' + icon_03,
+      symbolSize: [32, 41],
+
+      symbolOffset: [0, -20],
+      z: 999,
+      data: convertData(data),
+    }, {
+      type: 'scatter',
+      coordinateSystem: 'geo',
+      label: {
+        normal: {
+          show: true,
+          formatter: function(params) { 
+            var name = params.name
+            var value = params.value[2]
+            var text = `{fline|${value}人}\n{tline|${name}}`
+            return text;
+          },   
+          color:'#fff',
+          rich: {
+            fline: {
+              padding: [0, 25],
+              color: '#fff',
+              fontSize: 14,
+              fontWeight:400
+            },
+            tline: {
+              padding: [0, 27],
+              color: '#ABF8FF',
+              fontSize: 12,
+            },
+          }
+        },
+        emphasis: {
+          show: true
+        }
+      },
+      itemStyle: {
+        color: '#00FFF6',
+      },
+      symbol: 'image://' + icon_04,
+      symbolSize: [100, 50],
+      symbolOffset: [0, -60],
+      z: 999,
+      data: convertData(data),
+    }
+  ]
+}
+
+export default {
+  name: 'Home',
+  data() {
+    return {
+      is_show_dialog_city: false,
+    }
+  },
+  mounted() {
+    this.createMap()
+    this.createCanvas()
+  },
+  methods: {
+    createCanvas() {
+      var canvas = document.getElementById('canvas'),
+      ctx = canvas.getContext('2d'),
+      w = canvas.width = document.documentElement.clientWidth,
+      h = canvas.height = document.documentElement.clientHeight,
+      hue = 217,
+      stars = [],
+      count = 0,
+      maxStars = 1200;
+     
+     var canvas2 = document.createElement('canvas'),
+     ctx2 = canvas2.getContext('2d');
+     canvas2.width = 100;
+     canvas2.height = 100;
+     var half = canvas2.width / 2, gradient2 = ctx2.createRadialGradient(half, half, 0, half, half, half);
+     gradient2.addColorStop(0.025, '#fff');
+     gradient2.addColorStop(0.1, 'hsl(' + hue + ', 61%, 33%)');
+     gradient2.addColorStop(0.25, 'hsl(' + hue + ', 64%, 6%)');
+     gradient2.addColorStop(1, 'transparent');
+     
+     ctx2.fillStyle = gradient2;
+     ctx2.beginPath();
+     ctx2.arc(half, half, half, 0, Math.PI * 2);
+     ctx2.fill();
+     ctx2.closePath();
+     
+     // End cache
+     function random(min, max) {
+       if (arguments.length < 2) {
+         max = min;
+         min = 0;
+       }
+     
+       if (min > max) {
+         var hold = max;
+         max = min;
+         min = hold;
+       }
+     
+       return Math.floor(Math.random() * (max - min + 1)) + min;
+     }
+     
+     function maxOrbit(x, y) {
+       var max = Math.max(x, y),
+         diameter = Math.round(Math.sqrt(max * max + max * max));
+       return diameter / 2;
+     }
+     
+     var Star = function() {
+     
+       this.orbitRadius = random(maxOrbit(w, h));
+       this.radius = random(60, this.orbitRadius) / 12;
+       this.orbitX = w / 2;
+       this.orbitY = h / 2;
+       this.timePassed = random(0, maxStars);
+       this.speed = random(this.orbitRadius) / 900000;
+       this.alpha = random(2, 10) / 10;
+     
+       count++;
+       stars[count] = this;
+     }
+     // 星星背景
+     Star.prototype.draw = function() {
+       var x = Math.sin(this.timePassed) * this.orbitRadius + this.orbitX,
+         y = Math.cos(this.timePassed) * this.orbitRadius + this.orbitY,
+         twinkle = random(10);
+     
+       if (twinkle === 1 && this.alpha > 0) {
+         this.alpha -= 0.05;
+       } else if (twinkle === 2 && this.alpha < 1) {
+         this.alpha += 0.05;
+       }
+     
+       ctx.globalAlpha = this.alpha;
+       ctx.drawImage(canvas2, x - this.radius / 2, y - this.radius / 2, this.radius, this.radius);
+       this.timePassed += this.speed;
+     }
+     
+     // 生产星星
+     for (var i = 0; i < maxStars; i++) {
+       new Star();
+     }
+     
+     function animation() {
+       ctx.globalCompositeOperation = 'source-over';
+       ctx.globalAlpha = 0.8;
+       ctx.fillStyle = 'hsla(' + hue + ', 64%, 6%, 1)';
+       ctx.fillRect(0, 0, w, h)
+     
+       ctx.globalCompositeOperation = 'lighter';
+       for (var i = 1, l = stars.length; i < l; i++) {
+         stars[i].draw();
+       };
+     
+       window.requestAnimationFrame(animation);
+     }
+     
+     animation();	
+    },
+    createMap() {
+
+      const echart = echarts.init(document.getElementById('echarts'), {
+        width: document.documentElement.clientWidth * 0.6,
+        height: document.documentElement.clientHeight * 0.6
+      })
+
+      echarts.registerMap('江苏', jiangsu)
+
+      options.geo[0].itemStyle.color = {
+        image: document.getElementById('map-bg')
+      }
+      options.geo[1].itemStyle.color = {
+        image: document.getElementById('map-bg')
+      }
+      options.geo[2].itemStyle.color = {
+        image: document.getElementById('map-bg')
+      }
+      options.geo[2].emphasis.itemStyle.color = '#409EFF'
+
+      echart.setOption(options)
+
+      echart.on('mouseover', params => {
+        const {} = params
+        console.log(['echart', 'mouseover', params])
+        options.geo[0].emphasis.itemStyle.color = '#409EFF'
+        options.geo[1].emphasis.itemStyle.color = '#409EFF'
+        echart.setOption(options)
+      })
+
+      echart.on('click', (params) => {
+        const { componentType, name } = params
+        console.log(['echart', name, params])
+        if (componentType === 'geo' && name === '南京市') {
+          console.log(name)
+          this.is_show_dialog_city = true
+        }
+      })
+    },
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.warpper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+#echarts {
+  border: 1px solid #eaeaea;
+}
+#canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#dialog-box {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background-color: rgba(0,0,0,0.9);
+  .dialog-close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    padding: 3px 6px;
+    width: 24px;
+    height: 24px;
+    color: #fff;
+    border-radius: 50%;
+    border: 1px solid #eaeaea;
+    cursor: pointer;
+  }
+}
+#dialog-warpper {
+  width: 60%;
+  height: 60%;
+  transform: translate(35%, 40%);
+  background: url('../../../assets/images/nj.png') no-repeat center;
+  background-size: contain;
+}
+// /deep/ .factory-warpper {
+:deep(.factory-warpper) {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  .factory-title {
+    width: 124px;
+    height: 32px;
+    font-size: 14px;
+    color: #fff;
+    padding: 6px 10px;
+    background: url('../../../assets/images/bg.png') no-repeat left;
+    background-size: 100% 100%;
+  }
+  .factory-icon {
+    transform: scale(0.6);
+    pointer-events: none;
+  }
+}
+</style>

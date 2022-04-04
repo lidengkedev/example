@@ -1,8 +1,6 @@
 <template>
   <div>
-    <button type="primary" class="i-button">
-      <a href="./example/index.html" class="link">切换到静态示例菜单</a>
-    </button>
+    <router-view></router-view>
   </div>
 </template>
 
