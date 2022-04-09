@@ -1,0 +1,23 @@
+{
+  "name": "vue-node-deploy-publish",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "deploy-ci": "./bin/deploy.js"
+  },
+  "scripts": {
+    "serve": "node server/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.1.1",
+    "koa-session": "^6.2.0",
+    "koa-static": "^5.0.0",
+    "socket.io": "^4.4.1"
+  }
+}

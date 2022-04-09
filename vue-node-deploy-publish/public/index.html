@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动化部署</title>
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+    <script src="//unpkg.com/vue@next"></script>
+    <script src="//unpkg.com/element-plus"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+</head>
+<body>
+    <div id="app" style="margin:0 20px;">
+        <div v-if="!isLogin" class="login-warpper">
+            <el-form inline>
+                <el-form-item label="密码：" prop="password">
+                    <el-input v-model="loginForm.password" placeholder="请输入密码" style="width: 200px;"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="handleLogin">登录</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+        <el-button type="primary" @click="handleDeploy">部署</el-button>
+        <div class="deploy-logger">
+            <p class="logger-title">部署日志：</p>
+            <div class="logger-text">
+                <pre>{{ deploy_log_text }}</pre>
+                <pre>{{ messageList }}</pre>
+            </div>
+        </div>
+    </div>
+    <script>
+        const app = {
+            data() {
+                return {
+                    isLogin: false,
+                    loginForm: {
+                        password: ''
+                    },
+                    deploy_log_text: '点击按钮进行部署',
+                    messageList: []
+                }
+            },
+            mounted() {
+                // 链接到 socket 服务器，发一个 http 请求，成功后转 101 ws 协议
+                this.socket = io()
+                // 订阅部署日志，拿到日志，就一点点 push 到数组，显示到前端
+                this.socket.on('deploy-log', msg => {
+                    console.log(msg)
+                    this.messageList.push(msg)
+                })
+            },
+            methods: {
+                async handleLogin() {
+                    if (this.loginForm.password) {
+                        const { data: { code, message } } = await axios.post('/login', this.loginForm)
+                        if (code === 0) {
+                            this.isLogin = true
+                        } else {
+                            this.$message.error(message)
+                        }
+                    }
+                },
+                handleDeploy() {
+                    this.deploy_log_text = '后端部署中，请稍等...'
+                    this.getDeployLogger()
+                },
+                getDeployLogger() {
+                    axios.get('/deploy').then(res => {
+                        this.deploy_log_text = res.data.data
+                    }).catch(err => {
+                        console.log(err)
+                    })
+                }
+            },
+        }
+        Vue.createApp(app).use(ElementPlus).mount('#app')
+    </script>
+</body>
+</html>
