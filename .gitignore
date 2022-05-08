@@ -3,3 +3,6 @@ node_modules
 dist
 dist-ssr
 *.local
+electron/**/*.exe
+electron/**/*.zip
+electron/out/*
