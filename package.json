@@ -7,7 +7,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "typescript-video:serve": "cd typescript-video && npm run serve",
-    "typescript-video:build": "cd typescript-video && npm run build"
+    "typescript-video:build": "cd typescript-video && npm run build",
+    "electron-app:start": "cd electron-app && npm run start",
+    "electron-app:package": "cd electron-app && npm run package",
+    "electron-app:make": "cd electron-app && npm run make"
   },
   "repository": {
     "type": "git",

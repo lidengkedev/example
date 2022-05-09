@@ -1,13 +1,21 @@
 const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron')
 const path = require('path')
 const { dockMenu } = require('./menu/main-menu')
+const { loadThemeColor } = require('./utils/index')
 
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
         webPreferences: {
-            // 通过预加载脚本从渲染器访问Node.js
+            /**
+             * 通过预加载脚本从渲染器访问Node.js
+             * 在主进程通过Node的全局 process 对象访问这个信息是微不足道的。 
+             * 然而，你不能直接在主进程中编辑DOM，因为它无法访问渲染器 文档 上下文。 
+             * 它们存在于完全不同的进程！
+             * 这是将 预加载 脚本连接到渲染器时派上用场的地方。 
+             * 预加载脚本在渲染器进程加载之前加载，并有权访问两个 渲染器全局 (例如 window 和 document) 和 Node.js 环境。
+             */
             preload: path.join(__dirname, './render/preload.js')
         }
     })
@@ -25,6 +33,19 @@ const createWindow = () => {
     })
     ipcMain.handle('dark-mode:system', () => {
         nativeTheme.themeSource = 'system'
+    })
+    // 监听主题变化
+    nativeTheme.on('updated', () => {
+        console.log('Updated Event has been Emitted !')
+        if (nativeTheme.shouldUseDarkColors) {
+            console.log('Dark Theme Chosen by User !')
+            console.log(`Dark Theme Enabled - ${nativeTheme.shouldUseDarkColors}`)
+            loadThemeColor('dark')
+        } else {
+            console.log('Light Theme chosen by User')
+            console.log(`Light Theme Enabled - ${nativeTheme.shouldUseDarkColors}`)
+            loadThemeColor('light')
+        }
     })
 
     // 将进度栏添加到main window中
@@ -72,13 +93,3 @@ app.on('before-quit', () => {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 })
-
-/**
- * 通过预加载脚本从渲染器访问Node.js
- * 在主进程通过Node的全局 process 对象访问这个信息是微不足道的。 
- * 然而，你不能直接在主进程中编辑DOM，因为它无法访问渲染器 文档 上下文。 
- * 它们存在于完全不同的进程！
- * 这是将 预加载 脚本连接到渲染器时派上用场的地方。 
- * 预加载脚本在渲染器进程加载之前加载，并有权访问两个 渲染器全局 (例如 window 和 document) 和 Node.js 环境。
- */
-
