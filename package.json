@@ -10,7 +10,8 @@
     "typescript-video:build": "cd typescript-video && npm run build",
     "electron-app:start": "cd electron-app && npm run start",
     "electron-app:package": "cd electron-app && npm run package",
-    "electron-app:make": "cd electron-app && npm run make"
+    "electron-app:make": "cd electron-app && npm run make",
+    "vue-node-deploy-publish": "cd vue-node-deploy-publish && npm run serve"
   },
   "repository": {
     "type": "git",

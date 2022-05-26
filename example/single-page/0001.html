@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>罗马表盘时钟</title>
+    <style>
+        .watch-warpper {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            border: 1px solid red;
+            border-radius: 50%;
+            margin: 0 auto;
+            font-size: 12px;
+            overflow: hidden;
+            user-select: none;
+        }
+        .sceonds-warpper {
+            position: absolute;
+            left: 0;
+            top: 287px;
+            width: 600px;
+            height: 24px;
+            transition: all 300ms ease-in-out;
+        }
+        .sceonds-warpper .sceond {
+            position: absolute;
+            width: 600px;
+            height: 24px;
+            text-align: right;
+            transform-origin: center;
+            color: red;
+        }
+        .minutes-warpper {
+            position: absolute;
+            top: 287px;
+            left: 75px;
+            width: 450px;
+            height: 24px;
+            transition: all 300ms ease-in-out;
+        }
+        .minutes-warpper .minute {
+            position: absolute;
+            width: 450px;
+            height: 24px;
+            text-align: right;
+            transform-origin: center;
+        }
+        .hours-warpper {
+            position: absolute;
+            top: 287px;
+            left: 150px;
+            width: 300px;
+            height: 24px;
+            transition: all 300ms ease-in-out;
+        }
+        .hours-warpper .hour {
+            position: absolute;
+            width: 300px;
+            height: 24px;
+            text-align: right;
+            transform-origin: center;
+            color: blue;
+        }
+        .date-warpper {
+            position: absolute;
+            height: 24px;
+            top: 287px;
+            left: 220px;
+            width: 170px;
+            text-align: center;
+            color: rgb(207, 40, 40);
+        }
+        .date-time-current-line {
+            position: absolute;
+            top: 285px;
+            left: 300px;
+            width: 300px;
+            height: 24px;
+            border-bottom: 2px solid green;
+        }
+        .date-time-current-line::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border: 2px solid green;
+            border-radius: 50%;
+            position: absolute;
+            left: -8px;
+            bottom: -5.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="watch-warpper">
+        <div class="sceonds-warpper"></div>
+        <div class="minutes-warpper"></div>
+        <div class="hours-warpper"></div>
+        <div class="date-warpper"></div>
+        <div class="date-time-current-line"></div>
+    </div>
+    <script>
+        window.onload = function () {
+            let current_timer = null
+            const watch_warpper = document.querySelector('.watch-warpper')
+            const sceonds_warpper = document.querySelector('.sceonds-warpper')
+            const minutes_warpper = document.querySelector('.minutes-warpper')
+            const hours_warpper = document.querySelector('.hours-warpper')
+            const date_warpper = document.querySelector('.date-warpper')
+            const number_upperCase = ['十', '一', '二', '三', '四', '五', '六', '七', '八', '九']
+            const number_upperCase_2 = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九']
+            
+            function setYearMonthDayHourMinuteSecondDOM() {
+                runCurrentDateTimeInterval()
+                setMinutesAndSecondsDOM()
+                setHoursDOM()
+            }
+
+            function setMinutesAndSecondsDOM() {
+                const sceond_document_fragment = document.createDocumentFragment()
+                const minute_document_fragment = document.createDocumentFragment()
+
+                // for (let i = 60; i > 0; i--) {
+                for (let i = 1; i <= 60; i++) {
+                    let NUMBER = String(i).split('').map(item => number_upperCase[item])
+                    if (i === 10) {
+                        NUMBER = ['十']
+                    }
+                    if (i > 10 && i < 20) {
+                        NUMBER.splice(0, 1, '十')
+                    } else if (i > 10 && i % 10 !== 0) {
+                        NUMBER.splice(1, 0, '十')
+                    }
+                    NUMBER = NUMBER.join('')
+                    const sceond = document.createElement('div')
+                    let rotate = 360 / 60 * (60 - i)
+                    sceond.style.transform = `rotate(${rotate}deg)`
+                    sceond.classList.add('sceond')
+                    sceond.innerHTML = `${NUMBER}秒&nbsp;&nbsp;`
+                    sceond_document_fragment.appendChild(sceond)
+                    const minute = document.createElement('div')
+                    minute.style.transform = `rotate(${rotate}deg)`
+                    minute.classList.add('minute')
+                    minute.innerHTML = `${NUMBER}分`
+                    minute_document_fragment.appendChild(minute)
+                }
+                sceonds_warpper.appendChild(sceond_document_fragment)
+                minutes_warpper.appendChild(minute_document_fragment)
+            }
+            
+            function setHoursDOM () {
+                const hour_document_fragment = document.createDocumentFragment()
+                for (let i = 1; i <= 24; i++) {
+                    let NUMBER = String(i).split('').map(item => number_upperCase[item])
+                    if (i === 10) {
+                        NUMBER = ['十']
+                    }
+                    if (i > 10 && i < 20) {
+                        NUMBER.splice(0, 1, '十')
+                    } else if (i > 10 && i % 10 !== 0) {
+                        NUMBER.splice(1, 0, '十')
+                    }
+                    NUMBER = NUMBER.join('')
+                    const hour = document.createElement('div')
+                    hour.style.transform = `rotate(-${360 / 24 * (i - 1)}deg)`
+                    hour.classList.add('hour')
+                    hour.innerText = `${NUMBER}时`
+                    hour_document_fragment.appendChild(hour)
+                }
+                hours_warpper.appendChild(hour_document_fragment)
+            }
+
+            function runCurrentDateTimeInterval() {
+                clearInterval(current_timer)
+                current_timer = setInterval(setCurrentDateTime, 1000)
+            }
+
+            function setCurrentDateTime () {
+                const date = new Date()
+                const YEAR = date.getFullYear()
+                const MONTH = date.getMonth() + 1
+                const DAY = date.getDate()
+                const HOUR = date.getHours()
+                const MINUTE = date.getMinutes()
+                const SECOND = date.getSeconds()
+                const YEAR_UPPERCASE = YEAR.toString().split('').map(item => number_upperCase_2[item]).join('')
+                const MONTH_UPPERCASE = MONTH.toString().split('').map(item => number_upperCase_2[item]).join('')
+                const DAY_UPPERCASE = DAY.toString().split('').map(item => number_upperCase_2[item]).join('')
+                date_warpper.innerHTML = `${YEAR_UPPERCASE}年${setDateTimeUpperCase(MONTH)}月${setDateTimeUpperCase(DAY)}日`
+                sceonds_warpper.style.transform = `rotate(${360 / 60 * (SECOND )}deg)`
+                minutes_warpper.style.transform = `rotate(${360 / 60 * (MINUTE)}deg)`
+                hours_warpper.style.transform = `rotate(${360 / 24 * (HOUR)}deg)`
+            }
+
+            function setDateTimeUpperCase(number) {
+                let NUMBER = String(number).split('').map(item => number_upperCase[item])
+                if (number === 10) {
+                    NUMBER = ['十']
+                }
+                if (number > 10 && number < 20) {
+                    NUMBER.splice(0, 1, '十')
+                } else if (number > 10 && number % 10 !== 0) {
+                    NUMBER.splice(1, 0, '十')
+                }
+                // NUMBER = NUMBER.join('')
+                return NUMBER.join('')
+            }
+
+            setYearMonthDayHourMinuteSecondDOM()
+        }
+    </script>
+</body>
+</html>
