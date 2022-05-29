@@ -1,0 +1,18 @@
+{
+  "name": "css",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "stag": "vite build --mode staging",
+    "page": "vite preview",
+    "preview": "vite build --mode staging && vite preview --mode staging"
+  },
+  "devDependencies": {
+    "vite": "^2.9.9"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.1"
+  }
+}
