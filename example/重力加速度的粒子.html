@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+	<style type="text/css" media="screen">
+		#div{width: 500px;height:500px;margin: 100px auto;border: 1px solid black;}
+		#canvas{border: 1px solid blue;}
+	</style>
+</head>
+<body>
+	<div id="div">
+		<canvas id="canvas" width="500" height="500"></canvas>
+	</div>
+	<script>
+		window.onload = function (){
+
+			var canvas = document.getElementById('canvas');
+			var div = document.getElementById('div');
+			var context = canvas.getContext('2d');
+
+			//canvas.width = window.innerWidth;     //设置画布的宽度
+			//canvas.height = window.innerHeight;   //设置画布的高度
+
+			// canvas.width = div.offsetWidth;
+			// canvas.height = div.offsetHeight;
+
+			function Particle(){                 //面向对象对象方法
+
+				this.xPos = canvas.width/2;      //设置x轴
+				this.yPos = canvas.height/2;     //设置y轴
+
+				this.xOffset = Math.random() * 5 - 3;   //
+				this.yOffset = -5;
+				this.gravity = 0.1;
+			}
+
+			Particle.prototype.draw = function(){
+				context.beginPath();             //开辟新的路径
+
+				context.arc(this.xPos,this.yPos,5,0,Math.PI*2,false);   //绘制圆弧路径
+
+				context.fillStyle = getRandomColor();    //设置随机颜色
+
+				context.fill();                     //填充颜色
+			}
+
+			Particle.prototype.move = function(){
+				this.xPos += this.xOffset;
+				this.yPos += this.yOffset;
+				this.yOffset += this.gravity;
+			}
+
+			function getRandomColor(){              //设置随机颜色的函数
+
+				return 'rgb('+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+')';
+			}
+
+			var particleArray = [];                 //定义空数组
+
+			setInterval(function(){                 //定义定时器，实现动画效果
+				var p = new Particle();             //定义新对象
+				particleArray.push(p);              //将新定义的对象添加到数组中
+				if (particleArray.length > 500) {   //判断数组长度
+					particleArray.shift();          //删除下标为0的对象(第一个对象)
+				}
+				context.clearRect(0,0,canvas.width,canvas.height);  //清除画布区域的内容
+				for(var i = 0 ; i < particleArray.length; i++){     //for循环每一个对象添加行为
+
+					particleArray[i].draw();        //为对象添加随机颜色
+					particleArray[i].move();        //为对象随机位置
+				}
+			},100)
+		}
+	</script>
+</body>
+</html>

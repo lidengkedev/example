@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>练习</title>
+	<link rel="stylesheet" href="">
+	<style type="text/css" media="screen">
+		.box{width: 300px;height: 300px;margin: 0px auto;border: 1px solid black;}
+		canvas{border: 1px solid black;}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<canvas id="canvas" width="300px" height="300px"></canvas>
+	</div>
+	<script>
+		window.onload = function(){
+			var canvas = document.getElementById('canvas');
+			var context = canvas.getContext('2d');
+			//绘制矩形
+			function juxing1(){
+				context.strokeRect(250,5,40,40);//设置路径：参数1：x轴坐标
+				                                //          参数2：y轴坐标
+				                                //          参数3：设置矩形宽度
+				                                //          参数4：设置矩形高度
+				context.strokeStyle = 'black';  //设置画笔的的颜色
+				context.stroke();//绘制图形
+				context.fillStyle = 'rgba(255,12,34,0.5)';//设置充填颜色
+				context.fillRect(255,10,30,30);//充填颜色
+			}
+			juxing1();//调用函数
+			function juxing2(){
+				context.moveTo(100,100);//设置画笔位置
+				context.lineTo(100,200);//设置绘画到坐标为(100,200)
+				context.lineTo(200,200);//设置绘画到坐标为(200,200)
+				context.lineTo(200,100);//设置绘画到坐标为(200,100)
+				context.lineTo(100,100);//设置绘画到坐标为(100,100)
+				context.strokeStyle = 'red';//设置绘制画笔的线条颜色
+				context.fillStyle = 'black';//设置绘制封闭区域的充填颜色
+				context.fill();//封闭区域充填
+				context.lineWidth = 10;//绘制画笔的线条宽度
+				context.stroke();//绘制线条
+				context.moveTo(100,100);//重新设置画笔的位置
+			}
+			juxing2();//调用函数
+			// 绘制圆形
+			function yuan(){
+				context.beginPath();//重新设置画笔的路径
+				context.arc(150,150,100,0,Math.PI*2,false);//设置圆形
+				                                           // 参数1,参数2:圆心
+				                                           // 参数3：半径
+				                                           // 参数4:画笔开始绘画的位置
+				                                           // 参数5：设置弧度大小
+				                                           // 参数6：true  逆时针绘画
+				                                           //        false 顺时针绘画
+				context.strokeStyle = 'blue';//设置绘画线条颜色
+				// context.fillStyle = 'lightgray';
+				// context.fill();
+				context.stroke();//绘制线条
+				context.moveTo(50,150);//重新设置画笔的位置
+			}
+			yuan();
+			// 绘制三角形
+			function sanjiao(){
+				context.beginPath();
+				context.moveTo(150,10);
+				context.lineTo(10,250);
+				context.lineTo(290,250);
+				context.strokeStyle = 'orange';
+				context.closePath();//封闭绘制的路径
+				context.stroke();
+			}
+			sanjiao();
+			// 剪切路径,超出范围之内的全都不起效，在clip后面绘制的图形或者文字，如果不在clip区域内就被屏蔽掉例如下面的函数fontText()就被屏蔽掉，把他放在clip()上面就不会有问题
+			function clip(){
+				context.beginPath();
+				context.arc(50,50,30,0,Math.PI*2,true);
+				context.stroke();
+				context.clip();//剪切，在clip之后（剪裁路径形成之后），绘制的所有所有的内容，只有在剪裁区域之内的显示，超出剪裁范围不显示
+				context.moveTo(0,0)
+				context.lineTo(300,300);//设置绘制线条的位置，绘画中超出的部分被剪切掉，不显示
+				context.stroke();//绘制线条
+			}
+			fontText();
+			clip();
+			// 绘制字体
+			function fontText(){
+				context.font = '30px bold Arial';
+				context.textAlign = 'left';
+				context.fillStyle = 'red';
+				context.textBaseline = 'Middle';
+				context.fillText('我是中国人',20,250,200);
+			}
+			// fontText();
+		}
+	</script>
+</body>
+</html>

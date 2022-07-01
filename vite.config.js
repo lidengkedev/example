@@ -49,7 +49,7 @@ export default defineConfig(({ command, mode }) => {
       port: 9001
     },
     build: {
-      outDir: 'dist',
+      outDir: 'dist/vite-vue3',
       manifest: false,
       rollupOptions: {
         input: {
