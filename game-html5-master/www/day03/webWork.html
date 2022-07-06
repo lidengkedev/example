@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+</head>
+<body>
+	<!-- web work 的三大主要特征，能够长时间的运行，理想的启动性能以及理想的内存消耗
+         允许开发人员编写能够长时间运行而不被用户终端的后台程序，去执行事务和逻辑，并同时保证页面对用户的及时响应
+	 -->
+
+
+	 <p id='support'></p>
+	 <button id="buttonId" type="button">Post a Message</button>
+	 <script>
+	 	window.onload = function(){
+	 		if( typeof(Worker) !== 'undefined' ){
+	 			document.getElementById('support').innerHTML = '支持多线程。';
+	 		}
+
+	 		var worker = new Worker('work.js');
+	 		//注册函数接受来自worker的消息
+	 		worker.addEventListener('message', messageHandel,true);
+
+
+          
+            var buttonEle = document.getElementById('buttonId');
+            buttonEle.onclick = function(){
+               worker.postMessage('Here is  a Message for you ');
+            }
+
+            function messageHandel(e){
+            	console.log('receiver from worker:' + e.data + 'too');
+            }
+
+	 	}
+	 </script>
+</body>
+</html>

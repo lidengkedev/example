@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<style>
+		#wrapper{
+			width: 200px;
+			height: 200px;
+			border-radius: 4px;
+			border: 1px solid #000;
+		}
+		.source{
+			margin-top: 20px;
+			cursor: pointer;
+			width: 80px;
+			background: green;
+			border: 1px solid #ddd;
+			text-align: center;
+			line-height: 40px;
+			color: #fff;
+		}
+		#wrapper.active{
+			box-shadow: 4px 4px 3px rgb(239, 146, 123),4px 4px 2px rgba(252,146,63,1);
+		}
+	</style>
+</head>
+<body>
+	<div id="tihuan" style="background: #000;color: #fff;width:80px;height:80px;">dragStart替身</div>
+	<!-- 把元素拖到这个div区域 -->
+	<div id="wrapper"></div>
+	<!-- 拖动的元素 必须增加属性 draggable -->
+	<div class="target">
+		<div class="source" draggable=true>元素1</div>
+	</div>
+<script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.js"></script>
+<script>
+	$(function(){
+		var domWrapper = $('#wrapper')[0];
+		var domSource = $('.target .source')[0];
+		// 当前目标元素被拖动的时候，触发dragstart事件
+		domSource.ondragstart = function(ev){
+	       	ev.stopPropagation();// 阻止冒泡
+			console.log( 'dragstart' );
+			console.log( ev )
+			// 默认的拖动效果
+			ev.dataTransfer.effectAllowed = 'move';
+			// 设置数据，可以读取
+        	// ev.dataTransfer.setData('text','test');
+        	
+        	//setDragImage(用来替换鼠标虚影的dom对象, x , y)
+        	//x y: 鼠标指针在虚影上的位置坐标 
+			ev.dataTransfer.setDragImage( $('#tihuan')[0] , 5, 10);
+			return true;
+		}
+		// 当前目标元素不再被拖动的时候，触发dragend事件
+		// domSource.ondragend = function(ev){
+		// 	console.log('dragend');
+		// 	ev.preventDefault();// 阻止浏览器的默认行为
+	 //       	ev.stopPropagation();// 阻止冒泡
+		// }
+
+		// 执行drag事件后，鼠标在此元素上经过，触发dragover
+		domWrapper.ondragover = function(ev){
+			ev.preventDefault();// 阻止浏览器的默认行为
+	       	ev.stopPropagation();// 阻止冒泡
+			console.log('dragover')
+			if( !$(this).hasClass('active') ){
+				$(this).addClass('active')
+			}
+			return true;
+		}
+		// 拖动的元素在相对应的区域被释放，触发drop
+		domWrapper.ondrop = function(ev){
+			ev.preventDefault();// 阻止浏览器的默认行为
+	       	ev.stopPropagation();// 阻止冒泡
+			console.log('drop...');
+			var _dom = $('.source').clone(false);
+			$('.target .source').remove();
+			$('#wrapper').append( _dom );
+			$('#wrapper .source').removeAttr('draggable');
+			return false;
+		}
+
+	})
+</script>
+</body>
+</html>

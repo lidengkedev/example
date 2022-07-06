@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="common.css">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="https://static.1qianbao.com/static/pinganfuweb-modules/pafweblib/global/0.2.0/js/html5Shim.js?v=20160227"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <header class="qmgj-g-header">
+        <section class="header-box clearfix">
+            <div class="box-left">
+                <ul class="clearfix">
+                    <li class="nav-ele logo">
+                        <span class="col1">全民</span>
+                        <span class="col2">创造</span>
+                    </li>
+                    <li class="nav-ele active">
+                        <span>首页</span>
+                    </li>
+                    <li class="nav-ele">
+                        <span>节目专栏</span>
+                    </li>
+                    <li class="nav-ele">
+                        <span>圈子</span>
+                    </li>
+                    <li class="nav-search">
+                        <input placeholder="请输入您要搜索的内容" type="text" class="input-search">
+                    </li>
+                </ul>
+            </div>
+            <div class="box-right">
+                <a href="">登录</a>
+                <a href="">注册</a>
+            </div>
+        </section>
+    </header>
+    <section class="qmgj-g-body">
+        <div class="body-box">
+            <div class="login-box">
+                <div class="box-group" id="box-group">
+                    <h1 class="title">登录</h1>
+                    <!-- 手机号 -->
+                    <div class="login-item">
+                        <input type="text" placeholder="请输入您的手机号码" maxlength="11">
+                        <span class="error phone-error">您输入的号码有误，请检查</span>
+                    </div>
+                    <!-- 密码 -->
+                    <div class="login-item">
+                        <input type="password" placeholder="请输入您的密码">
+                        <span class="error pwd-error">请输入正确的密码</span>
+                        <a href="" class="forget-pwd">忘记密码？</a>
+                    </div>
+                    <!-- 登录 -->
+                    <div class="login-btn">登录</div>
+                    <!-- 记住我 -->
+                    <div class="login-remind clearfix">
+                        <div class="qmgj-checkbox"></div><span>记住我</span>
+                    </div>
+                    <!-- 第三方登录 -->
+                    <div class="login-three">
+                        <h3><span>第三方登录</span></h3>
+                        <div class="three weixin"></div>
+                        <div class="three qq"></div>
+                        <div class="three sina"></div>
+                    </div>
+                </div>
+                <div class="box-bottom">新用户？<a href="">立即注册</a></div>
+            </div>
+        </div>
+    </section>
+    <footer class="qmgj-g-footer">
+        <section class="footer-box clearfix">
+            <div class="box-left">
+                <a href="">关于全民创造</a>
+                <span>|</span>
+                <a href="">全民创造用户协议</a>
+                <span>|</span>
+                <a href="">全民创造风险提示</a>
+                <span>|</span>
+                <a href="">联系我们</a>
+            </div>
+            <div class="box-right"><span class="logo1">全民</span><span class="logo2">创造</span><span>©2015</span></div>
+        </section>
+    </footer>
+    <script src="jquery-3.1.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        // $ 看到$box立马能明白，这是jquery获取的节点
+        var Login = {
+            // 初始化
+            init: function() {
+                this.events();
+                this.getStorage();
+            },
+            //进页面后处理数据，有的话，展示出来
+            getStorage: function(){
+                if( localStorage.getItem('isStor') ){
+                    var isStor = localStorage.getItem('isStor');
+                    var phone = localStorage.getItem('phone');
+                    var pwd = localStorage.getItem('pwd');
+                    $('#box-group input[type="text"]').val( phone );
+                    $('input[type="password"]').val( pwd );
+                    isStor == 'true'? $('.qmgj-checkbox').addClass('active'):'';
+                }else if( sessionStorage.getItem('isStor') ){
+                    var phone = sessionStorage.getItem('phone');
+                    var pwd = sessionStorage.getItem('pwd');
+                    $('#box-group input[type="text"]').val( phone );
+                    $('input[type="password"]').val( pwd );
+                }
+            },
+            // 绑定事件
+            events: function() {
+                var that = this;
+                $('.login-btn').on('click', function(e) {
+                    var Flag = that.checkForm();
+                    if (Flag) that.ajaxLogin();
+                });
+
+                $('.qmgj-checkbox').on('click', function(e) {
+                    $(this).toggleClass('active');
+                });
+            },
+            checkForm: function() {
+                var $phone = $('#box-group input[type="text"]');
+                var $pwd = $('input[type="password"]');
+                var flag = true;
+                if (/^(1[3578]\d{9})$/g.test($phone.val())) {
+                    $('.phone-error').hide();
+                } else {
+                    $('.phone-error').show();
+                    flag = false;
+                }
+                if ($.trim($pwd.val()).length > 6) {
+                    $('.pwd-error').hide();
+                } else {
+                    $('.pwd-error').show();
+                    flag = false;
+                }
+                return flag;
+            },
+            ajaxLogin: function() {
+                var that = this;
+                var phoneVal = $('#box-group input[type="text"]').val();
+                var pwdVal = $.trim( $('input[type="password"]').val() );
+                var isStorage = $('.qmgj-checkbox').hasClass('active');
+                $.ajax({
+                    url: 'UserLogin.json',
+                    type: 'get',
+                    data: {
+                        phone: phoneVal,
+                        pwd: pwdVal,
+                        isSave: isStorage
+                    },
+                    success: function(res) {
+                        if (res.resultCode == '0000') {
+                            that.dealStorage( isStorage, phoneVal, pwdVal );
+                        } else {
+                            alert(res.resultMsg)
+                        }
+                    },
+                    error: function(err) {
+                        alert('服务器不稳定')
+                    }
+                });
+            },
+            // 处理存储数据的问题
+            dealStorage: function(isStor, phone, pwd){
+                localStorage.clear();
+                sessionStorage.clear();
+                if( isStor ){
+                    localStorage.setItem('isStor',isStor);
+                    localStorage.setItem('phone',phone);
+                    localStorage.setItem('pwd',pwd);
+                }else{
+                    sessionStorage.setItem('isStor',isStor);
+                    sessionStorage.setItem('phone',phone);
+                    sessionStorage.setItem('pwd',pwd);
+                }
+            }
+        }
+        Login.init();
+
+    });
+    </script>
+</body>
+
+</html>

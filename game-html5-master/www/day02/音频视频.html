@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="apple-touch-fullscreen" content="YES">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+</head>
+<body>
+	<!-- controls 显示音量、播放等控件 -->
+	<!-- preload 提前加载，也就是点击播放之前就开始加载-->
+	<!-- loop 循环播放-->
+	<!-- autoplay 自动播放 -->
+	<audio id="audioId" controls preload>
+		<source src="ToAlice.mp3">
+	</audio>
+
+	<button>点击播放</button>
+	<script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.js"></script>
+	<script>
+		$(document).ready(function(){
+			var Audio = {
+				events: function(){
+					$('button').on('click',function(e){
+						var $this = $(this);
+						// document.getElementsByTagName('audio')[0].paused
+						// paused 属性，用来判断音频或视频标签的资源是什么 状态
+						if( $('audio')[0].paused ){
+							$('audio')[0].play();// 播放资源
+							$this.html('点击暂停')
+						}else{
+							$('audio')[0].pause();//暂停
+							$this.html('点击播放')
+						}
+					});
+					$('audio')[0].addEventListener("play",function(){
+						console.log('playing')
+					});
+					$('audio')[0].addEventListener("pause",function(){
+						console.log('pauseing');
+						// ended 判断是否是播放结束状态
+						if( $('audio')[0].ended ){
+							console.log('ending')
+						}
+					});
+				}
+			}
+			Audio.events();
+		});
+	</script>
+</body>
+</html>

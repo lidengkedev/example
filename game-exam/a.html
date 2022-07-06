@@ -1,0 +1,264 @@
+   <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="gbk" />
+    <title>HTML5 推箱子游戏过关演示动画</title>
+    <style type="text/css">
+        img{border:0}
+	 body{ padding-top:10px;}
+        .gameWrap{ position: relative; background-color: #ffcc33; padding: 5px; width: 680px; height: 523px; border: 3px solid #cc9900; ;-moz-border-radius: 5px;-khtml-border-radius: 5px;-webkit-border-radius: 5px;border-radius: 5px; margin:0 auto;}
+        #gameBox{background-color:#6ba04b;border: 2px solid #cc9900; ;-moz-border-radius: 5px;-khtml-border-radius: 5px;-webkit-border-radius: 5px;border-radius: 5px;}
+		
+    </style>
+   
+</head>
+<body>
+<div class="gameWrap">
+    <canvas width="667" height="519" id="gameBox">你的浏览器不支持HTML5 Canvas</canvas>
+    <br>
+     <div id="msg"></div>
+
+</div>
+<script type="text/javascript" src="js/map.js"></script>
+<script type="text/javascript">
+  var canvas = document.getElementById("gameBox");
+  var context = canvas.getContext("2d");
+var imglen = 14; //需预加载的图片数量
+/*游戏主对象*/
+var FlGame = {
+    grade : 2, //关卡
+    loadImgLen : 0, //已加载的图片数量
+    imgList : {},//缓存所有图像
+    map : [],//地图数据
+    timer : null, //计时器
+    girlPos : [], //女孩的位置
+    girlDirec : "down", //女孩当前的朝向（默认正面朝下）
+    girlFrame : 0, //女孩动画第N帧，共两帧
+    MoveTimes:0,//移动次数 
+    UseTime:0,
+    lastTime:0,
+    msg: document.getElementById("msg"),
+    setp:-1,//移动步数
+    result:[],//过关答案
+    init : function(){ //入口
+        this.result=getSuccess(this.grade).split("");
+        this.getMap(this.grade);
+        this.draw();
+        this.lastTime= Date.now();
+        this.run();
+   
+    },
+    getMap : function(_mapIndex){
+        this.map = getMap(_mapIndex);
+    },
+    draw : function(){ //绘制主对象
+        this.clearCanvas();
+        this.drawMap();
+        this.drawGirl();
+        this.showMoveInfo();
+    },
+
+    // 游戏主循环
+    run : function(){ //运行帧
+          var now = Date.now();
+          var dt = (now - this.lastTime) / 1000.0;
+          this.update(dt);//更新
+          this.draw();
+         this.lastTime = now;
+         var that = this;
+        
+         this.timer =  setTimeout(function(){
+           that.run();
+         },1000)    
+    },
+
+    // 更新游戏对象
+    update: function(dt) {
+     this.UseTime += dt;
+     this.readText(dt);
+    },
+
+    readText:function(dt){
+      var sc=this.getSetp();
+      if(sc=="d"){
+         this.girlPos[0]+=1;
+         this.girlPos[1]+=0;
+         this.girlDirec ="down";
+
+         this.MoveTimes++;
+      }
+     if(sc=="u"){
+         this.girlPos[0]+=-1;
+         this.girlPos[1]+=0;
+         this.girlDirec ="up";
+         this.MoveTimes++;
+      }
+      if(sc=="l"){
+         this.girlPos[0]+=0;
+         this.girlPos[1]+=-1;
+         this.girlDirec ="left";
+         this.MoveTimes++;
+      }
+     if(sc=="r"){
+         this.girlPos[0]+=0;
+         this.girlPos[1]+=+1;
+         this.girlDirec ="right";
+         this.MoveTimes++;
+      }
+
+      if(sc=="D"){
+         this.girlPos[0]+=1;
+         this.girlPos[1]+=0;
+         this.girlDirec ="down";
+         this.MoveTimes++;
+       if(this.map[this.girlPos[0]][this.girlPos[1]]==6)//人的位置是带花的花盆
+            this.map[this.girlPos[0]][this.girlPos[1]] = 4;//留下花
+        else
+            this.map[this.girlPos[0]][this.girlPos[1]] = 3;
+
+        if( this.map[this.girlPos[0]+1][this.girlPos[1]] ==4)
+          this.map[this.girlPos[0]+1][this.girlPos[1]] = 6;
+        else
+            this.map[this.girlPos[0]+1][this.girlPos[1]] = 5;
+
+      }
+
+       if(sc=="U"){
+         this.girlPos[0]+=-1;
+         this.girlPos[1]+=0;
+         this.girlDirec ="up";
+         this.MoveTimes++;
+        if(this.map[this.girlPos[0]][this.girlPos[1]]==6)//人的位置是带花的花盆
+            this.map[this.girlPos[0]][this.girlPos[1]] = 4;//留下花
+        else
+            this.map[this.girlPos[0]][this.girlPos[1]] = 3;
+        if( this.map[this.girlPos[0]-1][this.girlPos[1]] ==4)
+            this.map[this.girlPos[0]-1][this.girlPos[1]] = 6;
+         else
+            this.map[this.girlPos[0]-1][this.girlPos[1]] = 5;
+      }
+        if(sc=="R"){
+         this.girlPos[0]+=0;
+         this.girlPos[1]+=1;
+         this.girlDirec ="right";
+         this.MoveTimes++;
+        if(this.map[this.girlPos[0]][this.girlPos[1]]==6)//人的位置是带花的花盆
+              this.map[this.girlPos[0]][this.girlPos[1]] = 4;//留下花
+        else
+            this.map[this.girlPos[0]][this.girlPos[1]] = 3;
+
+
+         if( this.map[this.girlPos[0]][this.girlPos[1]+1] ==4)
+            this.map[this.girlPos[0]][this.girlPos[1]+1] = 6;
+         else
+            this.map[this.girlPos[0]][this.girlPos[1]+1] = 5;
+
+      }
+      if(sc=="L"){
+         this.girlPos[0]+=0;
+         this.girlPos[1]+=-1;
+         this.girlDirec ="left";
+         this.MoveTimes++;
+         if(this.map[this.girlPos[0]][this.girlPos[1]]==6)//人的位置是带花的花盆
+            this.map[this.girlPos[0]][this.girlPos[1]] = 4;//留下花
+        else
+            this.map[this.girlPos[0]][this.girlPos[1]] = 3;
+        if( this.map[this.girlPos[0]][this.girlPos[1]-1] ==4)
+            this.map[this.girlPos[0]][this.girlPos[1]-1] = 6;
+         else
+            this.map[this.girlPos[0]][this.girlPos[1]-1] = 5;
+
+      }
+
+   },
+   getSetp:function(){
+      this.setp++;
+     if(this.setp==this.result.length) {
+         return 0;
+     }
+     return this.result[this.setp];
+   },
+   drawMap : function(){
+        var mapBg = context.createPattern(this.imgList.map_bg,"repeat");
+        context.save();
+        context.fillStyle = mapBg;
+        context.fillRect(0,0,667,519);
+        context.restore();
+        for(var i=0;i<this.map.length;i++){
+          for(var j=0;j<this.map[i].length;j++){
+             if(this.map[i][j]!=1){
+                var x = (j+1)*1+j*36;
+                var y = (i+1)*1+i*36;
+                if(this.map[i][j]==9){//人物位置,在人的位置要绘底图
+                     this.map[i][j] = 3;
+                     if(this.girlPos.length==0){ //初始化时，取一次人物的初始坐标
+                          this.girlPos = [i,j];
+                     }
+                }
+                var mapFlag = this.map[i][j];
+                context.drawImage(this.imgList["map_"+mapFlag],x,y);
+            }
+         }
+      }
+    },
+    drawGirl :function(){ //女孩,direc方向
+        this.girlFrame = this.girlFrame==0?1:0;
+        var i = this.girlPos[0];
+        var j = this.girlPos[1];
+        var x = (j+1)*1+j*36+3;
+        var y = (i+1)*1+i*36-4;
+        context.drawImage(this.imgList["npc_"+this.girlDirec+"_"+this.girlFrame],x,y);
+    },
+   
+    showMoveInfo:function()
+    {  
+	this.msg.innerHTML="第"+(this.grade)+"关 移动次数："+this.MoveTimes+" 用时:"+Math.floor(this.UseTime);
+   },
+   stop : function(){ //停止
+        clearInterval(this.timer);
+    },
+    clearCanvas : function(){ //清空画布
+        canvas.width=0;
+        canvas.width=667;
+    },
+   
+    imgOnload : function(img){
+        FlGame.loadImgLen++;
+        FlGame.imgList[img.picname] = img;
+        if(FlGame.loadImgLen==imglen){
+            FlGame.init();//所有图片加载后启动动画
+        }
+    }
+};
+//加载所属图片
+(function(){
+    var imgList = { //加载的清单
+        map_bg:"images/map_bg.png",
+        map_2:"images/map_2.jpg",
+        map_3:"images/map_3.jpg",
+        map_4:"images/map_4.jpg",
+        map_5:"images/map_5.jpg",
+        map_6:"images/map_6.jpg",
+        npc_down_0:"images/npc_down_0.png",
+        npc_down_1:"images/npc_down_1.png",
+        npc_up_0:"images/npc_up_0.png",
+        npc_up_1:"images/npc_up_1.png",
+        npc_left_0:"images/npc_left_0.png",
+        npc_left_1:"images/npc_left_1.png",
+        npc_right_0:"images/npc_right_0.png",
+        npc_right_1:"images/npc_right_1.png"
+    };
+    for(name in imgList){
+        var img = new Image();
+        img.src = imgList[name];
+        img.picname = name;
+        img.onload =function(){ FlGame.imgOnload(this);}
+        img.onerror = function(e){
+            alert("资源加载时发生错误！"+this.src);
+        }
+    }
+})();
+
+</script>
+</body>
+</html>

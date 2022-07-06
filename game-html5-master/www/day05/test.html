@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+    .divBox {
+        color: red;
+        font-size: 24px;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="target"></div>
+    <script id="htmlId" type="text/html">
+        <div class="divBox">
+        	##var name = "huachenxin"##
+        	##for(var i=0;i<arr.length;i++){##
+        		##if(arr[i].username=='zhangsan'||arr[i].username=='lisi'){##
+				<ul>
+	                <li>{{arr[i].username}}</li>
+	                <li>{{arr[i].age}}</li>
+	                <li>{{arr[i].job}}</li>
+	                <li>{{name}}</li>
+	            </ul>
+        		##}else{##
+				<div>{{arr[i].username}}不显示</div>
+        		##}##
+        	##}##
+        </div>
+    </script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script>
+    // 把字符串解析为函数
+    _.templateSettings = {
+        evaluate: /##([\s\S]+?)##/g,
+        interpolate: /\{\{(.+?)\}\}/g,
+        escape: /\{\{\{\{-([\s\S]+?)\}\}\}\}/g
+    };
+    var html = document.getElementById('htmlId').innerHTML;
+    var htmlFn = _.template(html);
+
+    var json = [
+	    {
+	        username: 'zhangsan',
+	        age: '18',
+	        job: 'student'
+	    }, 
+	    {
+	        username: 'lisi',
+	        age: '18',
+	        job: 'student'
+	    }, 
+	    {
+	        username: 'wangwu',
+	        age: '18',
+	        job: 'student'
+	    }, 
+	    {
+	        username: 'zhaoliu',
+	        age: '18',
+	        job: 'student'
+	    }
+    ];
+
+    var stringHtml = htmlFn({
+    	arr: json
+    });
+
+    document.getElementById('target').innerHTML = stringHtml;
+    // var compiled = _.template("hello: {{name}}");
+    // var html = compiled({
+    //     name: 'moe'
+    // });
+    // console.log(html);
+    </script>
+</body>
+
+</html>

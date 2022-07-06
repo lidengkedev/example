@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body>
+
+	<div>
+		<span>用户名：</span>
+		<input type="text" placeholder="请输入用户名">
+	</div>
+	<div id="saveBtn">点击保存</div>
+	<div id="showBtn">点击显示</div>
+	<div id="removeBtn">点击清理缓存字段</div>
+    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.js"></script>
+    <script>
+    $(document).ready(function() {
+        // cookie 临时存放数据，可以设置时长，超过时长就会失效过期
+        // 本地存储
+        // 供前端存储一部分信息或数据 类似cookie
+        // sessionStorage 会话存储（临时、短暂型存储）
+        // 当前的网站关闭时，会话存储失效
+
+        // localStorage 持久性存储 (失效的话，需要销毁)
+        if (window.Storage) {// 判断浏览器是否支持 本地存储
+            //alert('支持Storage')
+        } else {
+            //alert('不支持')
+        }
+
+        $('#saveBtn').click(function(){
+        	var _val = $('input').val();
+        	localStorage.setItem('username', _val);
+        	// localStorage.username = _val;
+        	alert('保存成功')
+        });
+
+        $('#showBtn').click(function(){
+        	var _val = localStorage.getItem('username');
+        	if( !_val ){
+        		alert( 'username不存在' )
+        		return ;
+        	}
+        	// var _val = localStorage.username;
+        	$('input').val( _val );
+        });
+
+        $('#removeBtn').click(function(event) {
+        	// 清理掉单个字段
+        	localStorage.removeItem('username');
+        	// 清理掉 本地存储里面的所有字段
+        	// localStorage.clear();
+        	// localStorage.key(index) 查看指定下标位置的字段名 
+        	alert('清理成功')
+        });
+
+    });
+    </script>
+</body>
+
+</html>

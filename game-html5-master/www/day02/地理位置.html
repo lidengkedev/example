@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="apple-touch-fullscreen" content="YES">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+</head>
+<body>
+	<div id="location">Hello world</div>
+	<script src="convert.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.3"></script>
+    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.js"></script>
+    <script>
+    $(function() {
+        // getCurrentPosition(successFn,errorFn)
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(res) {
+            	var longitude = res.coords.longitude;
+            	var latitude = res.coords.latitude;
+            	var lng1 = wgs84togcj02(longitude, latitude)[0];
+		        var lat1 = wgs84togcj02(longitude, latitude)[1];
+		        var lng2 = gcj02tobd09(lng1, lat1)[0];
+		        var lat2 = gcj02tobd09(lng1, lat1)[1];
+		        console.log( '经度：'+lng2 + ',纬度：'+lat2 );
+            }, function(err) {
+            	console.log( err );
+            	if( err.code == 0 ){
+            		alert( "获取地理位置信息错误:" + err.message )
+            	}
+            	if( err.code == 1 ){
+            		alert( "用户禁止使用地理定位:" + err.message )
+            	}
+            	if( err.code == 2 ){
+            		alert( "获取用户信息失败:" + err.message )
+            	}
+            	if( err.code == 3 ){
+            		alert( "超时:" + err.message )
+            	}
+            });
+        }
+    })
+    </script>
+</body>
+
+</html>

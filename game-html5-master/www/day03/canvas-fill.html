@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+</head>
+<body>
+	<canvas id="canvas" width="500" height="500" style="border: 1px solid #000">
+	</canvas>
+	<script>
+		var canvas = document.getElementById('canvas');
+		if( canvas.getContext ){
+			var ctx = canvas.getContext('2d');
+
+			ctx.beginPath();
+			// 设置样式 颜色
+			ctx.fillStyle="#000000";
+			// 填充矩形(x,y,w,h)
+			// 在(x,y) 50*50
+			ctx.fillRect(250,250,50,50);
+			ctx.closePath();
+
+			ctx.beginPath();
+			ctx.moveTo(300,300);
+			ctx.lineTo(300,350);
+			ctx.lineTo(350,350);
+			ctx.lineTo(350,300);
+			ctx.fillStyle = 'green';
+			ctx.fill();
+			ctx.closePath();
+
+
+			// 画圆
+			/*
+					 1.5Math.PI
+
+			1Math.PI		    0Math.PI
+
+					 0.5Math.PI
+
+			(x,y,r,角度起,角度止,顺时针)
+			*/
+			var PI = Math.PI;
+			ctx.beginPath();
+			ctx.arc(250,160,40,0,0.4*PI,false);
+			ctx.lineTo(250,160);
+			// ctx.stroke();
+			ctx.fill();
+			ctx.closePath();
+
+
+
+
+
+		}else{
+			alert('浏览器不支持canvas')
+		}
+	</script>
+</body>
+</html>
