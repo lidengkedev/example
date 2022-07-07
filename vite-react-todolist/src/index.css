@@ -1,0 +1,32 @@
+body {
+    background-color: aliceblue;
+}
+.todo-app {
+    text-align: center;
+    width: 1080px;
+    margin: 0 auto;
+}
+.todo-title {
+    text-align: center;
+}
+.todo-item-input {
+    display: flex;
+    justify-content: space-between;
+}
+.todo-container {
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    padding: 2px;
+}
+.todo-container .todo-container-list {
+    display: flex;
+    padding: 10px;
+}
+.todo-item-operate .anticon {
+    margin-left: 10px;
+}
+.todo-filter {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    text-align: left;
+}
