@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <title>Vis-Network</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        #app { width: 100%; height: 100vh; }
+        #container { width: 100%; height: 100%; background-color: cornflowerblue; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="container"></div>
+    </div>
+</body>
+<script>
+    const container = document.getElementById('container')
+    var nodes = new vis.DataSet([
+        { id: 1, label: '盘古' },
+        { id: 2, label: '鸿钧' },
+        { id: 3, label: '女娲' },
+        { id: 4, label: '伏羲' },
+        { id: 5, label: '轩辕' },
+        { id: 6, label: '蚩尤' },
+        { id: 7, label: '神农' },
+        { id: 8, label: '大禹' },
+        { id: 9, label: '共工' },
+        { id: 10, label: '太上老君' },
+        { id: 11, label: '原始天尊' },
+        { id: 12, label: '灵宝道君' },
+        { id: 13, label: '太乙真人' },
+        { id: 14, label: '玉鼎真人' },
+        { id: 15, label: '姜子牙' },
+        { id: 16, label: '姬昌' },
+        { id: 17, label: '姬发' },
+        { id: 18, label: '伯邑考' },
+    ])
+    var edges = new vis.DataSet([
+        { from: 1, to: 3 },
+        { from: 1, to: 2 },
+        { from: 2, to: 10 },
+        { from: 2, to: 11 },
+        { from: 2, to: 12 },
+        { from: 11, to: 13 },
+        { from: 11, to: 14 },
+        { from: 11, to: 15 },
+    ])
+    var data = {
+        nodes: nodes,
+        edges: edges
+    }
+    var options = {
+        autoResize: true,
+        height: '100%',
+        width: '100%',
+        locale: 'en',
+        clickToUse: false,
+        configure: {},// defined in the configure module.
+        edges: {},// defined in the edges module.
+        nodes: {
+            icon: {
+                face: 'Ionicons',
+                code: '\uf007',
+                size: 50,
+                color: '#2B7CE9'
+            },
+            shadow: {
+                color: 'rgba(0,0,0,0.5)',
+                size: 10,
+                x: 5,
+                y: 5
+            },
+            shape: 'circle',
+            title: 'title'
+        },// defined in the nodes module.
+        groups: {},// defined in the groups module.
+        layout: {},// defined in the layout module.
+        interaction: {},// defined in the interaction module.
+        manipulation: {},// defined in the manipulation module.
+        physics: {}// defined in the physics module.
+    }
+    var network = new vis.Network(container, data, options)
+</script>
+</html>
