@@ -34,7 +34,7 @@ function setRollupOptionsInput () {
             let htmlReadmeMdFileSteam = fs.readFileSync(resolve(__dirname, '../CSS-README.md'), { encoding: 'utf-8' })
 
             // 追加 HTML-README.md 文本内容
-            htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/css/pages/${file}.html)\n`
+            htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/css/pages/${file})\n`
 
             // 写入文本内容
             fs.writeFileSync(resolve(__dirname, '../CSS-README.md'), htmlReadmeMdFileSteam)
