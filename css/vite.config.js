@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import { config } from 'dotenv'
 import path, { resolve } from 'path'
 import fs from 'fs'
-import { createUuid } from '../publish.js'
 
 // 定义 CSS-README.md 文件的标题内容
 const CSS_README_MD = `
