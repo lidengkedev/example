@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用 Canvas 绘制一个类似于 Echarts 的柱状图</title>
+    <style>
+        .warpper {
+            width: 750px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        #canvas {
+            width: 750px;
+            height: 500px;
+            border: 1px solid #eaeaea;
+        }
+    </style>
+</head>
+<body>
+    <div class="warpper">
+        <h1>使用 Canvas 绘制一个类似于 Echarts 的柱状图</h1>
+        <canvas id="canvas" width="750" height="500"></canvas>
+    </div>
+</body>
+<script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+
+    // 画布设置
+    const options = {
+        height: 500,
+        width: 750
+    }
+
+    // 调色盘
+    const colors = ['#409EFF', '#67C23A', '#E6A23C', '#F56C6C', '#909399']
+    
+    // 柱状图数据
+    const barData = [
+        { name: 'Bar 1', value: 400 },
+        { name: 'Bar 2', value: 300 },
+        { name: 'Bar 3', value: 340 },
+        { name: 'Bar 4', value: 280 },
+        { name: 'Bar 5', value: 230 },
+        { name: 'Bar 6', value: 380 },
+        { name: 'Bar 7', value: 420 },
+        { name: 'Bar 8', value: 430 },
+        { name: 'Bar 9', value: 450 },
+    ]
+    
+    
+    // 画一个Y轴的轴线
+    function createxAxis() {
+        ctx.beginPath()
+        ctx.moveTo(20, 20)
+        ctx.lineTo(20, options.height - 20)
+        ctx.stroke()
+        ctx.closePath()
+    }
+
+    // 画一个X轴的轴线
+    function createyAxis() {
+        const xAxisLineHeight = options.height - 20
+        ctx.beginPath()
+        ctx.moveTo(20, xAxisLineHeight)
+        ctx.lineTo(730, xAxisLineHeight)
+        ctx.stroke()
+        ctx.closePath()
+    }
+    // 画柱状体
+    function seriesData(data) {
+        // 1. 获取 取整的随机数，从调色盘中获取颜色，用来显示柱状体的填充颜色
+        // 2. 设置 X 轴上 柱状体开始的位置，并随着数据的 逐个添加  50（柱状体的宽度） + 20（柱状体之间的距离） 的间距
+        // 3. 在 x 轴线下 写入 柱状体的 刻度文本
+        // 4. 在 x 轴线上 写入 柱状体的 数据值
+        const random = Math.ceil(Math.random() * 10)
+        const color = colors[random > colors.length ? 0 : random]
+        let x = 0
+        for (let i = 0; i < data.length; i++) {
+            x = x + 70
+            // 画一个柱状体
+            ctx.beginPath()
+            ctx.moveTo(x, options.height - 21)
+            ctx.lineTo(x, options.height - data[i].value)
+            ctx.lineWidth = 50
+            ctx.strokeStyle = color
+            ctx.stroke()
+            ctx.closePath()
+            // 画一个刻度文本
+            ctx.font = '12px 微软雅黑'
+            ctx.fillText(data[i].name, x - 15, options.height - 5)
+            ctx.fillText(data[i].value, x - 15, options.height - data[i].value - 5)
+        }
+    }
+    // 生成坐标轴和柱状图
+    function createAxis() {
+        createxAxis()
+        createyAxis()
+        seriesData(barData)
+    }
+    createAxis()
+</script>
+</html>

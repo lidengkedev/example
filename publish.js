@@ -82,7 +82,7 @@ folder.forEach((filename) => {
     let htmlReadmeMdFileSteam = fs.readFileSync(resolve('HTML-README.md'), { encoding: 'utf-8' })
 
     // 追加 HTML-README.md 文本内容
-    htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/htmls/${uuid}.html)`
+    htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/htmls/${uuid}.html)\n`
     
     // 写入文本内容
     fs.writeFileSync(resolve('HTML-README.md'), htmlReadmeMdFileSteam)
