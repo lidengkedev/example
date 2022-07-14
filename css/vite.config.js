@@ -15,7 +15,7 @@ fs.writeFileSync(resolve(__dirname, '../CSS-README.md'), CSS_README_MD)
 
 function setRollupOptionsInput () {
     
-    const folder = fs.readdirSync(path.join(__dirname, 'page'))
+    const folder = fs.readdirSync(path.join(__dirname, 'pages'))
 
     const rollupOptionsInput = {
         main: resolve(__dirname, 'index.html')
@@ -24,7 +24,7 @@ function setRollupOptionsInput () {
         if (file.includes('.html')) {
 
             // 读取每一个html文件，返回文本内容
-            const file_steams = fs.readFileSync(resolve(__dirname, 'page/' + file), { encoding: 'utf-8' })
+            const file_steams = fs.readFileSync(resolve(__dirname, 'pages/' + file), { encoding: 'utf-8' })
             // 正则表达式：匹配 html 中 title 标签中的 文本内容
             const reg = new RegExp('(.*)<title>(.*?)</title>(.*)')
 
@@ -35,13 +35,13 @@ function setRollupOptionsInput () {
             let htmlReadmeMdFileSteam = fs.readFileSync(resolve(__dirname, '../CSS-README.md'), { encoding: 'utf-8' })
 
             // 追加 HTML-README.md 文本内容
-            htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/css/${file}.html)\n`
+            htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/css/pages/${file}.html)\n`
 
             // 写入文本内容
             fs.writeFileSync(resolve(__dirname, '../CSS-README.md'), htmlReadmeMdFileSteam)
 
             const filename = file.slice(0, -5)
-            rollupOptionsInput[filename] = resolve(__dirname, `page/${file}`)
+            rollupOptionsInput[filename] = resolve(__dirname, `pages/${file}`)
         }
     })
     return rollupOptionsInput
