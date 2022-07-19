@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浏览器全屏功能实现</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        .header {
+            height: 60px;
+            line-height: 60px;
+            padding: 0 20px;
+            text-align: right;
+            color: #FFF;
+            background-color: #000;
+        }
+        .fullscreen {
+            margin: 10px;
+            width: 40px;
+            height: 40px;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            cursor: pointer;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-image: url('./images/1549615.png');
+            background-size: cover;
+        }
+        .is-fullscreen {
+            background-image: url('./images/1549616.png');
+        }
+    </style>
+</head>
+<body>
+    <div class="warpper">
+        <div class="header">
+            <button class="fullscreen"></button>
+        </div>
+    </div>
+    <script>
+        window.onload = function () {
+            const btn = document.querySelector('.fullscreen')
+            btn.onclick = function () {
+                fullScreen()
+                document.onfullscreenchange = function () {
+                    if (document.fullscreen) {
+                        btn.setAttribute('class', 'fullscreen is-fullscreen')
+                    } else {
+                        btn.classList.remove('is-fullscreen')
+                    }
+                    console.log(`fullscreen: ======> ${document.fullscreen}`)
+                }
+            }
+            document.addEventListener('keydown', fullscreenEventListener)
+        }
+
+        window.onbeforeunload = function () {
+            document.removeEventListener('keydown', fullscreenEventListener)
+        }
+
+        function fullscreenEventListener(event) {
+            if (event.keyCode === 122) {
+                event.preventDefault()
+                fullScreen()
+            }
+        }
+        function fullScreen () {
+            if (document.fullscreen) {
+                closeFullScreen()
+            } else {
+                openFullScreen()
+            }
+        }
+        function closeFullScreen () {
+            if (document.exitFullscreen) {
+                document.exitFullscreen()
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen()
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen()
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen()
+            }
+        }
+        function openFullScreen () {
+            const elem = document.documentElement
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen()
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen()
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen()
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen()
+            }
+        }
+    </script>
+</body>
+</html>
