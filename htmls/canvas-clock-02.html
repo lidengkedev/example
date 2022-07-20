@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>罗马表盘时钟</title>
+    <title>使用 canvas 绘制一个转动的罗马表盘时钟</title>
     <style>
+        body {
+            background-color: blanchedalmond;
+            background-image: url('./images/previewFix.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
         .watch-warpper {
             position: relative;
             width: 600px;
@@ -16,7 +23,10 @@
             font-size: 12px;
             overflow: hidden;
             user-select: none;
+            text-shadow: 1px 5px 2px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
         }
+
         .sceonds-warpper {
             position: absolute;
             left: 0;
@@ -25,6 +35,7 @@
             height: 24px;
             transition: all 300ms ease-in-out;
         }
+
         .sceonds-warpper .sceond {
             position: absolute;
             width: 600px;
@@ -33,6 +44,7 @@
             transform-origin: center;
             color: red;
         }
+
         .minutes-warpper {
             position: absolute;
             top: 287px;
@@ -41,6 +53,7 @@
             height: 24px;
             transition: all 300ms ease-in-out;
         }
+
         .minutes-warpper .minute {
             position: absolute;
             width: 450px;
@@ -48,6 +61,7 @@
             text-align: right;
             transform-origin: center;
         }
+
         .hours-warpper {
             position: absolute;
             top: 287px;
@@ -56,6 +70,7 @@
             height: 24px;
             transition: all 300ms ease-in-out;
         }
+
         .hours-warpper .hour {
             position: absolute;
             width: 300px;
@@ -64,6 +79,7 @@
             transform-origin: center;
             color: blue;
         }
+
         .date-warpper {
             position: absolute;
             height: 24px;
@@ -71,8 +87,9 @@
             left: 220px;
             width: 170px;
             text-align: center;
-            color: rgb(207, 40, 40);
+            color: green;
         }
+
         .date-time-current-line {
             position: absolute;
             top: 285px;
@@ -81,6 +98,7 @@
             height: 24px;
             border-bottom: 2px solid green;
         }
+
         .date-time-current-line::before {
             content: '';
             width: 6px;
@@ -93,6 +111,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="watch-warpper">
         <div class="sceonds-warpper"></div>
@@ -111,7 +130,7 @@
             const date_warpper = document.querySelector('.date-warpper')
             const number_upperCase = ['十', '一', '二', '三', '四', '五', '六', '七', '八', '九']
             const number_upperCase_2 = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九']
-            
+
             function setYearMonthDayHourMinuteSecondDOM() {
                 runCurrentDateTimeInterval()
                 setMinutesAndSecondsDOM()
@@ -149,8 +168,8 @@
                 sceonds_warpper.appendChild(sceond_document_fragment)
                 minutes_warpper.appendChild(minute_document_fragment)
             }
-            
-            function setHoursDOM () {
+
+            function setHoursDOM() {
                 const hour_document_fragment = document.createDocumentFragment()
                 for (let i = 1; i <= 24; i++) {
                     let NUMBER = String(i).split('').map(item => number_upperCase[item])
@@ -177,7 +196,7 @@
                 current_timer = setInterval(setCurrentDateTime, 1000)
             }
 
-            function setCurrentDateTime () {
+            function setCurrentDateTime() {
                 const date = new Date()
                 const YEAR = date.getFullYear()
                 const MONTH = date.getMonth() + 1
@@ -189,7 +208,7 @@
                 const MONTH_UPPERCASE = MONTH.toString().split('').map(item => number_upperCase_2[item]).join('')
                 const DAY_UPPERCASE = DAY.toString().split('').map(item => number_upperCase_2[item]).join('')
                 date_warpper.innerHTML = `${YEAR_UPPERCASE}年${setDateTimeUpperCase(MONTH)}月${setDateTimeUpperCase(DAY)}日`
-                sceonds_warpper.style.transform = `rotate(${360 / 60 * (SECOND )}deg)`
+                sceonds_warpper.style.transform = `rotate(${360 / 60 * (SECOND)}deg)`
                 minutes_warpper.style.transform = `rotate(${360 / 60 * (MINUTE)}deg)`
                 hours_warpper.style.transform = `rotate(${360 / 24 * (HOUR)}deg)`
             }
@@ -212,4 +231,5 @@
         }
     </script>
 </body>
+
 </html>
