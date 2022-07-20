@@ -114,7 +114,7 @@ function setHtmlReadmeFile(filename_path, readme_file) {
         // 读取 HTML-README.md 文件，返回 HTML-README.md 文件的文本内容
         let htmlReadmeMdFileSteam = fs.readFileSync(resolve(readme_file), { encoding: 'utf-8' })
         // 追加 HTML-README.md 文本内容
-        htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/${filename_path})\n`
+        htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/${filename_path})\r\n`
         // 写入文本内容
         fs.writeFileSync(resolve(readme_file), htmlReadmeMdFileSteam)
     }
@@ -126,9 +126,9 @@ function setHtmlReadmeFile(filename_path, readme_file) {
 function createHtmlReadmeFile() {
     // 定义 HTML-README.md 文件的标题内容
     const HTML_README_MD = (
-        '# HTML 示例文件访问链接汇总目录\n' +
-        '[TOC]\n' +
-        '## HTML 文件示例\n'
+        '# HTML 示例文件访问链接汇总目录\r\n' +
+        '[TOC]\r\n' +
+        '## HTML 文件示例\n\n'
     )
     // 初始化写入 HTML-README.md 文件的标题内容
     fs.writeFileSync(resolve('HTML-README.md'), HTML_README_MD)
