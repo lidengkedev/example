@@ -32,6 +32,55 @@
         .menu-item:hover {
             opacity: 0.8;
         }
+        #node-add-form-warpper {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 240px;
+            display: none;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid transparent;
+            background-color: rgba(255,255,255, 0);
+            box-shadow: inset 0 0 5px rgba(255,255,255, 0.8);
+        }
+        #node-add-form-warpper .form-header {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        #node-add-form-warpper .form-item {
+            margin-bottom: 15px;
+        }
+        #node-add-form-warpper .form-item:last-child {
+            text-align: center;
+            margin-bottom: 0;
+        }
+        input {
+            width: 100%;
+            border: 1px solid #eaeaea;
+            border-radius: 5px;
+            padding: 5px 7px;
+            color: #FFF;
+            background-color: transparent;
+        }
+        input:focus-visible {
+            outline: none;
+        }
+        button {
+            border: 1px solid #eaeaea;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #FFF;
+            background-color: transparent;
+        }
+        button[data-type='primary'] {
+            margin-left: 40px;
+            color: #FFFFFF;
+            background-color: #409EFF;
+        }
     </style>
 </head>
 <body>
@@ -39,9 +88,21 @@
         <div id="container"></div>
         <div id="menu-warpper">
             <ul class="menu-inner">
-                <li class="menu-item">添加</li>
-                <li class="menu-item">删除</li>
+                <li id="node-add" class="menu-item">添加</li>
+                <li id="node-delete" class="menu-item">删除</li>
+                <li id="node-dig" class="menu-item">挖掘</li>
             </ul>
+        </div>
+        <div id="node-add-form-warpper">
+            <div class="form-header">新增节点</div>
+            <div class="form-item">
+                <label for="" class="form-title"></label>
+                <input type="text" class="form-input new-node" placeholder="请输入名称">
+            </div>
+            <div class="form-item">
+                <button class="form-btn cancel">取消</button>
+                <button class="form-btn submit" data-type="primary">确定</button>
+            </div>
         </div>
     </div>
 </body>
@@ -196,6 +257,13 @@
 <script>
     const container = document.getElementById('container')
     const menu_warpper = document.getElementById('menu-warpper')
+    const node_add_elem = document.getElementById('node-add')
+    const node_delete_elem = document.getElementById('node-delete')
+    const node_dig_elem = document.getElementById('node-dig')
+    const node_add_form_warpper_elem = document.getElementById('node-add-form-warpper')
+    const node_add_form_new_node_elem = document.querySelector('#node-add-form-warpper .new-node')
+    const node_add_submit_elem = document.querySelector('#node-add-form-warpper .submit')
+    const node_add_cancel_elem = document.querySelector('#node-add-form-warpper .cancel')
     let eventOptions = {
         node_seleced: false,
         node_id: 0,
@@ -212,6 +280,23 @@
         height: '100%',
         width: '100%',
         locale: 'en',
+        locales: {
+            en: {
+                edit: '修改',
+                del: '删除选中',
+                back: '返回',
+                addNode: '添加节点',
+                addEdge: '添加线',
+                editNode: '修改节点',
+                editEdge: '修改线',
+                addDescription: '在空白处单击以放置新节点',
+                edgeDescription: '单击一个节点并将边缘拖动到另一个节点以连接它们',
+                editEdgeDescription: '单击控制点并将其拖动到节点以连接到该节点',
+                createEdgeError: '无法将边缘链接到群集',
+                deleteClusterError: '无法删除群集',
+                editClusterError: '无法修改群集'
+            }
+        },
         clickToUse: false,
         configure: {},// defined in the configure module.
         edges: {
@@ -234,8 +319,8 @@
                 x: 5,
                 y: 5
             },
-            shape: 'circle',
-            title: 'title'
+            shape: 'text',
+            // title: 'title'
         },// defined in the nodes module.
         groups: {},// defined in the groups module.
         layout: {},// defined in the layout module.
@@ -247,7 +332,7 @@
     }
 
     const person = [
-        { id: 1, label: '原始天尊', pid: 0 },
+        { id: 1, label: '原始天尊', pid: 17 },
         { id: 2, label: '南极仙翁', pid: 1 },
         { id: 3, label: '燃灯道人', pid: 1 },
         { id: 4, label: '云中子', pid: 1 },
@@ -263,50 +348,70 @@
         { id: 14, label: '玉鼎真人', pid: 1 },
         { id: 15, label: '道行天尊', pid: 1 },
         { id: 16, label: '清虚道德真君', pid: 1 },
+        { id: 17, label: '盘古', pid: 0 },
+        { id: 18, label: '鸿钧', pid: 17 },
+        { id: 19, label: '女娲', pid: 17 },
+        { id: 20, label: '伏羲', pid: 17 },
+        { id: 21, label: '轩辕', pid: 17 },
+        { id: 22, label: '蚩尤', pid: 17 },
+        { id: 23, label: '神农', pid: 17 },
+        { id: 24, label: '大禹', pid: 17 },
+        { id: 25, label: '共工', pid: 17 },
+        { id: 26, label: '太上老君', pid: 17 },
+        { id: 27, label: '灵宝道君', pid: 17 },
+        { id: 28, label: '姜子牙', pid: 17 },
+        { id: 29, label: '姬昌', pid: 17 },
+        { id: 30, label: '姬发', pid: 17 },
+        { id: 31, label: '伯邑考', pid: 17 },
     ]
     
     window.onload = function () {
-        // var nodes = new vis.DataSet([
-        //     { id: 1, label: '盘古' },
-        //     { id: 2, label: '鸿钧' },
-        //     { id: 3, label: '女娲' },
-        //     { id: 4, label: '伏羲' },
-        //     { id: 5, label: '轩辕' },
-        //     { id: 6, label: '蚩尤' },
-        //     { id: 7, label: '神农' },
-        //     { id: 8, label: '大禹' },
-        //     { id: 9, label: '共工' },
-        //     { id: 10, label: '太上老君' },
-        //     { id: 11, label: '原始天尊' },
-        //     { id: 12, label: '灵宝道君' },
-        //     { id: 13, label: '太乙真人' },
-        //     { id: 14, label: '玉鼎真人' },
-        //     { id: 15, label: '姜子牙' },
-        //     { id: 16, label: '姬昌' },
-        //     { id: 17, label: '姬发' },
-        //     { id: 18, label: '伯邑考' }
-        // ])
+        
+        // 画布-节点
         var nodes = new vis.DataSet(person)
+
+        // 画布-线
         var edges = new vis.DataSet(person.map(v => { return { from: v.pid, to: v.id } }))
-        // var edges = new vis.DataSet([
-        //     { from: 1, to: 3, label: 'label' },
-        //     { from: 1, to: 2, label: 'label' },
-        //     { from: 2, to: 10, label: 'label' },
-        //     { from: 2, to: 11, label: 'label' },
-        //     { from: 2, to: 12, label: 'label' },
-        //     { from: 11, to: 13, label: 'label' },
-        //     { from: 11, to: 14, label: 'label' },
-        //     { from: 11, to: 15, label: 'label' },
-        // ])
+
+        // 画布-节点和线
         var data = {
             nodes: nodes,
             edges: edges
         }
+
+        // 画布-实例
         network = new vis.Network(container, data, options)
         
+        // 画布容器-单击
         container.onclick = function (event) {
             menu_warpper.style.display = 'none'
         }
+
+        // 添加节点
+        node_add_elem.onclick = function () {
+            menu_warpper.style.display = 'none'
+            node_add_form_warpper_elem.style.display = 'block'
+        }
+        // 删除节点
+        node_delete_elem.onclick = function () {
+            menu_warpper.style.display = 'none'
+        }
+        // 挖掘节点
+        node_dig_elem.onclick = function () {
+            menu_warpper.style.display = 'none'
+        }
+        // 添加节点-确认
+        node_add_submit_elem.onclick = function () {
+            node_add_form_new_node_elem.value = ''
+            node_add_form_warpper_elem.style.display = 'none'
+        }
+        // 添加节点-取消
+        node_add_cancel_elem.onclick = function () {
+            node_add_form_new_node_elem.value = ''
+            node_add_form_warpper_elem.style.display = 'none'
+        }
+        
+        // 画布容器-右键菜单
         container.oncontextmenu = function (event) {
             event.preventDefault()
             if (eventOptions.node_seleced) {
@@ -318,6 +423,8 @@
                 network.unselectAll()
             }
         }
+
+        // 画布-单击
         network.on('click', function (properties) {
             console.log(properties)
             const { edges, nodes } = properties
@@ -377,6 +484,8 @@
                 // })
             }
         })
+        
+        // 画布-节点-上浮
         network.on('hoverNode', function(properties) {
             eventOptions.node_seleced = true
             // eventOptions.node_id = properties.node
@@ -384,6 +493,8 @@
             // const scale = network.getScale()
             // console.log({scale})
         })
+
+        // 画布-节点-离开
         network.on('blurNode', function (properties) {
             eventOptions.node_seleced = false
             // eventOptions.node_id = 0
@@ -404,6 +515,8 @@
             // 获取当前的关系图缩放级别。1.0是100% ，0是无限放大。
             // network.getScale()
         })
+        
+        // 画布-菜单
         network.on('contextmenu', function (properties) {
             console.log(properties)
         })
@@ -416,6 +529,8 @@
         //         easingFunction: 'ease-in-out'
         //     }
         // })
+        
+        // 本地数据库
         sql = new Sql()
         sql.connect('database', 1).then(res => {
             if (sql.hasObjectStoreNames('person')) {
