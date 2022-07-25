@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS3 cube-bezier() 函数定义三次贝塞尔曲线 制作动画效果</title>
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box;}
+        body {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        section {
+            position: relative;
+            width: 50%;
+            border-right: 1px solid #eaeaea;
+            border-bottom: 1px solid #eaeaea;
+            min-height: 300px;
+        }
+        section i {
+            position:absolute;
+            width:50px;
+            height:50px;
+            border-radius:50%;
+            background:radial-gradient(at 30% 30%,#0000,#000a) red;
+            left:var(--x);
+            top: var(--y);
+        }
+        .section-1 i.start {
+            animation: section-1-x 1s, section-1-y 0.5s;
+            animation-timing-function: cubic-bezier(.5,-800,.5,800);
+            animation-iteration-count: infinite;
+        }
+        
+
+
+        d {
+            position: fixed;
+            height: 4px;
+            width: 4px;
+            background:#222;
+            border-radius: 50%;
+        }
+        section .btn {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family:sans-serif;
+            font-size: 16px;
+            background:#c82629;
+            color:#fff;
+        }
+        .section-2 i {
+            left:10px;
+            top:200px;
+        }
+        .section-2 i.start {
+            animation:
+                section-2-x 2s linear infinite alternate,
+                section-2-y 2s infinite cubic-bezier(0,500,1,500);
+        }
+        
+        
+        .section-3 i {
+            left:10px;
+            top:150px;
+        }
+        .section-3 i.start {
+            animation:
+                section-3-x 2s linear infinite alternate,
+                section-3-y 2s infinite cubic-bezier(0.5,500,0.5,-500) alternate;
+        }
+        .section-4 i {
+            left:0;
+            top:50%;
+        }
+        .section-4 i.start {
+            animation:
+                section-4-x 10s linear infinite alternate,
+                section-4-y 2s infinite cubic-bezier(.5,600,.5,-600);
+        }
+        .section-5 i {
+            left:0;
+            top:40%;
+        }
+        .section-5 i.start {
+            animation:
+                section-5-x 10s linear infinite alternate,
+                section-5-y 2s infinite cubic-bezier(.5,1330,.5,-1330);
+        }
+    </style>
+    <style>
+        @keyframes section-1-x { to { left:calc(var(--x) + 1px); } }
+        @keyframes section-1-y { to { top :calc(var(--y) + 0.2px); } }
+        @keyframes section-2-x { to { left:250px; } }
+        @keyframes section-2-y { to { top:199.5px; } }
+        @keyframes section-3-x { to { left:300px; } }
+        @keyframes section-3-y { to { top:149.5px; } }
+        @keyframes section-4-x { to { left:calc(100% - 40px); } }
+        @keyframes section-4-y { to { top:49.9%; } }
+        @keyframes section-5-x { to { left:calc(100% - 40px); } }
+        @keyframes section-5-y { to { top:39.9%; } }
+    </style>
+</head>
+<body>
+    <section class="section-1"> <i style="--x:300px;--y:100px;"></i> <button class="btn"> Run the animation </button> </section>
+    <section class="section-2"> <i></i> <button class="btn"> Run the animation </button> </section>
+    <section class="section-3"> <i></i> <button class="btn"> Run the animation </button> </section>
+    <section class="section-4"><i></i><button class="btn"> Run the animation </button></section>
+    <section class="section-5"><i></i><button class="btn"> Run the animation </button></section>
+</body>
+<script>
+    function section_1 () {
+        let elem = document.querySelector('.section-1 i');
+        let start;
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            let rect = elem.getBoundingClientRect();
+            // document.body.insertAdjacentHTML(
+            //     "beforeBegin",
+            //     '<d style="top:' + (rect.y + rect.height / 2) + 'px;left:' + (rect.x + rect.width / 2) + 'px;"></d>'
+            // )
+
+            if (elapsed < 3000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+        document.querySelector(".section-1 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_2 () {
+        let elem = document.querySelector('.section-2 i');
+        let start;
+
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 4000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+
+        document.querySelector(".section-2 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_3 () {
+        let elem = document.querySelector('.section-3 i');
+        let start;
+
+        const debug = (timestamp) => {
+            console.log({start, timestamp})
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 4000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+        document.querySelector(".section-3 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_4 () {
+        let elem = document.querySelector('.section-4 i');
+        let start;
+
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 20000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+
+        document.querySelector(".section-4 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_5 () {
+        let elem = document.querySelector('.section-5 i');
+        let start;
+
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 20000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+
+        document.querySelector(".section-5 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+
+
+    section_1()
+    section_2()
+    section_3()
+    section_4()
+    section_5()
+
+</script>
+</html>
