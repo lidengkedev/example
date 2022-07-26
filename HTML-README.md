@@ -8,6 +8,7 @@
 - [使用 canvas 实现益智五子棋游戏](https://lidengkedev.github.io/example/htmls/canvas-gobang.html)
 - [CSS3 cube-bezier() 函数定义三次贝塞尔曲线 制作动画效果](https://lidengkedev.github.io/example/htmls/css3-cubic-bezier.html)
 - [使用 css3 展示 Flex 布局示例](https://lidengkedev.github.io/example/htmls/css3-flex.html)
+- [使用 CSS 的属性 transition 绘制多种动画效果](https://lidengkedev.github.io/example/htmls/css3-transition.html)
 - [使用 echarts 绘制一个2d 地图](https://lidengkedev.github.io/example/htmls/echarts-map-2d.html)
 - [使用 echarts 绘制一个 3d 地图](https://lidengkedev.github.io/example/htmls/echarts-map-3d.html)
 - [使用 js 实现在输入框内输入文本，输出打字机效果](https://lidengkedev.github.io/example/htmls/font-print.html)
