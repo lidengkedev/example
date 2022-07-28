@@ -10,163 +10,26 @@
         body {
             width: 100%;
             height: 99vh;
-            background-color: aqua;
-        }
-        #echarts {
-            border: 1px solid #eaeaea;
+            background-color: black;
         }
         #canvas {
             position: absolute;
             top: 0;
             left: 0;
         }
+        #echarts {
+            width: 100%;
+            height: 90vh;
+        }
     </style>
 </head>
 <body>
     <canvas id="canvas" width="1300px" height="600px" style="pointer-events: none;"></canvas>
-    <div id="echarts" style="width: 100%; height: 100%;"></div>
-    <img src="./images/004.jpg" style="display: none" alt="" id="map-bg">
+    <div id="echarts"></div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
 <script>
-    const data = [
-        { name: '南京市', value: 3802 },
-        { name: '无锡市', value: 3802 },
-        { name: '徐州市', value: 3412 },
-        { name: '常州市', value: 3421 },
-        { name: '苏州市', value: 3802 },
-        { name: '南通市', value: 3432 },
-        { name: '连云港市', value: 3512 },
-        { name: '淮安市', value: 3802 },
-        { name: '盐城市', value: 3802 },
-        { name: '扬州市', value: 3802 },
-        { name: '镇江市', value: 3802 },
-        { name: '泰州市', value: 3612 },
-        { name: '宿迁市', value: 3802 },
-    ]
-
-    const gdGeoCoordMap = {
-        "南京市": [118.767413, 32.041544],
-        "无锡市": [120.301663, 31.574729],
-        "徐州市": [117.184811, 34.261792],
-        "常州市": [119.946973, 31.772752],
-        "苏州市": [120.619585, 31.299379],
-        "南通市": [120.864608, 32.016212],
-        "连云港市": [119.178821, 34.600018],
-        "淮安市": [119.021265, 33.597506],
-        "盐城市": [120.139998, 33.377631],
-        "扬州市": [119.421003, 32.393159],
-        "镇江市": [119.452753, 32.204402],
-        "泰州市": [119.915176, 32.484882],
-        "宿迁市": [118.275162, 33.963008],
-    }
-
-    const convertData = function (data) {
-        var res = []
-        for (var i = 0; i < data.length; i++) {
-            var geoCoord = gdGeoCoordMap[data[i].name]
-            if (geoCoord) {
-                res.push({
-                    name: data[i].name,
-                    value: geoCoord.concat(data[i].value)
-                })
-            }
-        }
-        return res
-    }
-
-    const options = {
-        geo3D: {
-            map: '江苏',              // 地图类型。
-            boxDepth: 80,            // 三维地理坐标系组件在三维场景中的深度
-            regionHeight: 4,        // 三维地图每个区域的高度
-            // 用于鼠标的旋转，缩放等视角控制
-            viewControl: {
-                autoRotate: false,          // 是否开启视角绕物体的自动旋转查看
-                rotateSensitivity: 0,       // 旋转操作的灵敏度，值越大越灵敏。支持使用数组分别设置横向和纵向的旋转灵敏度。
-                zoomSensitivity: 0,         // 缩放操作的灵敏度，值越大越灵敏。
-                panSensitivity: 0,          // 平移操作的灵敏度，值越大越灵敏。支持使用数组分别设置横向和纵向的平移灵敏度
-                alpha: 40,                    // 视角绕 x 轴，即上下旋转的角度。配合 beta 可以控制视角的方向。
-                beta: 0,                    // 视角绕 y 轴，即左右旋转的角度。
-                maxBeta: 45,                // 左右旋转的最大 beta 值。即视角能旋转到达最右的角度。
-            },
-            // 三维地理坐标系组件 中三维图形的视觉属性，包括颜色，透明度，描边等
-            itemStyle: {
-                opacity: 1,
-                color: 'rgb(5,101,123)', // 地图颜色
-                borderWidth: 1,         // 分界线wdith
-                borderColor: '#459bca', // 分界线颜色
-            },
-            // 鼠标 hover 高亮时图形和标签的样式。
-            emphasis: {
-                label: {
-                    show: false,           // 是否显示高亮
-                },
-                itemStyle: {
-                    color: '#0489d6'    // 地图高亮颜色
-                }
-            },
-            // 光照相关的设置。
-            light: {
-                // 场景主光源的设置
-                main: {
-                    color: '#fff',          // 主光源的颜色
-                    intensity: 1.5,         // 主光源的强度
-                    shadow: true,          // 主光源是否投射阴影
-                    shadowQuality: 'high',  // 阴影的质量
-                    // alpha: 55,              // 主光源绕 x 轴，即上下旋转的角度
-                    // beta: 4,               // 主光源绕 y 轴，即左右旋转的角度
-                },
-                // 全局的环境光设置
-                ambient: {
-                    color: '#fff', // 环境光的颜色
-                    intensity: 2  // 环境光的强度
-                },
-                ambientCubemap: {
-                    diffuseIntensity: 2, // 漫反射的强度
-                    specularIntensity: 2, // 高光反射的强度
-                }
-            },
-        },
-        series: [
-            {
-                type: "bar3D",
-                coordinateSystem: 'geo3D', // 该系列使用的坐标系
-                barSize: 1, // 柱子粗细
-                shading: 'realistic', // realistic lambert color 三维柱状图中三维图形的着色效果。
-                bevelSize: 1, // 柱子的倒角尺寸。支持设置为从 0 到 1 的值。
-                bevelSmoothness: 5, // 柱子倒角的光滑/圆润度，数值越大越光滑/圆润。
-                label: {
-                    show: true,
-                    distance: 1, // 标签距离图形的距离，在三维的散点图中这个距离是屏幕空间的像素值，其它图中这个距离是相对的三维距离。
-                    textStyle: {
-                        color: '#fff',
-                        fontSize: 18,
-                        fontWeight: 'normal',
-                        borderWidth: 0.5,
-                        borderColor: 'transparent'
-                    },
-                    formatter: function (data) {
-                        var res = data.name + " " + data.value[2]
-                        return res
-                    }
-                },
-                data: [],
-            },
-            {
-                type: 'scatter3D',
-                name: '电厂',
-                coordinateSystem: 'geo3D',
-                // symbol: 'arrow',
-                symbol: 'path://M512 991.738V591.762l415.992-240.024v400.016L512 991.738z M95.968 351.738L512 591.762v399.976L95.968 751.754V351.738z M95.968 367.762L512 127.738l415.992 240.024L512 607.746 95.968 367.762z M95.968 351.738L512 111.754l415.992 239.984L512 591.762 95.968 351.738z M664.524 199.762l263.468 151.976L512 591.762V287.73l152.524-87.968z M512 367.762v150.148l-288.008-166.172v-150.148L512 367.762z M512 367.762l287.976-166.172v150.148L512 517.91v-150.148z M512 47.746l291.196 168-291.196 168-291.234-168 291.234-168z M512 31.762l291.196 168-291.196 168-291.234-168 291.234-168z M512 367.762l-291.234-168 28.508-16.43L512 95.738v272.024z M512 95.738V31.762l262.688 151.57L512 95.738z M767.968 844.066l-95.976 55.392v-99.72l95.976-55.382v99.71z M815.992 763.426v-59.664l47.992-27.696v59.664l-47.992 27.696z m0-155.68l47.992-27.696v43.68l-47.992 27.696v-43.68z m0-96.016l47.992-27.656v43.672l-47.992 27.704v-43.72zM736 655.738l47.992-27.696v43.71L736 699.45v-43.712z m0-95.984l47.992-27.696v43.68L736 603.434v-43.68z m-16.024-240.016l47.992-27.696v43.71l-47.992 27.696v-43.71z m-64.008 384.024l48.024-27.696v43.68l-48.024 27.696v-43.68z m0-96.016l48.024-27.696v43.68l-48.024 27.696v-43.68z m-15.984-239.984l47.992-27.696v43.68l-47.992 27.696v-43.68z m-64.008 479.968L624 820.036v59.704l-48.024 27.696v-59.706z m0-95.976L624 724.058v43.68l-48.024 27.696v-43.68z m0-96.016L624 628.042v43.71l-48.024 27.696v-43.71z m-15.984-239.984l47.984-27.696v43.68l-47.984 27.696v-43.68z M159.976 719.746v-43.68l47.992 27.696v43.68l-47.992-27.696z m0-96.016v-43.68l47.992 27.696v43.68l-47.992-27.696z m80 48.024v-43.71L288 655.738v43.71l-48.024-27.694z m79.992 47.992v-43.68l48.024 27.696v43.68l-48.024-27.696zM400 767.738v-43.68l47.992 27.696v43.68L400 767.738z m-160.024 0v-43.68L288 751.754v43.68l-48.024-27.696z m79.992 48.024v-43.718l48.024 27.696v43.718l-48.024-27.696zM400 863.754v-43.718l47.992 27.696v43.718L400 863.754zM159.976 527.746v-43.672l47.992 27.656v43.718l-47.992-27.702z m80 47.992v-43.68L288 559.754v43.68l-48.024-27.696z m79.992 47.992v-43.68l48.024 27.696v43.68l-48.024-27.696zM400 671.754v-43.71l47.992 27.696v43.71L400 671.754z m-144.008-336v-43.71l47.992 27.696v43.71l-47.992-27.696z m80 47.992v-43.68l47.984 27.696v43.68l-47.984-27.696z m79.992 47.992v-43.68l47.992 27.696v43.68l-47.992-27.696z M512 405.91l-288.008-166.172v-38.148L512 367.762v38.148z m0 217.82L95.968 383.746v-32.008L512 591.762v31.968z M512 367.762l287.976-166.172v38.148L512 405.91v-38.148z m415.992 15.984L512 623.73v-31.968l415.992-240.024v32.008z',
-                symbolSize: [40, 40],
-                color: '#2da44e',
-                data: []
-            }
-        ]
-    }
-
     function createCanvas() {
         var canvas = document.getElementById('canvas'),
             ctx = canvas.getContext('2d'),
@@ -266,16 +129,174 @@
 
         animation();
     }
+    createCanvas()
 
-    function createMap() {
+</script>
+<script>
+    const data = [
+        { name: '南京市', value: 1 },
+        { name: '无锡市', value: 1 },
+        { name: '徐州市', value: 1 },
+        { name: '常州市', value: 1 },
+        { name: '苏州市', value: 1 },
+        { name: '南通市', value: 1 },
+        { name: '连云港市', value: 1 },
+        { name: '淮安市', value: 1 },
+        { name: '盐城市', value: 1 },
+        { name: '扬州市', value: 1 },
+        { name: '镇江市', value: 1 },
+        { name: '泰州市', value: 1 },
+        { name: '宿迁市', value: 1 },
+    ]
+
+    const gdGeoCoordMap = {
+        "南京市": [118.767413, 32.041544],
+        "无锡市": [120.301663, 31.574729],
+        "徐州市": [117.184811, 34.261792],
+        "常州市": [119.946973, 31.772752],
+        "苏州市": [120.619585, 31.299379],
+        "南通市": [120.864608, 32.016212],
+        "连云港市": [119.178821, 34.600018],
+        "淮安市": [119.021265, 33.597506],
+        "盐城市": [120.139998, 33.377631],
+        "扬州市": [119.421003, 32.393159],
+        "镇江市": [119.452753, 32.204402],
+        "泰州市": [119.915176, 32.484882],
+        "宿迁市": [118.275162, 33.963008],
+    }
+
+    const convertData = function (data) {
+        var res = []
+        for (var i = 0; i < data.length; i++) {
+            var geoCoord = gdGeoCoordMap[data[i].name]
+            if (geoCoord) {
+                res.push({
+                    name: data[i].name,
+                    value: geoCoord.concat(data[i].value)
+                })
+            }
+        }
+        return res
+    }
+
+    let mapName = '江苏'
+    let seriesData = convertData(data)
+    window.onload = function () {
+        fetch('https://geojson.cn/api/data/320000.json').then(res => res.json()).then(res => {
+            echarts.registerMap(mapName, res)
+            createMap(seriesData)
+        })
+    }
+
+    function createMap(data) {
+        let mapBgCanvas = document.createElement('img')
+        mapBgCanvas.setAttribute('src', './images/004.jpeg')
 
         const echart = echarts.init(document.getElementById('echarts'))
-
-        const mapBgImg = document.getElementById('map-bg')
-
-        echarts.registerMap('江苏', jiangsu)
-
-        echart.setOption(options)
+        echart.setOption({
+            geo3D: {
+                map: mapName,              // 地图类型。
+                roam: true,
+                zoom: 1,
+                boxDepth: 80,            // 三维地理坐标系组件在三维场景中的深度
+                regionHeight: 4,        // 三维地图每个区域的高度
+                // 用于鼠标的旋转，缩放等视角控制
+                viewControl: {
+                    autoRotate: false,          // 是否开启视角绕物体的自动旋转查看
+                    autoRotateSpeed: 0,//物体自传的速度
+                    rotateSensitivity: 0,       // 旋转操作的灵敏度，值越大越灵敏。支持使用数组分别设置横向和纵向的旋转灵敏度。
+                    zoomSensitivity: 0,         // 缩放操作的灵敏度，值越大越灵敏。
+                    panSensitivity: 0,          // 平移操作的灵敏度，值越大越灵敏。支持使用数组分别设置横向和纵向的平移灵敏度
+                    alpha: 50,                    // 视角绕 x 轴，即上下旋转的角度。配合 beta 可以控制视角的方向。
+                    beta: 0,                    // 视角绕 y 轴，即左右旋转的角度。
+                    maxBeta: 45,                // 左右旋转的最大 beta 值。即视角能旋转到达最右的角度。
+                    distance: 105,
+                    animation: true,
+                    animationEasingUpdate: 'cubicInOut'
+                },
+                label: {
+                    show: false,
+                    fontSize: 18,
+                    fontFamily: '微软雅黑',
+                    color: '#FFF'
+                },
+                // 三维地理坐标系组件 中三维图形的视觉属性，包括颜色，透明度，描边等
+                itemStyle: {
+                    color: 'rgb(5,101,123)', // 地图颜色
+                    opacity: 1,
+                    borderWidth: 1,         // 分界线wdith
+                    borderColor: 'rgba(17,255,255,0.5)', // 分界线颜色
+                },
+                // 鼠标 hover 高亮时图形和标签的样式。
+                emphasis: {
+                    label: {
+                        show: false,           // 是否显示高亮
+                        textStyle: {
+                            color: '#fff',
+                            fontSize: 13,
+                            backgroundColor: 'rgba(0,23,11,1)'
+                        }
+                    },
+                    itemStyle: {
+                        color: '#0489d6'    // 地图高亮颜色
+                    }
+                },
+                // 光照相关的设置。
+                light: {
+                    // 场景主光源的设置
+                    main: {
+                        color: '#fff',          // 主光源的颜色
+                        intensity: 1,         // 主光源的强度
+                        shadow: true,          // 主光源是否投射阴影
+                        shadowQuality: 'high',  // 阴影的质量
+                        // alpha: 55,              // 主光源绕 x 轴，即上下旋转的角度
+                        // beta: 4,               // 主光源绕 y 轴，即左右旋转的角度
+                    },
+                    // 全局的环境光设置
+                    ambient: {
+                        color: '#fff', // 环境光的颜色
+                        intensity: 1,  // 环境光的强度
+                        quality: 'high'
+                    },
+                    ambientCubemap: {
+                        exposure: 1.0,
+                        diffuseIntensity: 2, // 漫反射的强度
+                        specularIntensity: 2, // 高光反射的强度
+                    }
+                },
+                shading: 'color',
+                colorMaterial: {
+                    detailTexture: mapBgCanvas,
+                },
+            },
+            series: [
+                {
+                    type: "bar3D",
+                    coordinateSystem: 'geo3D', // 该系列使用的坐标系
+                    barSize: 4, // 柱子粗细
+                    bevelSize: 0.2, // 柱子的倒角尺寸。支持设置为从 0 到 1 的值。
+                    bevelSmoothness: 5, // 柱子倒角的光滑/圆润度，数值越大越光滑/圆润。
+                    silent: false,//图形是否不响应和触发鼠标事件
+                    minHeight: 2,
+                    label: {
+                        show: false,
+                        distance: 0.5, // 标签距离图形的距离，在三维的散点图中这个距离是屏幕空间的像素值，其它图中这个距离是相对的三维距离。
+                        textStyle: {
+                            color: '#FFF',
+                            fontSize: 14,
+                            fontWeight: '700',
+                            borderWidth: 0.5,
+                            borderColor: 'transparent'
+                        },
+                        formatter: function (data) {
+                            var res = data.value[2]
+                            return res
+                        }
+                    },
+                    data: convertData(data),
+                }
+            ]
+        }, true)
 
         echart.on('click', (params) => {
             console.log(params)
@@ -285,42 +306,6 @@
             }
         })
 
-        echart.setOption({
-            series: [
-                {
-                    data: convertData(data)
-                }, {
-                    // data: convertData([
-                    //     { name: '南京市', value: 1 },
-                    //     { name: '无锡市', value: 1 },
-                    //     { name: '徐州市', value: 1 },
-                    //     { name: '常州市', value: 1 },
-                    //     { name: '苏州市', value: 1 },
-                    //     { name: '南通市', value: 1 },
-                    //     { name: '连云港市', value: 1 },
-                    //     { name: '淮安市', value: 1 },
-                    //     { name: '盐城市', value: 1 },
-                    //     { name: '扬州市', value: 1 },
-                    //     { name: '镇江市', value: 1 },
-                    //     { name: '泰州市', value: 1 },
-                    //     { name: '宿迁市', value: 1 },
-                    // ])
-                }
-            ]
-        })
-
-    }
-
-    let jiangsu = null
-
-    window.onload = function () {
-        createCanvas()
-
-        fetch('https://geojson.cn/api/data/320000.json')
-        .then(res => res.json()).then(res => {
-            jiangsu = res
-            createMap()
-        })
     }
 
 </script>

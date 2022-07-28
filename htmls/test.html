@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #main {
+            width: 100%;
+            height: 90vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="main"></div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+<!-- <script src="https://cdn.bootcdn.net/ajax/libs/echarts-gl/2.0.8/echarts-gl.min.js"></script> -->
+<!-- <script src="https://echarts.baidu.com/resource/echarts-gl-latest/dist/echarts-gl.min.js"></script> -->
+<script>
+    
+    const data = [
+        { name: '南京市', value: 1 },
+        { name: '无锡市', value: 1 },
+        { name: '徐州市', value: 1 },
+        { name: '常州市', value: 1 },
+        { name: '苏州市', value: 1 },
+        { name: '南通市', value: 1 },
+        { name: '连云港市', value: 1 },
+        { name: '淮安市', value: 1 },
+        { name: '盐城市', value: 1 },
+        { name: '扬州市', value: 1 },
+        { name: '镇江市', value: 1 },
+        { name: '泰州市', value: 1 },
+        { name: '宿迁市', value: 1 },
+    ]
+
+    const gdGeoCoordMap = {
+        "南京市": [118.767413, 32.041544],
+        "无锡市": [120.301663, 31.574729],
+        "徐州市": [117.184811, 34.261792],
+        "常州市": [119.946973, 31.772752],
+        "苏州市": [120.619585, 31.299379],
+        "南通市": [120.864608, 32.016212],
+        "连云港市": [119.178821, 34.600018],
+        "淮安市": [119.021265, 33.597506],
+        "盐城市": [120.139998, 33.377631],
+        "扬州市": [119.421003, 32.393159],
+        "镇江市": [119.452753, 32.204402],
+        "泰州市": [119.915176, 32.484882],
+        "宿迁市": [118.275162, 33.963008],
+    }
+    const convertData = function (data) {
+        var res = []
+        for (var i = 0; i < data.length; i++) {
+            var geoCoord = gdGeoCoordMap[data[i].name]
+            if (geoCoord) {
+                res.push({
+                    name: data[i].name,
+                    value: geoCoord.concat(data[i].value)
+                })
+            }
+        }
+        return res
+    }
+    const chinaName = 'jiangsu';
+    const chinaData = convertData(data);
+    const myChart = echarts.init(document.getElementById('main'));
+
+    fetch('https://geojson.cn/api/data/320000.json').then(res => res.json()).then(res => {
+        echarts.registerMap(chinaName, res)
+        LoadMap(chinaName, chinaData, myChart);
+    })
+
+    // 配置二维地图贴图
+    function LoadMapping(name, data) {
+        var chartOption = {
+            geo: {
+                show: true,
+                map: name,
+                top: '0',
+                right: '0',
+                zoom: 1,
+                width: 1024,
+            },
+            series: [
+                {
+                    type: 'effectScatter',
+                    coordinateSystem: 'geo',
+                    showEffectOn: 'render',
+                    rippleEffect: {
+                        period: 5,
+                        scale: 4,
+                        brushType: 'fill'
+                    },
+                    symbolSize: 16,
+                    data: data,
+                },
+
+            ]
+        }
+
+        return chartOption;
+    }
+
+
+    function LoadMap(name, data, myChart) {
+        // 先渲染贴图
+        const canvas = document.createElement('canvas');
+        var mapBg = echarts.init(canvas, null, {
+            width: 1024,
+            height: 1024
+        });
+        const chartOption = LoadMapping(name, data);
+        mapBg.setOption(chartOption);
+        // 3D地图渲染
+        option = {
+            geo3D: {
+                map: name,
+                roam: true,
+                width: 1024,
+                boxHeight: 20,
+                itemStyle: {
+                    color: '#5a8dce',
+                    borderWidth: 1,
+                    borderColor: '#96ebf7'
+                },
+                shading: 'color',
+                colorMaterial: {
+                    detailTexture: mapBg
+                },
+            },
+        }
+        myChart.setOption(option, true);
+    }
+</script>
+</html>
