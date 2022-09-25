@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用 html2pdf.js 导出 PDF 文件</title>
+    <style>
+        * {
+            font-family: 'msyh';
+            /* font-family: 'xyjt'; */
+            /* font-family: 'source-han-sans'; */
+            font-style: italic;
+        }
+        img { width: 500px; height: 500px; }
+    </style>
+</head>
+<body>
+    <button id="print">导出PDF</button>
+    <div>1:这是一段文本信息用来显示的！！！</div>
+    <div>2:这是一段文本信息用来显示的！！！</div>
+    <div>3:这是一段文本信息用来显示的！！！</div>
+    <div>4:这是一段文本信息用来显示的！！！</div>
+    <div>5:这是一段文本信息用来显示的！！！</div>
+    <div>6:这是一段文本信息用来显示的！！！</div>
+    <div>7:这是一段文本信息用来显示的！！！</div>
+    <div>8:这是一段文本信息用来显示的！！！</div>
+    <div>9:这是一段文本信息用来显示的！！！</div>
+    <img src="./images/004.jpeg" alt="">
+    <div>10:这是一段文本信息用来显示的！！！</div>
+    <div>11:这是一段文本信息用来显示的！！！</div>
+    <div>12:这是一段文本信息用来显示的！！！</div>
+    <div>13:这是一段文本信息用来显示的！！！</div>
+    <div>14:这是一段文本信息用来显示的！！！</div>
+    <div>15:这是一段文本信息用来显示的！！！</div>
+    <img src="./images/1549615.png" alt="">
+    <div>16:这是一段文本信息用来显示的！！！</div>
+    <div>17:这是一段文本信息用来显示的！！！</div>
+    <div>18:这是一段文本信息用来显示的！！！</div>
+    <div>19:这是一段文本信息用来显示的！！！</div>
+    <div>20:这是一段文本信息用来显示的！！！</div>
+    <div>21:这是一段文本信息用来显示的！！！</div>
+    <div>22:这是一段文本信息用来显示的！！！</div>
+    <div>23:这是一段文本信息用来显示的！！！</div>
+    <div>24:这是一段文本信息用来显示的！！！</div>
+    <img src="./images/previewFix.jpg" alt="">
+    <div>25:这是一段文本信息用来显示的！！！</div>
+    <div>26:这是一段文本信息用来显示的！！！</div>
+    <div>27:这是一段文本信息用来显示的！！！</div>
+    <div>28:这是一段文本信息用来显示的！！！</div>
+    <div>29:这是一段文本信息用来显示的！！！</div>
+    <div>30:这是一段文本信息用来显示的！！！</div>
+    <div>31:这是一段文本信息用来显示的！！！</div>
+    <div>32:这是一段文本信息用来显示的！！！</div>
+    <div>33:这是一段文本信息用来显示的！！！</div>
+    <div>34:这是一段文本信息用来显示的！！！</div>
+    <div>35:这是一段文本信息用来显示的！！！</div>
+    <div>36:这是一段文本信息用来显示的！！！</div>
+    <div>37:这是一段文本信息用来显示的！！！</div>
+    <div>38:这是一段文本信息用来显示的！！！</div>
+    <div>39:这是一段文本信息用来显示的！！！</div>
+    <div>40:这是一段文本信息用来显示的！！！</div>
+    <div>41:这是一段文本信息用来显示的！！！</div>
+    <div>42:这是一段文本信息用来显示的！！！</div>
+    <div>43:这是一段文本信息用来显示的！！！</div>
+    <div>44:这是一段文本信息用来显示的！！！</div>
+    <div>45:这是一段文本信息用来显示的！！！</div>
+    <div>46:这是一段文本信息用来显示的！！！</div>
+    <div>47:这是一段文本信息用来显示的！！！</div>
+    <div>48:这是一段文本信息用来显示的！！！</div>
+    <div>49:这是一段文本信息用来显示的！！！</div>
+    <div>50:这是一段文本信息用来显示的！！！</div>
+</body>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
+<script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+<script src="http://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/vxe-table-plugin-export-pdf/fonts/source-han-sans-normal.js"></script> -->
+<script src="./msyh-italic.js"></script>
+<!-- <script src="./xyjt-italic.js"></script> -->
+<!-- <script src="./source-han-sans-italic.js"></script> -->
+<script>
+    var doc = null
+    window.onload = function () {
+        const btn = document.getElementById('print')
+        btn.onclick = function () {
+
+            var { jsPDF } = window.jspdf
+            doc = new jsPDF('p', 'pt', [1920, 1080])
+            doc.setFont('msyh', 'italic')
+            // doc.setFont('xyjt', 'italic')
+            // doc.setFont('source-han-sans')
+
+            console.log(doc.getFontList())
+            // doc.setLanguage("zh-CN")
+            doc.html(document.body, {
+                fontFaces: [
+                    { family: 'msyh' },
+                    // { family: 'xyjt' },
+                    // { family: 'source-han-sans' }
+                ],
+                callback: function (doc) {
+                    doc.save(document.title + '.pdf')
+                },
+                filename: 'jspdf-to-html-to-pdf.pdf',
+                x: 10,
+                y: 10,
+                windowWidth: 1366,
+            })
+        }
+    }
+</script>
+</html>
