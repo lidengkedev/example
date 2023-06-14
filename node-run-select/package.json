@@ -1,0 +1,24 @@
+{
+  "name": "run-select",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "ldk",
+  "license": "MIT",
+  "devDependencies": {
+    "inquirer": "^8.0.0"
+  },
+  "pkg": {
+    "scripts": "./index.js",
+    "assets": "views/**/*",
+    "targets": ["node14-win-arm64"],
+    "outputPath": "dist"
+  }
+}
