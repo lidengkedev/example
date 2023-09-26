@@ -12,6 +12,7 @@
 - [使用 CSS 的属性 transition 绘制多种动画效果](https://lidengkedev.github.io/example/htmls/css3-transition.html)
 - [使用 jQuery 仿写一个 EasyUI 弹窗插件](https://lidengkedev.github.io/example/htmls/easy-ui-message.html)
 - [使用 echarts 绘制一个2d 地图](https://lidengkedev.github.io/example/htmls/echarts-map-2d.html)
+- [江苏省3D地区-悬浮框显示区域数据-区域显示图片标注](https://lidengkedev.github.io/example/htmls/echarts-map-3d-jiangsu.html)
 - [使用 echarts 绘制一个 3d 地图](https://lidengkedev.github.io/example/htmls/echarts-map-3d.html)
 - [使用 js 实现在输入框内输入文本，输出打字机效果](https://lidengkedev.github.io/example/htmls/font-print.html)
 - [使用 js 实现浏览器全屏功能实现](https://lidengkedev.github.io/example/htmls/fullscreen.html)
