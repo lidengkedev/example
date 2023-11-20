@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Echarts-仪表盘-180度仪表盘不同阶段显示不同色条</title>
+  <style>
+    html,body {margin: 0;padding: 0;box-sizing: border-box;width: 100%;height: 100vh;}
+    .color-style { position: absolute;top:0;left:0; color: white;width: 200px; height: 20px; background: linear-gradient(to right, green 0%, blue 25%, yellow 50%, pink 75%, red 100%);}
+  </style>
+</head>
+<body>
+  <div id="echarts" style="width: 100%; height: 100%;"></div>
+  <div id="position" class="color-style">0~200</div>
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<script>
+  var timer = null
+  window.onload = function () {
+    const echart = echarts.init(document.getElementById('echarts'))
+    echart.setOption({
+      title: {
+        text: 'Echarts-仪表盘',
+        left: 'center'
+      },
+      series: [
+        {
+        type: 'gauge',
+        min: 0,
+        max: 200,
+        splitNumber: 4,
+        radius: '83%',
+        startAngle: 180,
+        endAngle: 0,
+        z: 10,
+        progress: {
+          show: true,
+          width: 20,
+          // roundCap: true,
+          itemStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [{
+                  offset: 0, color: 'red' // 0% 处的颜色
+              }, {
+                  offset: 1, color: 'blue' // 100% 处的颜色
+              }],
+            }
+          }
+        },
+        axisLine: {
+          lineStyle: {
+            // color: [[0.5, '#f00'], [1, 'blue']],
+            color: [[1, '#eaeaea']],
+            width: 20,
+            valueAnimation: true,
+          }
+        },
+        splitLine: {
+          show: false,
+          //distance: -18,
+          length: 18,
+          lineStyle: {
+            color: '#f00'
+          }
+        },
+        axisTick: {
+          show: false,
+          //distance: -12,
+          length: 10,
+          lineStyle: {
+            color: '#f00'
+          }
+        },
+        axisLabel: {
+          show: false,
+          //distance: -50,
+          color: '#f00',
+          fontSize: 25
+        },
+        anchor: {
+          show: true,
+          //size: 20,
+          itemStyle: {
+            //borderColor: '#000',
+            //borderWidth: 2
+          }
+        },
+        pointer: {
+          offsetCenter: [0, '10%'],
+          icon: 'path://M2090.36389,615.30999 L2090.36389,615.30999 C2091.48372,615.30999 2092.40383,616.194028 2092.44859,617.312956 L2096.90698,728.755929 C2097.05155,732.369577 2094.2393,735.416212 2090.62566,735.56078 C2090.53845,735.564269 2090.45117,735.566014 2090.36389,735.566014 L2090.36389,735.566014 C2086.74736,735.566014 2083.81557,732.63423 2083.81557,729.017692 C2083.81557,728.930412 2083.81732,728.84314 2083.82081,728.755929 L2088.2792,617.312956 C2088.32396,616.194028 2089.24407,615.30999 2090.36389,615.30999 Z',
+          length: '60%',
+          itemStyle: {
+            color: '#000'
+          }
+        },
+        detail: {
+          //show: false,
+          valueAnimation: true,
+          precision: 1
+        },
+        title: {
+          offsetCenter: [0, '-50%']
+        },
+        data: [
+          { value: 58.46 }
+        ]
+      },
+      {
+        type: 'gauge',
+        min: 0,
+        max: 200,
+        startAngle: 180,
+        endAngle: 0,
+        radius: '50%',
+        axisLine: {
+          lineStyle: {
+            color: [[1, '#eaeaea']],
+            width: 180
+          }
+        },
+        splitLine: {show: false},
+        axisTick: {show: false},
+        axisLabel: {show: false},
+        anchor: {show: false},
+        pointer: {show: false},
+        detail: {show: false},
+        data: []
+      },
+      {
+        type: 'gauge',
+        min: 0,
+        max: 200,
+        splitNumber: 4,
+        startAngle: 180,
+        endAngle: 0,
+        axisLine: {
+          lineStyle: {
+            color: [[1, '#000']],
+            width: 3
+          }
+        },
+        splitLine: {
+          distance: -3,
+          length: 18,
+          lineStyle: {
+            color: '#000'
+          }
+        },
+        axisTick: {
+          distance: 0,
+          length: 10,
+          lineStyle: {
+            color: '#000'
+          }
+        },
+        axisLabel: {
+          distance: 10,
+          fontSize: 25,
+          color: '#000'
+        },
+        pointer: {
+          show: false
+        },
+        title: {
+          show: false
+        },
+        anchor: {
+          show: true,
+          size: 14,
+          itemStyle: {
+            color: '#000'
+          }
+        }
+      }
+      ]
+    })
+    clearInterval(timer)
+    timer = setInterval(() => {
+      const value = +(Math.random() * 200)
+      let color = 'green'
+      if (value > 0 && value <= 50) {
+        color = 'blue'
+      } else if (value > 50 && value <= 100) {
+        color = 'yellow'
+      } else if (value > 100 && value <= 150) {
+        color = 'pink'
+      } else if (value > 150) {
+        color = 'red'
+      }
+      echart.setOption({
+        series: [
+          {
+            type: 'gauge',
+            progress: {
+              itemStyle: {
+                // color: {
+                //   colorStops: [
+                //     {offset: 1, color: 'green'},
+                //     {offset: 0, color: color }
+                //   ]
+                // }
+                color: color
+              }
+            },
+            data: [
+              { value: value.toFixed(2) }
+            ]
+          }
+        ]
+      })
+    }, 2000);
+  }
+</script>
+</html>

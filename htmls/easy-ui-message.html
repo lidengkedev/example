@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用 jQuery 仿写一个 EasyUI 弹窗插件</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      height: 100vh;
+      width: 100vw;
+    }
+    #message-window {
+      width: 100%;
+      height: 100%;
+      font-family: "微软雅黑";
+      font-size: 14px;
+      position: fixed;
+      top: 0px;
+      left: 0px;
+      background-color: rgba(0,0,0,0.2);
+    }
+    .message-panel {
+      width: 300px;
+      margin: 0px;
+      padding: 0px;
+      position: absolute;
+      top: 30%;
+      left: 40%;
+      border-radius: 5px;
+    }
+    .message-head {
+      line-height: 24px;
+      background-color: rgb(224, 231, 241);
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      cursor: move;
+    }
+    .message-head label {
+        font-weight: bold;
+        padding-left: 20px;
+    }
+    .message-content {
+      background-color: #f2f7fd;
+      min-height: 120px;
+    }
+    .message-content > div {
+        padding: 20px;
+    }
+    .message-footer {
+      border-top: 1px solid #dddddd;
+      background-color: #f2f7fd;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+    .message-footer div {
+      text-align: center;
+    }
+    .message-footer button {
+      margin: 5px auto;
+      background-color: #FFFFFF;
+      width: 70px;
+      border-style: none;
+      border-radius: 5px;
+      border: 1px solid #BBBBBB;
+      margin: 5px 2px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <button id="alert">Alert</button>
+  <button id="confirm">Confirm</button>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script>
+    ;(function ($) {
+      var MessageModal = function () {
+        var _this = this;
+        this.config = {
+          type: 'alert',
+          title: 'title',
+          message: 'this is a message !',
+          icon: 'info',
+          callback: function (r) {}
+        };
+      };
+      MessageModal.prototype = {
+        createDOM: function () {
+          var _this = this;
+          var message_window = document.getElementById('message-window');
+          message_window?message_window.parentNode.removeChild(message_window):null;
+          var message_window = document.createElement('div');
+          var message_panel = document.createElement('div');
+          message_panel.setAttribute('class','message-panel');
+          var message_head = document.createElement('div');
+          message_head.setAttribute('class','message-head');
+          
+          var message_title = document.createElement('label');
+          message_title.innerHTML = _this.config.title;
+          message_head.appendChild(message_title);
+          
+          var message_close = document.createElement('span');
+          message_head.appendChild(message_close);
+          
+          var message_content = document.createElement('div');
+          message_content.setAttribute('class','message-content');
+          var message_content_content = document.createElement('div');
+          var message_conentDOM = _this.createContentDOM();
+          message_content_content.appendChild(message_conentDOM);
+          message_content.appendChild(message_content_content);
+          
+          var message_footer = document.createElement('div');
+          message_footer.setAttribute('class','message-footer');
+          var message_footerDOM = _this.createFooterDOM();
+          message_footer.appendChild(message_footerDOM);
+          
+          message_panel.appendChild(message_head);
+          message_panel.appendChild(message_content);
+          message_panel.appendChild(message_footer);
+          message_window.appendChild(message_panel);
+          message_window.setAttribute('id','message-window');
+          (document.body||document.documentElement).appendChild(message_window);
+          _this.closeMessageModal();
+          _this.dragMessageWindow();
+        },
+        createContentDOM: function () {
+          _this = this;
+          var message_content_bottom = document.createElement('div');
+          message_content_bottom.innerHTML = _this.config.message;
+          return message_content_bottom;
+        },
+        createFooterDOM: function () {
+          var _this = this;
+          var type = _this.config.type;
+          var footer_botton = document.createElement('div');
+          switch (type){
+            case 'alert':
+              var sure_botton = document.createElement('button');
+              sure_botton.innerHTML = '确定';
+              sure_botton.setAttribute('id','message-footer-reset-button');
+              footer_botton.appendChild(sure_botton);
+              break;
+            case 'confirm':
+              var reset_botton = document.createElement('button');
+              reset_botton.innerHTML = '取消';
+              reset_botton.setAttribute('id','message-footer-reset-button');
+              var sure_botton = document.createElement('button');
+              sure_botton.innerHTML = '确定';
+              sure_botton.setAttribute('id','message-footer-sure-button');
+              footer_botton.appendChild(reset_botton);
+              footer_botton.appendChild(sure_botton);
+              break;
+            default:
+              var sure_botton = document.createElement('button');
+              sure_botton.innerHTML = '确定';
+              sure_botton.setAttribute('id','message-footer-reset-button');
+              footer_botton.appendChild(sure_botton);
+              break;
+          }
+          return footer_botton;
+        },
+        closeMessageModal: function () {
+          var _this = this;
+          var message_window = document.getElementById('message-window');
+          var message_footer_reset_button = document.getElementById('message-footer-reset-button');
+          var message_footer_sure_button = document.getElementById('message-footer-sure-button');
+          message_footer_reset_button.onclick = function () {
+            message_window.parentNode.removeChild(message_window);
+          };
+          // message_footer_sure_button?message_footer_sure_button.onclick = _this.sureMessageModal:null;
+          message_footer_sure_button?(message_footer_sure_button.onclick = function () {
+            var that = this;
+            _this.config.callback(true);
+            var message_window = document.getElementById('message-window');
+            message_window.parentNode.removeChild(message_window);
+          }):null;
+        },
+        dragMessageWindow: function () {
+          var _this = this;
+          var message_window = document.getElementById('message-window');
+          var message_panel = message_window.getElementsByClassName('message-panel')[0];
+          var message_head = message_panel.getElementsByClassName('message-head')[0];
+          message_head.onmousedown = function (e) {
+            var downEvent = event || e;
+            var mouse_current_X = downEvent.clientX;//鼠标x轴坐标
+            var mouse_current_Y = downEvent.clientY;//鼠标y轴坐标
+            var message_panel_X = message_panel.offsetLeft;//弹框左偏移
+            var message_panel_Y = message_panel.offsetTop; //弹框上偏移
+            var X_X = mouse_current_X - message_panel_X;//鼠标与弹框偏移量的距离
+            var Y_Y = mouse_current_Y - message_panel_Y;
+            //鼠标拖动
+            document.onmousemove = function (e) {
+              var moveEvent = event || e;
+              var mouse_move_x = moveEvent.clientX;
+              var mouse_move_y = moveEvent.clientY;
+              var left = mouse_move_x - X_X;
+              var top = mouse_move_y - Y_Y;
+              left = left < 0 ? 0 : left; 
+              top = top < 0 ? 0 : top; 
+              left = left > (document.body.clientWidth - message_panel.clientWidth) ? (document.body.clientWidth - message_panel.clientWidth) : left; 
+              top = top > (document.body.clientHeight - message_panel.clientHeight) ? (document.body.clientHeight - message_panel.clientHeight) : top; 
+              message_panel.style.left = left + "px";
+              message_panel.style.top = top + "px";
+            }
+            //鼠标弹起
+            document.onmouseup = function () {
+              document.onmousemove = null;//取消鼠标拖动绑定
+            }
+          }
+        },
+        alert: function (title, message, icon) {
+          var _this = this;
+          _this.config.type = 'alert';
+          title?_this.config.title = title:null;
+          message?_this.config.message = message:null;
+          _this.createDOM();
+        },
+        confirm: function (title, message, callback) {
+          var _this = this;
+          _this.config.type = 'confirm';
+          title?_this.config.title = title:null;
+          message?_this.config.message = message:null;
+          _this.config.callback = callback;
+          _this.createDOM();
+        }
+      };
+      window.MessageModal = MessageModal;
+    })(jQuery)
+  </script>
+  <script>
+    window.onload = function () {
+      var message = new MessageModal()
+      var alert = document.getElementById('alert')
+      alert.onclick = function () {
+        message.alert('提示信息', '这是一个 alert 弹框!', 'info')
+      }
+      var confirm = document.getElementById('confirm')
+      confirm.onclick = function () {
+        message.confirm('标题信息', '这是一个 confirm 弹框!', function(r) {
+          message.alert('确认信息', '提示信息！' + r)
+        })
+      }
+    }
+  </script>
+</body>
+</html>

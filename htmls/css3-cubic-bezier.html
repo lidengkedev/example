@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS3 cube-bezier() 函数定义三次贝塞尔曲线 制作动画效果</title>
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box;}
+        body {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        section {
+            position: relative;
+            width: 50%;
+            border-right: 1px solid #eaeaea;
+            border-bottom: 1px solid #eaeaea;
+            min-height: 300px;
+        }
+        section i {
+            position:absolute;
+            width:50px;
+            height:50px;
+            border-radius:50%;
+            background:radial-gradient(at 30% 30%,#0000,#000a) red;
+            left:var(--x);
+            top: var(--y);
+        }
+        .section-1 i.start {
+            animation: section-1-x 1s, section-1-y 0.5s;
+            animation-timing-function: cubic-bezier(.5,-800,.5,800);
+            animation-iteration-count: infinite;
+        }
+        section d {
+            position: fixed;
+            height: 4px;
+            width: 4px;
+            background:#222;
+            border-radius: 50%;
+        }
+        section .btn {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family:sans-serif;
+            font-size: 16px;
+            background:#c82629;
+            color:#fff;
+        }
+        .section-2 i {
+            left:10px;
+            top:200px;
+        }
+        .section-2 i.start {
+            animation:
+                section-2-x 2s linear infinite alternate,
+                section-2-y 2s infinite cubic-bezier(0,500,1,500);
+        }
+        .section-3 i {
+            left:10px;
+            top:150px;
+        }
+        .section-3 i.start {
+            animation:
+                section-3-x 2s linear infinite alternate,
+                section-3-y 2s infinite cubic-bezier(0.5,500,0.5,-500) alternate;
+        }
+        .section-4 i {
+            left:0;
+            top:50%;
+        }
+        .section-4 i.start {
+            animation:
+                section-4-x 10s linear infinite alternate,
+                section-4-y 2s infinite cubic-bezier(.5,600,.5,-600);
+        }
+        .section-5 i {
+            left:0;
+            top:40%;
+        }
+        .section-5 i.start {
+            animation:
+                section-5-x 10s linear infinite alternate,
+                section-5-y 2s infinite cubic-bezier(.5,1330,.5,-1330);
+        }
+        .section-6 .box,
+        .section-7 .box {
+            width: 150px;
+            height: 200px;
+            display:inline-block;
+            position:relative;
+            border: 1px solid #eaeaea;
+            background: linear-gradient(blue 0 0) center/100% 1px no-repeat,
+                        linear-gradient(blue 0 0) center/1px 100% no-repeat;
+        }
+        .section-6 .box i,
+        .section-7 .box i {
+            content:"";
+            position:absolute;
+            width: 30px;
+            height: 30px;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .section-6 .ball-1.start {
+            animation:
+                section-6-x 1s linear infinite alternate,
+                section-6-y-1 1s infinite cubic-bezier(0,667,1,667);
+        }
+        .section-6 .ball-2.start {
+            animation:
+                section-6-x 1s linear infinite alternate,
+                section-6-y-2 1s infinite cubic-bezier(0,667,1,667);
+        }
+        .section-6 .ball-3.start {
+            animation:
+                section-6-x 1s linear infinite alternate,
+                section-6-y-1 1s infinite cubic-bezier(0.5,1725,0.5,-1725) alternate;
+        }
+        .section-6 .ball-4.start {
+            animation:
+                section-6-x 1s linear infinite alternate,
+                section-6-y-2 1s infinite cubic-bezier(0.5,1725,0.5,-1725) alternate;
+        }
+        .section-7 .ball-1.start {
+            animation:
+                section-7-x 1s linear infinite alternate,
+                section-7-y 1s infinite cubic-bezier(0,667,1,667) alternate;
+        }
+        .section-7 .ball-2.start {
+            animation:
+                section-7-x 1s linear infinite alternate,
+                section-7-y 1s infinite cubic-bezier(0.5,667,1,667) alternate;
+        }
+        .section-7 .ball-3.start {
+            animation:
+                section-7-x 1s linear infinite alternate,
+                section-7-y 1s infinite cubic-bezier(0,667,0.5,667) alternate;
+        }
+        .section-7 .ball-4.start {
+            animation:
+                section-7-x 1s linear infinite alternate,
+                section-7-y 1s infinite cubic-bezier(0.5,1725,0.5,-1725) alternate;
+        }
+        .section-7 .ball-5.start {
+            animation:
+                section-7-x 1s linear infinite alternate,
+                section-7-y 1s infinite cubic-bezier(0.8,1725,0.2,-1725) alternate;
+        }
+        .section-7 .ball-6.start {
+            animation:
+                section-7-x 1s linear infinite alternate,
+                section-7-y 1s infinite cubic-bezier(0.2,1725,0.7,-1725) alternate;
+        }
+        .section-8 i {
+            left: var(--x);
+            top: var(--y);
+            animation: section-8-x var(--a,4s) linear infinite;
+        }
+        i  u {
+            position:absolute;
+            width:50px;
+            height:50px;
+            margin:-25px 0 0 -25px;
+            border-radius:50%;
+            background:radial-gradient(at 30% 30%,#0000,#000a) red;
+            transform:translate(0px);
+        }
+        .section-8 u.start {
+            animation: section-8-y var(--d,1s) cubic-bezier(.5,-900,.5,900) infinite;
+        }
+        .section-9 {
+            text-align: center;
+        }
+        .section-9 .unexpected-2 {
+            font-family:sans-serif;
+            padding-bottom:8px;
+            background: 
+                linear-gradient(currentColor 0 0) left  var(--p, 50%) bottom 0 /var(--d, 10%) 3px no-repeat,
+                linear-gradient(currentColor 0 0) right var(--p, 50%) bottom 0 /var(--d, 10%) 3px no-repeat;
+            transition: 0.3s, background-position 0.3s 0.3s;
+        }
+        .section-9 .unexpected-2:hover {
+            --d: 50%;
+            --p: 50.1%;
+            transition: cubic-bezier(0, 500, 1, 500) 0.3s, background-size 0.3s 0.3s;
+        }
+        .section-9 .unexpected-4 {
+            font-family:sans-serif;
+            padding-bottom:8px;
+            clip-path:polygon(1px 1px,calc(100% - 1px) 1px,calc(100% - 1px) calc(100% - 1px),
+                calc(50% - 10px + var(--d,0px)) calc(100% - 1px),
+                calc(50% - 10px + var(--d,0px)) calc(100% + 3px),
+                calc(50% + 10px + var(--d,0px)) calc(100% + 3px),
+                calc(50% + 10px + var(--d,0px)) calc(100% - 1px),1px calc(100% - 1px));
+            box-shadow:0 0px 0px 100vmax currentColor;
+            transition:0s;
+        }
+        .section-9 .unexpected-4:hover {
+            --d:1px;
+            transition:0.5s cubic-bezier(.5, -700, .5, 700);
+        }
+        .section-9 .area-4 {
+            font-family:sans-serif;
+            text-shadow: 
+                0 0 0 rgb(255,0,0), 
+                0 0 0 rgb(0,255,0), 
+                0 0 0 rgb(0,0,255);
+        }
+        .section-9 .area-4:hover {
+            text-shadow: 
+                0.3px -0.1px 0.1px rgb(255,0,0), 
+                0.2px 0.1px 0 rgb(0,255,0), 
+                -0.1px 0.2px 0 rgb(0,0,255);
+            transition: 0.2s cubic-bezier(0.5,200,0.5,-200);
+        }
+        .section-9 .buggy-1 {
+            font-family:sans-serif;
+            position: relative;
+            white-space: nowrap;
+            left:0px;
+            bottom:0px;
+            top:0px; 
+        }
+        .section-9 .buggy-1:hover {
+            left:0.1px;
+            transform: translateY(0.1px);
+            top:0.1px;
+            transition: 
+                left      0.2s,
+                top       0.2s 0.2s,
+                transform 0.2s 0.4s;
+            transition-timing-function: cubic-bezier(0.5,-300,0.5,300);
+        }
+        .section-9  .morphing-1 {
+            font-family:sans-serif;
+            padding:8px;
+            box-shadow:0 0 0px 80px var(--c,#0000);
+            background:var(--c,#0000);
+            transition: 0.3s,clip-path 0s;
+            clip-path: polygon(0 0,100% 0,100% 100%,0 100%);
+        }
+        .section-9 .morphing-1:hover {
+            --c:#000;
+            color:#fff;
+            transition: 0.3s, clip-path cubic-bezier(.5,150,.5,-150) 0.4s 0.3s; 
+            clip-path: polygon(0.5px 0,calc(100% + 0.5px) 0,calc(100% - 0.5px) 100%,-0.5px 100%);
+        }
+        .section-9 .arcade-4 {
+            font-family:sans-serif;
+            padding:8px 8px 90px;
+            clip-path: inset(0 0 40px 0);
+            color:#fff;
+            box-shadow:0 calc(1.2em + 16px) 0 inset #000;
+            --x:0px;
+            background:
+                linear-gradient(90deg,#0000 12px,#f92033 0 22px,#0000 0 26px,#fdc98d 0 32px,#0000) bottom calc(26px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 10px,#f92033 0 28px,#fdc98d 0 32px,#0000 0) bottom calc(24px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 10px,#643700 0 16px,#fdc98d 0 20px,#000 0 22px,#fdc98d 0 24px,#000 0 26px,#f92033 0 32px,#0000 0) bottom calc(22px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 8px,#643700 0 10px,#fdc98d 0 12px,#643700 0 14px,#fdc98d 0 20px,#000 0 22px,#fdc98d 0 28px,#f92033 0 32px,#0000 0) bottom calc(20px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 8px,#643700 0 10px,#fdc98d 0 12px,#643700 0 16px,#fdc98d 0 22px,#000 0 24px,#fdc98d 0 30px,#f92033 0 32px,#0000 0) bottom calc(18px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 8px,#643700 0 12px,#fdc98d 0 20px,#000 0 28px,#f92033 0 30px,#0000 0) bottom calc(16px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 12px,#fdc98d 0 26px,#f92033 0 30px,#0000 0) bottom calc(14px + var(--x)) left 50%,
+                linear-gradient(90deg,#fdc98d 6px,#f92033 0 14px,#222a87 0 16px,#f92033 0 22px,#222a87 0 24px,#f92033 0 28px,#0000 0 32px,#643700 0) bottom calc(12px + var(--x)) left 50%,
+                linear-gradient(90deg,#fdc98d 6px,#f92033 0 16px,#222a87 0 18px,#f92033 0 24px,#f92033 0 26px,#0000 0 30px,#643700 0) bottom calc(10px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 10px,#f92033 0 16px,#222a87 0 24px,#feee49 0 26px,#222a87 0 30px, #643700 0) bottom calc(8px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 12px,#222a87 0 18px,#feee49 0 20px,#222a87 0 30px,#643700 0) bottom calc(6px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 8px,#643700 0 12px,#222a87 0 30px,#643700 0) bottom calc(4px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 6px,#643700 0 14px,#222a87 0 26px,#0000 0) bottom calc(2px + var(--x)) left 50%,
+                linear-gradient(90deg,#0000 6px,#643700 0 10px,#0000 0 ) bottom calc(0px + var(--x)) left 50%;
+
+            background-size: 34px 2px;
+            background-repeat: no-repeat;
+            transition: color 0.3s,box-shadow 0.3s; 
+        }
+
+        .section-9 .arcade-4:hover {
+            background-size:0 0;
+            color:#000;
+            --x:0.5px;
+            box-shadow:0 0 0 inset #000;
+            transition: 1s 0.2s cubic-bezier(1,150,0.5,150),background-size 0s 1.2s,color 0.2s 1s,box-shadow 0.2s 1s; 
+        }
+        .section-9 div[class] {
+            display:inline-block;
+            font-size:40px;
+            margin:25px;
+            cursor:pointer;
+        }
+    </style>
+    <style>
+        @keyframes section-1-x { to { left:calc(var(--x) + 1px); } }
+        @keyframes section-1-y { to { top :calc(var(--y) + 0.2px); } }
+        @keyframes section-2-x { to { left:250px; } }
+        @keyframes section-2-y { to { top:199.5px; } }
+        @keyframes section-3-x { to { left:300px; } }
+        @keyframes section-3-y { to { top:149.5px; } }
+        @keyframes section-4-x { to { left:calc(100% - 40px); } }
+        @keyframes section-4-y { to { top:49.9%; } }
+        @keyframes section-5-x { to { left:calc(100% - 40px); } }
+        @keyframes section-5-y { to { top:39.9%; } }
+        @keyframes section-6-x { to {left:calc(100% - 30px)}}
+        @keyframes section-6-y-1 {to {top:49.9%}}
+        @keyframes section-6-y-2 {to {top:50.1%}}
+        @keyframes section-7-x { to {left:calc(100% - 30px)}}
+        @keyframes section-7-y {to {top:49.9%}}
+        @keyframes section-8-x { to { transform:rotate(360deg); } }
+        @keyframes section-8-y { to { transform:translate(0.5px); } }
+    </style>
+</head>
+<body>
+    <section class="section-1"> <i style="--x:300px;--y:100px;"></i> <button class="btn"> Run the animation </button> </section>
+    <section class="section-2"> <i></i> <button class="btn"> Run the animation </button> </section>
+    <section class="section-3"> <i></i> <button class="btn"> Run the animation </button> </section>
+    <section class="section-4"><i></i><button class="btn"> Run the animation </button></section>
+    <section class="section-5"><i></i><button class="btn"> Run the animation </button></section>
+    <section class="section-6">
+        <div class="box"><i class="ball-1"></i></div>
+        <div class="box"><i class="ball-2"></i></div>
+        <div class="box"><i class="ball-3"></i></div>
+        <div class="box"><i class="ball-4"></i></div>
+        <button class="btn"> Run the animation </button>
+    </section>
+    <section class="section-7">
+        <div class="box"><i class="ball-1"></i></div>
+        <div class="box"><i class="ball-2"></i></div>
+        <div class="box"><i class="ball-3"></i></div>
+        <div class="box"><i class="ball-4"></i></div>
+        <div class="box"><i class="ball-5"></i></div>
+        <div class="box"><i class="ball-6"></i></div>
+        <button class="btn"> Run the animation </button>
+    </section>
+    <section class="section-8">
+        <i style="--x:300px;--y:200px;"><u></u></i>
+        <div class="debug"></div>
+        <button class="btn"> Run the animation </button>
+    </section>
+    <section class="section-9">
+        <div class="unexpected-2">1. Hover me </div>
+        <div class="unexpected-4">2. Hover me </div>
+        <div class="buggy-1">3. Hover me </div>
+        <div class="area-4">4. Hover me </div>
+        <div class="morphing-1">5. Hover me </div>
+        <div class="arcade-4">6. Hover me </div>
+    </section>
+</body>
+<script>
+    function section_1 () {
+        let elem = document.querySelector('.section-1 i');
+        let start;
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            let rect = elem.getBoundingClientRect();
+            // document.body.insertAdjacentHTML(
+            //     "beforeBegin",
+            //     '<d style="top:' + (rect.y + rect.height / 2) + 'px;left:' + (rect.x + rect.width / 2) + 'px;"></d>'
+            // )
+
+            if (elapsed < 3000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+        document.querySelector(".section-1 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_2 () {
+        let elem = document.querySelector('.section-2 i');
+        let start;
+
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 4000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+
+        document.querySelector(".section-2 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_3 () {
+        let elem = document.querySelector('.section-3 i');
+        let start;
+
+        const debug = (timestamp) => {
+            console.log({start, timestamp})
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 4000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+        document.querySelector(".section-3 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_4 () {
+        let elem = document.querySelector('.section-4 i');
+        let start;
+
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 20000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+
+        document.querySelector(".section-4 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_5 () {
+        let elem = document.querySelector('.section-5 i');
+        let start;
+
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 20000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+
+        document.querySelector(".section-5 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_6 () {
+        let elem = document.querySelectorAll('.section-6 i');
+        let start;
+
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 2000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+
+        document.querySelector(".section-6 .btn").addEventListener("click", function () {
+            document.querySelectorAll('.section-6 i').forEach(elem => elem.classList.add('start'))
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_7 () {
+        let elem = document.querySelectorAll('.section-7 i');
+        let start;
+
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 2000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+
+        document.querySelector(".section-7 .btn").addEventListener("click", function () {
+            elem.forEach(elem => elem.classList.add('start'))
+            window.requestAnimationFrame(debug);
+        })
+    }
+    function section_8 () {
+        let elem = document.querySelector('.section-8 i u');
+        let start;
+
+        function debug(timestamp) {
+            if (start === undefined)
+                start = timestamp;
+            const elapsed = timestamp - start;
+            if (elapsed < 30000) {
+                window.requestAnimationFrame(debug);
+            }
+        }
+
+        function clear() {
+            document.querySelector('.section-8 .debug').innerHTML = "&nbsp;";
+            start = undefined;
+            window.requestAnimationFrame(debug);
+        }
+
+        document.querySelector(".section-8 .btn").addEventListener("click", function () {
+            elem.classList.add("start");
+            window.requestAnimationFrame(debug);
+        })
+    }
+    section_1()
+    section_2()
+    section_3()
+    section_4()
+    section_5()
+    section_6()
+    section_7()
+    section_8()
+
+</script>
+</html>

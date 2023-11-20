@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>江苏省3D地区-悬浮框显示区域数据-区域显示图片标注</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    #map3d { width: 100%; height: 100vh; background-color: #000000; }
+  </style>
+</head>
+<body>
+  <div id="map3d"></div>
+  <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.3/echarts.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/echarts-gl/2.0.8/echarts-gl.min.js"></script>
+  <script>
+    window.onload = function () {
+      fetch('https://geojson.cn/api/data/320000.json').then(res => res.json()).then(res => {
+        echarts.registerMap('jiangsu', res)
+        createMap([
+          { name: '南京市', value: [118.767413, 32.041544, 7] },
+          { name: '无锡市', value: [120.301663, 31.574729, 6] }
+        ])
+      })
+    }
+    function createMap(data) {
+      const echart = echarts.init(document.getElementById('map3d'))
+      echart.setOption({
+        tooltip: {
+          show: true
+        },
+        geo3D: {
+          map: 'jiangsu',
+          boxDepth: 80,
+          regionHeight: 1,
+          itemStyle: {
+            color: 'rgb(5,101,123)',
+            opacity: 1,
+            borderWidth: 1,
+            borderColor: 'rgba(17,255,255,0.5)',
+          },
+          emphasis: {
+            label: {
+              show: false
+            }
+          }
+        },
+        series: [{
+          type: 'map3D',
+          map: 'jiangsu',
+          boxDepth: 80,
+          regionHeight: 1.1,
+          viewControl: {},
+          label: {
+            show: true,
+            color: '#ffffff'
+          },
+          itemStyle: {
+            color: 'transparent',
+            opacity: 1,
+            borderWidth: 1,
+            borderColor: 'rgb(5,101,123)'
+          },
+          emphasis: {
+            itemStyle: {
+              color: 'transparent'
+            }
+          },
+          light: {
+            main: {
+              color: '#fff',
+              intensity: 1.5,
+              shadow: true,
+              shadowQuality: 'high'
+            }
+          },
+          data: data
+        },
+        {
+          type: 'scatter3D',
+          coordinateSystem: 'geo3D',
+          symbol: 'circle',
+          symbolSize: 20,
+          itemStyle: {
+            color: 'red'
+          },
+          label: {
+            show: true,
+            textStyle: {
+              color: '#FFF',
+              fontSize: 14,
+              fontWeight: '700',
+              borderWidth: 0.5,
+              borderColor: 'transparent'
+            },
+            formatter: function (data) {
+              var res = data.value[2]
+              return res
+            }
+          },
+          data: data,
+        },
+        {
+          type: 'bar3D',
+          coordinateSystem: 'geo3D',
+          minHeight: 1,
+          itemStyle: {},
+          label: {
+            show: true,
+            textStyle: {
+              color: '#FFF',
+              fontSize: 14,
+              fontWeight: '700',
+              borderWidth: 0.5,
+              borderColor: 'transparent'
+            },
+            formatter: function (data) {
+              var res = data.value[2]
+              return res
+            }
+          },
+          data: [
+            { name: '徐州市', value: [117.184811, 34.261792, 5] },
+            { name: '南通市', value: [120.864608, 32.016212, 8] }
+          ],
+        }
+      ]
+      })
+      echart.on('click', (params) => {
+        console.log(params)
+      })
+    }
+  </script>
+</body>
+</html>
