@@ -21,6 +21,7 @@
 - [使用 js 实现在输入框内输入文本，输出打字机效果](https://lidengkedev.github.io/example/htmls/font-print.html)
 - [使用 js 实现浏览器全屏功能实现](https://lidengkedev.github.io/example/htmls/fullscreen.html)
 - [使用 canvas 绘制重力加速度粒子放射动画](https://lidengkedev.github.io/example/htmls/gravity-particle.html)
+- [由于字体文件过大导致页面加载缓慢，通过在HTML中动态加载FontFace字体文件来缓解字体文件加载过慢问题](https://lidengkedev.github.io/example/htmls/html-font-face-load.html)
 - [使用 html2pdf.js 导出 PDF 文件](https://lidengkedev.github.io/example/htmls/html-print.html)
 - [使用 js 本地存储功能之 本地数据库 IndexedDB 数据库操作](https://lidengkedev.github.io/example/htmls/indexed-db.html)
 - [Layers Control Tutorial - Leaflet](https://lidengkedev.github.io/example/htmls/leaflet.html)
