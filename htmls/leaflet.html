@@ -59,6 +59,11 @@
     const satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
     layerControl.addBaseLayer(satellite, 'Satellite');
     layerControl.addOverlay(parks, 'Parks');
+
+    // 画一个圆
+    const circle = L.circle([39.75, -105.09], { radius: 2000, color: 'red' }).addTo(map)
+    const polyline = L.polyline([[39.75, -105.09],[39.68, -105.00],[39.61, -105.02]], { color: 'red' }).addTo(map)
+    const polygon = L.polygon([[39.75, -105.09],[39.68, -105.00],[39.61, -105.02]], { color: 'red', fill: false }).addTo(map)
   </script>
 
 </body>
