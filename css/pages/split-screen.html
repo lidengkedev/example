@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用 CSS3 实现一个鼠标拖动自动分屏宽度自适应的效果</title>
+    <style>
+        .screen-warpper {
+            height: 400px;
+            display: flex;
+        }
+        .screen-item.left {
+            position: relative;
+            min-width: 200px;
+            max-width: 1200px;
+            overflow-y: scroll;
+            resize: horizontal;
+            z-index: 1;
+            background-color: #52ccba;
+        }
+        .screen-item.right {
+            flex: 1;
+            background-color: pink;
+        }
+    </style>
+</head>
+<body>
+    <div class="screen-warpper">
+        <div class="screen-item left"></div>
+        <div class="screen-item right"></div>
+    </div>
+</body>
+</html>
