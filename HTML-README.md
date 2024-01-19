@@ -27,5 +27,6 @@
 - [使用 js 本地存储功能之 本地数据库 IndexedDB 数据库操作](https://lidengkedev.github.io/example/htmls/indexed-db.html)
 - [Layers Control Tutorial - Leaflet](https://lidengkedev.github.io/example/htmls/leaflet.html)
 - [使用 vis 中的 Network 功能 绘制关系图](https://lidengkedev.github.io/example/htmls/vis-network.html)
+- [使用 Vue 框架添加 容器分屏拖动功能](https://lidengkedev.github.io/example/htmls/vue-box-resize.html)
 - [使用 vue 编写一个工序拆分页面](https://lidengkedev.github.io/example/htmls/vue-working-procedure.html)
 - [使用 js 实现页面水印效果](https://lidengkedev.github.io/example/htmls/water-mark.html)
