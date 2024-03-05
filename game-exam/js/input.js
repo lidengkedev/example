@@ -1,11 +1,9 @@
 
 (function() {
-    var pressedKeys = {};//±£´æ°´¼üµÄ¶ÔÏó
+    var pressedKeys = {};//ä¿å­˜æŒ‰é”®çš„å¯¹è±¡
 
     function setKey(event, status) {
       var code = event.keyCode || event.which;
-
-
 
         var key;
 
@@ -27,7 +25,7 @@
 
         pressedKeys[key] = status;
 
-       //×èÖ¹Ä¬ÈÏÊÂ¼ş
+       //é˜»æ­¢é»˜è®¤äº‹ä»¶
      if (event.preventDefault ){
         event.preventDefault();
      }else{
@@ -36,15 +34,15 @@
      return false;
 
     }
-      //°´ÏÂÄ³Ò»¼ü
+      //æŒ‰ä¸‹æŸä¸€é”®
     document.addEventListener('keydown', function(e) {
         setKey(e, true);
     });
-    //ËÉ¿ªÄ³Ò»¼ü
+    //æ¾å¼€æŸä¸€é”®
     document.addEventListener('keyup', function(e) {
         setKey(e, false);
     });
-     //°Ñ¼üÅÌ½¹µã´Ó¶¥²ãä¯ÀÀÆ÷´°¿ÚÒÆ×ß
+     //æŠŠé”®ç›˜ç„¦ç‚¹ä»é¡¶å±‚æµè§ˆå™¨çª—å£ç§»èµ°
     window.addEventListener('blur', function() {
         pressedKeys = {};
     });

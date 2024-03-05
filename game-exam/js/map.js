@@ -1,4 +1,4 @@
-/* ÓÎÏ·¹ý¹ØÊý¾Ý*/
+/* æ¸¸æˆè¿‡å…³æ•°æ®*/
 
  function getSuccess(grade){
    var Success={
@@ -13,8 +13,8 @@
    
 
 /*
-ÓÎÏ·µØÍ¼Êý¾Ý
-ÀëÏßÓ¦ÓÃ£¬manifestÇåµ¥ÎÄ¼þ
+æ¸¸æˆåœ°å›¾æ•°æ®
+ç¦»çº¿åº”ç”¨ï¼Œmanifestæ¸…å•æ–‡ä»¶
 */
 function getMap(_mapIndex){
 var maps = {
@@ -127,27 +127,31 @@ if(_mapIndex>0&&_mapIndex<104){
 }
 }
 
-  MusicUris = ["audio/qingshenyizhong.mp3", "audio/chunyang.mp3",
-                "audio/tianyuan.mp3", "audio/shaolin.mp3", "audio/linjian.mp3",
-            "audio/qixiu.mp3", "audio/wanhua.mp3"];
+MusicUris = [
+  "audio/qingshenyizhong.mp3",
+  "audio/chunyang.mp3",
+  "audio/tianyuan.mp3",
+  "audio/shaolin.mp3",
+  "audio/linjian.mp3",
+  "audio/qixiu.mp3",
+  "audio/wanhua.mp3"
+];
     
 
-     //¿ËÂ¡¶þÎ¬Êý×é
-     function copyArray2(arr){
-	var b=[];
-	for(var i=0;i<arr.length;i++)
-	{	
-		b[i]=arr[i].concat();
-	}
-	return b;
-    }      
+//å…‹éš†äºŒç»´æ•°ç»„
+function copyArray2(arr){
+  var b=[];
+  for (var i=0;i<arr.length;i++) {	
+    b[i]=arr[i].concat();
+  }
+  return b;
+}      
 
-     //¿ËÂ¡Ò»Î¬Êý×é
-     function copyArray(arr){
-	var b=[];
-	for(var i=0;i<arr.length;i++)
-	{	
-		b[i]=arr[i];
-	}
-	return b;
-    }      
+//å…‹éš†ä¸€ç»´æ•°ç»„
+function copyArray(arr){
+  var b=[];
+  for (var i=0;i<arr.length;i++) {	
+    b[i]=arr[i];
+  }
+  return b;
+}
