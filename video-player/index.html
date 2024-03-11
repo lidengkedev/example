@@ -6,17 +6,29 @@
   <title>视频播放器</title>
 </head>
 <body>
-  <input type="file" name="" id="file" webkitdirectory>
-  <input type="url" name="" id="url">
-  <video id="video" src=""></video>
+  <div class="video-player-warpper">
+    <video id="video" src="" width="500px" height="400px"></video>
+    <div class="video-controls-warpper">
+      <div class="slide-inner">
+        <div class="slide-process"></div>
+      </div>
+      <div class="icon-play"></div>
+      <div class="times"></div>
+      <div class="audio-inner">
+        <div class="icon-audio"></div>
+        <div class="slide-inner">
+          <div class="slide-process"></div>
+        </div>
+      </div>
+      <div class="icon-menu"></div>
+      <div class="icon-fullscreen"></div>
+    </div>
+  </div>
   <script>
-    // file.onchange = function (e) {
-    //   const files = e.target.files
-    //   console.log(files)
-    // }
-    url.onblur = function () {
-      video.src = url.value
-    }
+    const video_url = [
+      { url: 'D:\\workspace\\video\\20240225_180205.mp4', name: '20240225_180205' }
+    ]
+    video.src = video_url[0].url
   </script>
 </body>
 </html>
