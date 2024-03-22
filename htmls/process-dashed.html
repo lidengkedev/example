@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="html,js,css,vue">
+  <title>使用vue@2.6.5制作一个横向条形纹进度条或者占比情况说明组件</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* .origin-warpper { width: 1000px; margin: 0 auto; } */
+    /* .comp-process { width: 100px; } */
+    .comp-process .header { display: flex; justify-content: space-between; }
+    .comp-process .header .unit { padding-left: 10px; font-size: 12px; }
+    .process-inner { height: 12px; position: relative; }
+    .process-num { height: 100%; width: 3px; margin-left: 1px; display: inline-block; vertical-align: top; background-color: #808080; }
+    .process-num:first-child { margin-left: 0; }
+    .vue-component { width: 500px; }
+  </style>
+  <script src="https://unpkg.com/vue@2.6.5/dist/vue.js"></script>
+</head>
+<body>
+  <div class="origin-warpper">
+    <div class="comp-process">
+      <div class="header">
+        <div class="title">本月流量用量</div>
+        <div class="num">12<span class="unit">GB</span></div>
+      </div>
+      <div class="process-inner">
+        <div class="process-num is-active"></div>
+      </div>
+    </div>
+  </div>
+  <div class="vue-component">
+    <div id="app-1"></div>
+    <div style="font-size: 12px;">--------------------------------------- 分割线 ----------------------------------------</div>
+    <div id="app-2"></div>
+  </div>
+  <script>
+    window.onload = function () {
+      const processStyle = ''
+      const process = []
+      const num = 12
+      const max = 100
+      const maxWidth = document.querySelector('.origin-warpper .comp-process').getBoundingClientRect().width
+      const splitNum = Math.floor(maxWidth / 4)
+      const activeNum = Math.floor(num / max * maxWidth / 4)
+      const warpper = document.querySelector('.origin-warpper .process-inner')
+      let processHTML = ''
+      for (let i = 0; i < splitNum; i++) {
+        // process.push({ active: i <= activeNum })
+        const classActive = i <= activeNum ? ' is-active' : ''
+        const processStyle = i <= activeNum ? 'background-color: #52ccba;' : 'background-color: #808080;'
+        processHTML += '<div class="process-num'+ classActive +'" style="'+ processStyle +'"></div>'
+      }
+      warpper.innerHTML = processHTML
+
+      // vue
+      // class CompProcess extends Vue {
+      //   get processStyle() {}
+      // }
+      const CompProcess = {
+        template: `<div class="comp-process">
+          <div v-show="!isProcess" class="header">
+            <div class="title">{{ title }}</div>
+            <div class="num">{{ num }}<span class="unit">{{ unit }}</span></div>
+          </div>
+          <div class="process-inner">
+            <div v-for="(item, index) in process" :key="index" :class="['process-num', {'is-active': item.active}]" :style="processStyle(item)"></div>
+          </div> 
+        </div>`,
+        props: {
+          title: String,
+          num: Number,
+          max: {
+            type: Number,
+            default: 100
+          },
+          unit: String,
+          bgColor: {
+            type: String,
+            default: '#808080'
+          },
+          color: String,
+          isProcess: Boolean
+        },
+        data() {
+          return {
+            process: []
+          }
+        },
+        computed: {
+          processStyle() {
+            return item => {
+              if (item.active) {
+                return { 'background-color': this.color }
+              }
+              return { 'background-color': this.bgColor }
+            }
+          }
+        },
+        mounted() {
+          const maxWidth = this.$el.getBoundingClientRect().width
+          const splitNum = Math.floor(maxWidth / 4)
+          const activeNum = Math.floor(this.num / this.max * maxWidth / 4)
+          for (let i = 0; i < splitNum; i++) {
+            this.process.push({ active: i <= activeNum })
+          }
+          console.log({maxWidth, splitNum, activeNum, process: this.process})
+        }
+      }
+      const Ctor = Vue.extend(CompProcess)
+      new Ctor({
+        propsData: {
+          title: '本月流量用量',
+          num: 68,
+          unit: 'GB',
+          color: '#52ccba'
+        }
+      }).$mount('#app-1')
+      new Ctor({
+        propsData: {
+          isProcess: true,
+          num: 68,
+          color: '#52ccba'
+        }
+      }).$mount('#app-2')
+    }
+  </script>
+</body>
+</html>
