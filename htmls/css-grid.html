@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="html,css">
+  <title>Grid 网格布局</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    .grid-desc-container { display: grid; grid-template-columns: repeat(auto-fill, 50%); }
+    .grid-desc-code-warpper { border: 1px solid #808800; display: inline-block; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <h1>Grid 网格布局</h1>
+  <h2>定义区域</h2>
+  <details>
+    <summary>grid-template-areas</summary>
+    <div class="grid-desc-container">
+      <div class="grid-desc-code-warpper">
+        <xmp>
+          <section>
+            <article class="device">device</article>
+            <article class="map">map</article>
+            <article class="value">value</article>
+            <article class="industry">industry</article>
+            <article class="weight">weight</article>
+            <article class="area">area</article>
+            <article class="height">height</article>
+            <article class="expire">expire</article>
+            <article class="alarm">alarm</article>
+            <article class="statistical">statistical</article>
+            <article class="time">time</article>
+            <article class="trip">trip</article>
+          </section>
+        </xmp>
+      </div>
+      <div class="grid-desc-code-warpper">
+        <xmp>
+          section {
+            display: grid;
+            width: 100%;
+            height: 87.5%;
+            grid-template-areas: 
+            "device map map map value"
+            "industry map map map weight"
+            "area map map map height"
+            "expire alarm statistical time trip";
+            grid-template-columns: 15.6vw 15.6vw auto 15.6vw 15.6vw;
+            grid-tempalte-rows: 1fr 1fr 1fr 1fr;
+            gap: 55px 50px;
+          }
+          section > article { position: relative; }
+          section > article.device { grid-eare: device; }
+          section > article.map { grid-eare: map; }
+          section > article.value { grid-eare: value; }
+          section > article.industry { grid-eare: industry; }
+          section > article.weight { grid-eare: weight; }
+        </xmp>
+      </div>
+    </div>
+    <style>
+      section {
+        display: grid;
+        width: 100%;
+        height: 87.5%;
+        border: 1px solid red;
+        grid-template-areas: 
+        "device map map map value"
+        "industry map map map weight"
+        "area map map map height"
+        "expire alarm statistical time trip";
+        grid-template-columns: 15.6vw 15.6vw auto 15.6vw 15.6vw;
+        grid-template-rows: 1fr 1fr 1fr 1fr;
+        gap: 55px 50px;
+      }
+      section > article { position: relative; border: 1px solid #808080; }
+      section > article.device { grid-area: device; }
+      section > article.map { grid-area: map; }
+      section > article.value { grid-area: value; }
+      section > article.industry { grid-area: industry; }
+      section > article.weight { grid-area: weight; }
+    </style>
+    <section>
+      <article class="device">device</article>
+      <article class="map">map</article>
+      <article class="value">value</article>
+      <article class="industry">industry</article>
+      <article class="weight">weight</article>
+      <article class="area">area</article>
+      <article class="height">height</article>
+      <article class="expire">expire</article>
+      <article class="alarm">alarm</article>
+      <article class="statistical">statistical</article>
+      <article class="time">time</article>
+      <article class="trip">trip</article>
+    </section>
+  </details>
+</body>
+</html>
