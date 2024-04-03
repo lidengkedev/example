@@ -9,6 +9,7 @@
 - [Hi Canvas](https://lidengkedev.github.io/example/htmls/canvas-somke.html)
 - [Color-径向颜色渐变计算](https://lidengkedev.github.io/example/htmls/color-linear.html)
 - [Grid 网格布局](https://lidengkedev.github.io/example/htmls/css-grid.html)
+- [使用 CSS 中的 background-image、background-clip 或 mask-image 实现 文本线性渐变效果](https://lidengkedev.github.io/example/htmls/css-text-gradient.html)
 - [CSS3 cube-bezier() 函数定义三次贝塞尔曲线 制作动画效果](https://lidengkedev.github.io/example/htmls/css3-cubic-bezier.html)
 - [使用 css3 展示 Flex 布局示例](https://lidengkedev.github.io/example/htmls/css3-flex.html)
 - [使用 CSS 的属性 transition 绘制多种动画效果](https://lidengkedev.github.io/example/htmls/css3-transition.html)
