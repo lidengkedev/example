@@ -28,6 +28,7 @@
 - [使用 js 本地存储功能之 本地数据库 IndexedDB 数据库操作](https://lidengkedev.github.io/example/htmls/indexed-db.html)
 - [Layers Control Tutorial - Leaflet](https://lidengkedev.github.io/example/htmls/leaflet.html)
 - [使用vue@2.6.5制作一个横向条形纹进度条或者占比情况说明组件](https://lidengkedev.github.io/example/htmls/process-dashed.html)
+- [使用svg实现文本不同渐变方向的线性渐变效果和径向渐变效果](https://lidengkedev.github.io/example/htmls/svg-gradient.html)
 - [使用 SVG 画一个进度圆环](https://lidengkedev.github.io/example/htmls/svg-ring.html)
 - [使用 vis 中的 Network 功能 绘制关系图](https://lidengkedev.github.io/example/htmls/vis-network.html)
 - [使用 Vue 框架添加 容器分屏拖动功能](https://lidengkedev.github.io/example/htmls/vue-box-resize.html)
