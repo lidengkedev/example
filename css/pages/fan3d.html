@@ -1,69 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>使用 CSS3 实现一个 鼠标上浮 像打开折叠扇一样展开明星照片</title>
-	<link rel="stylesheet" href="">
-	<style type="text/css" media="screen">
-		*{
-			margin: 0 auto;
-			padding: 0;
-		}
-		.box{
-			width: 200px;
-			height: 600px;
-			margin: 100px auto;
-			position: relative;
-		}
-		img{
-			width: 200px;
-			height: 600px;
-		}
-		.div1,.div2,.div3,.div4,.div5{
-			width: 200px;
-			height: 600px;
-			position: absolute;
-			left: 0;
-			top: 0;
-			transition: all 1s;
-			/*控制旋转点*/
-			transform-origin: bottom center;
-		}
-		.box:hover>.div1{
-			transform: rotate(-30deg);
-		}
-		.box:hover>.div2{
-			transform: rotate(-15deg);
-		}
-		.box:hover>.div3{
-			transform: rotate(0deg);
-		}
-		.box:hover>.div4{
-			transform: rotate(15deg);
-		}
-		.box:hover>.div5{
-			transform: rotate(30deg);
-		}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>使用 CSS3 实现一个 鼠标上浮 像打开折叠扇一样展开明星照片</title>
+  <link rel="stylesheet" href="">
+  <style type="text/css" media="screen">
+    * { margin: 0 auto; padding: 0; }
+    .box { width: 250px; height: 600px; margin: 100px auto; position: relative; }
+    .sector {
+      width: 250px;
+      height: 600px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      transition: all 1s;
+      /*控制旋转点*/
+      transform-origin: bottom center;
+    }
+    .sector img { width: 250px; height: 600px; }
+    .box:hover > .sector:nth-of-type(1) { transform: rotate(-80deg); }
+    .box:hover > .sector:nth-of-type(2) { transform: rotate(-60deg); }
+    .box:hover > .sector:nth-of-type(3) { transform: rotate(-40deg); }
+    .box:hover > .sector:nth-of-type(4) { transform: rotate(-20deg); }
+    .box:hover > .sector:nth-of-type(5) { transform: rotate(0deg); }
+    .box:hover > .sector:nth-of-type(6) { transform: rotate(20deg); }
+    .box:hover > .sector:nth-of-type(7) { transform: rotate(40deg); }
+    .box:hover > .sector:nth-of-type(8) { transform: rotate(60deg); }
+    .box:hover > .sector:nth-of-type(9) { transform: rotate(80deg); }
 	</style>
 </head>
 <body>
-	<div class="box">
-		<div class="div1">
-		<img src="../images/shan/0.jpg" alt="">
-		</div>
-		<div class="div2">
-		<img src="../images/shan/1.jpg" alt="">
-		</div>
-		<div class="div3">
-		<img src="../images/shan/2.jpg" alt="">
-		</div>
-		<div class="div4">
-		<img src="../images/shan/3.jpg" alt="">
-		</div>
-		<div class="div5">
-		<img src="../images/shan/4.jpg" alt="">
-		</div>
-	</div>
+  <div class="box">
+    <div class="sector"><img src="../images/shan/xiaowu-001.png" alt=""></div>
+    <div class="sector"><img src="../images/shan/xiaowu-002.png" alt=""></div>
+    <div class="sector"><img src="../images/shan/xiaowu-003.png" alt=""></div>
+    <div class="sector"><img src="../images/shan/xiaowu-004.png" alt=""></div>
+    <div class="sector"><img src="../images/shan/xiaowu-005.png" alt=""></div>
+    <div class="sector"><img src="../images/shan/xiaowu-006.png" alt=""></div>
+    <div class="sector"><img src="../images/shan/xiaowu-007.png" alt=""></div>
+    <div class="sector"><img src="../images/shan/xiaowu-008.png" alt=""></div>
+    <div class="sector"><img src="../images/shan/xiaowu-009.png" alt=""></div>
+  </div>
 </body>
 </html>
