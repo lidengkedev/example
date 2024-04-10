@@ -1,69 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>使用 CSS3 实现一个 鼠标上浮 像打开折叠扇一样展开明星照片</title>
-	<link rel="stylesheet" href="">
-	<style type="text/css" media="screen">
-		*{
-			margin: 0 auto;
-			padding: 0;
-		}
-		.box{
-			width: 200px;
-			height: 400px;
-			margin: 100px auto;
-			position: relative;
-		}
-		img{
-			width: 200px;
-			height: 400px;
-		}
-		.div1,.div2,.div3,.div4,.div5{
-			width: 200px;
-			height: 400px;
-			position: absolute;
-			left: 0;
-			top: 0;
-			transition: all 1s;
-			/*控制旋转点*/
-			transform-origin: bottom center;
-		}
-		.box:hover>.div1{
-			transform: rotate(-30deg);
-		}
-		.box:hover>.div2{
-			transform: rotate(-15deg);
-		}
-		.box:hover>.div3{
-			transform: rotate(0deg);
-		}
-		.box:hover>.div4{
-			transform: rotate(15deg);
-		}
-		.box:hover>.div5{
-			transform: rotate(30deg);
-		}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>使用 CSS3 实现一个 鼠标上浮 像打开折叠扇一样展开明星照片</title>
+  <link rel="stylesheet" href="">
+  <style type="text/css" media="screen">
+    * { margin: 0 auto; padding: 0; }
+    .box { width: 250px; height: 600px; margin: 100px auto; position: relative; }
+    .sector {
+      width: 250px;
+      height: 600px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      transition: all 1s;
+      /*控制旋转点*/
+      transform-origin: bottom center;
+    }
+    .sector img { width: 250px; height: 600px; }
+    .box:hover > .sector:nth-of-type(1) { transform: rotate(-80deg); }
+    .box:hover > .sector:nth-of-type(2) { transform: rotate(-60deg); }
+    .box:hover > .sector:nth-of-type(3) { transform: rotate(-40deg); }
+    .box:hover > .sector:nth-of-type(4) { transform: rotate(-20deg); }
+    .box:hover > .sector:nth-of-type(5) { transform: rotate(0deg); }
+    .box:hover > .sector:nth-of-type(6) { transform: rotate(20deg); }
+    .box:hover > .sector:nth-of-type(7) { transform: rotate(40deg); }
+    .box:hover > .sector:nth-of-type(8) { transform: rotate(60deg); }
+    .box:hover > .sector:nth-of-type(9) { transform: rotate(80deg); }
 	</style>
 </head>
 <body>
-	<div class="box">
-		<div class="div1">
-		<img src="/assets/0.557ca98a.jpg" alt="">
-		</div>
-		<div class="div2">
-		<img src="/assets/1.138b3568.jpg" alt="">
-		</div>
-		<div class="div3">
-		<img src="/assets/2.7f3b2f4e.jpg" alt="">
-		</div>
-		<div class="div4">
-		<img src="/assets/3.b55d6887.jpg" alt="">
-		</div>
-		<div class="div5">
-		<img src="/assets/4.aef966f7.jpg" alt="">
-		</div>
-	</div>
+  <div class="box">
+    <div class="sector"><img src="https://lidengkedev.githu.io/example/css/assets/xiaowu-001.65c0a13b.png" alt=""></div>
+    <div class="sector"><img src="https://lidengkedev.githu.io/example/css/assets/xiaowu-002.2eb507c5.png" alt=""></div>
+    <div class="sector"><img src="https://lidengkedev.githu.io/example/css/assets/xiaowu-003.c548e832.png" alt=""></div>
+    <div class="sector"><img src="https://lidengkedev.githu.io/example/css/assets/xiaowu-004.5af4dc10.png" alt=""></div>
+    <div class="sector"><img src="https://lidengkedev.githu.io/example/css/assets/xiaowu-005.23785708.png" alt=""></div>
+    <div class="sector"><img src="https://lidengkedev.githu.io/example/css/assets/xiaowu-006.76b68ce8.png" alt=""></div>
+    <div class="sector"><img src="https://lidengkedev.githu.io/example/css/assets/xiaowu-007.f3ade781.png" alt=""></div>
+    <div class="sector"><img src="https://lidengkedev.githu.io/example/css/assets/xiaowu-008.d24053d4.png" alt=""></div>
+    <div class="sector"><img src="https://lidengkedev.githu.io/example/css/assets/xiaowu-009.394347f5.png" alt=""></div>
+  </div>
 </body>
 </html>
