@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <link href='http://www.bigemap.com:9000/bigemap.js/v2.1.0/bigemap.css' rel='stylesheet' />
+  <script src='http://www.bigemap.com:9000/bigemap.js/v2.1.0/bigemap.js'></script>
+  <title>Google Map Streets</title>
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    .tool { position: absolute; z-index: 10; right: 10px; top: 10px; }
+    .tool a { padding: 5px 10px; border-radius: 5px; color: #FFF; background-color: #52ccba; }
+  </style>
+</head>
+<body>
+  <p class="tool">
+    <a id="satellite" class="button button-tiny button-rounded button-primary" href="javascript:void (0);">卫星</a>
+    <a id="street" class="button button-tiny button-rounded button-primary" href="javascript:void (0);">电子</a>
+    <a id="layer-mixins" class="button button-tiny button-rounded button-primary" href="javascript:void (0);">合并图层</a>
+  </p>
+  <div id='map'></div>
+  <script>
+    // 参考文档：http://www.bigemap.com/offlinemaps/api/
+    //软件配置信息地址，软件安装完成之后使用本地地址，如：http://localhost:9000
+    BM.Config.HTTP_URL = 'http://www.bigemap.com:9000';
+    const nanjing_latlng = [32.05425677484691, 118.79905099024315]
+    const chengdu_latlng = [30.657348674722016, 104.06364187852249]
+    // 在ID为map的元素中实例化一个地图，并设置地图的ID号为 bigemap.zhongkexingtu，ID号程序自动生成，无需手动配置，无需设置地图投影 ，中心点，默认的级别和显示级别控件
+    // var map = BM.map('map', 'bigemap.zhongkexingtu', {
+    var map = BM.map('map', null, {
+      crs: BM.CRS.EPSG4326,
+      // center: nanjing_latlng,
+      center: chengdu_latlng,
+      // zoom: 18,
+      zoom: 3,
+      zoomControl: true,
+      attributionControl: false
+    });
+    //为地图添加一个单击事件，更多事件列表请参见 ：http://www.bigemap.com/offlinemaps/api/#map-baselayerchange
+    map.on('click',function(e){
+      var str = 'lat:' + e.latlng.lat + ',lng:' + e.latlng.lng;
+      alert(str);
+    });
+    //创建一个卫星图层 ，具体API详情请参见 ：http://www.bigemap.com/offlinemaps/api/#tilelayer
+    // var arcgis_satellite = BM.tileLayer('bigemap.zhongkexingtu')
+    var arcgis_satellite = BM.tileLayer('bigemap.ctfzk21h')
+    arcgis_satellite.addTo(map)
+    var arcgis_street = BM.tileLayer('bigemap.arcgis-map')
+    document.getElementById('satellite').addEventListener('click',function () {
+      arcgis_street.remove(map);
+      map.flyTo(nanjing_latlng, 5, { animate: true })
+      //先移除一个图层 ，再添加一个图层
+      arcgis_satellite.addTo(map);
+    })
+    document.getElementById('street').addEventListener('click',function () {
+      arcgis_satellite.remove(map);
+      map.flyTo([16.851146220069495, -30.592885901710403], 5, { animate: true }) // 江宁区九龙湖
+      // map.panTo(nanjing_latlng)
+      arcgis_street.addTo(map);
+    })
+    document.getElementById('layer-mixins').addEventListener('click',function () {
+      arcgis_street.remove(map)
+      arcgis_satellite.remove(map)
+      map.flyTo(chengdu_latlng, 8, { animate: true })
+      // map.setMaxZoom(14)
+      var layer1 = BM.tileLayer('bigemap.ctfzk21h')
+      var layer2 = BM.tileLayer('bigemap.9ss9fohh')
+      layer1.addTo(map)
+      layer2.addTo(map)
+      // map.setZoom(8)
+    })
+    // var layer1 = BM.tileLayer('bigemap.ctfzk21h')
+    // var layer2 = BM.tileLayer('bigemap.9ss9fohh')
+    // layer1.addTo(map)
+    // setTimeout(() => {
+    //   Object.assign(layer1.options,{ maxNativeZoom:5, maxZoom:14 })
+    // }, 500)
+    // layer2.addTo(map)
+    console.log(map.addAttribution('12312312312331231231231').getContainer())
+  </script>
+</body>
+</html>

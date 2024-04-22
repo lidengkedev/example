@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <meta name="keywords" content="js,leaflet">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- <meta http-equiv="refresh" content="5"> -->
+  <!-- <meta http-equiv="refresh" content="0; url=http://example.com"> -->
+  <meta name="description" content="https://leafletjs.cn/">
+  <title>Leaflet 地图瓦片控制编辑</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+  <style>
+    html, body { padding: 0; margin: 0; box-sizing: border-box; }
+    #map { width: 100%; height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    const nanjing_latlng = [32.05425677484691, 118.79905099024315]
+    var map = L.map('map').setView(nanjing_latlng, 11)
+    // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // L.tileLayer('http://www.bigemap.com:9001/bigemap.ctfzk21h/tiles/{z}/{x}/{y}.png', {
+    // L.tileLayer('https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}', {
+    L.tileLayer('https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}', {
+        // maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map)
+    // L.tileLayer('https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}').addTo(map)
+    // https://geojson.cn/api/data/320000.json
+    // fetch('https://geojson.cn/api/data/320000.json').then(res => res.json()).then(res => {
+    //   L.geoJSON(res, { style: {} }).addTo(map)
+    // })
+    // https://geojson.cn/api/data/320000/320100.json
+    fetch('/json/320100.json', {
+      headers: {
+        'Content-Type': 'application/www-form-urlencoded',
+        'Access-Control-Allow-Origin': '*',
+        'Origin': '',
+        'Sec-Fetch-Mode': 'no-cors'
+      }
+    }).then(res => res.json()).then(res => {
+      L.geoJSON(res, { style: {} }).addTo(map)
+    })
+  </script>
+</body>
+</html>
