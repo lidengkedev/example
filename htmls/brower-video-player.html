@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>通过浏览器选择本地视频文件并播放本地视频的播放器</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; }
+    .upload-file { width: 100%; margin: 0 auto; padding: 10px; text-align: center; color: #FFF; background-color: #52ccba; cursor: pointer; }
+    .video-player-warpper { position: relative; border: 1px solid #EAEAEA; }
+    #video { width: 100%; height: calc(100vh - 41px); }
+    .menu-inner { position: absolute; top: 0; right: -600px; width: 620px; display: grid; grid-template-columns: 20px 1fr; transition: right 300ms ease-in-out; }
+    .menu-inner.is-loading::before { position: absolute; top: 0; left: 0; content: '加载中，请稍后...'; width: 100%; height: 100%; color: orange; font-size: 28px; display: grid; place-content: center; }
+    .menu-inner .menu-list { height: calc(100vh - 41px); overflow-y: auto; background-color: rgba(0,0,0,0.3); }
+    .menu-inner .menu-item { padding: 5px 10px; color: #FFF; cursor: pointer; list-style: none; display: grid; grid-template-columns: 1fr 65px; }
+    .menu-inner .menu-item span { pointer-events: none; }
+    .menu-inner .menu-item:hover { background-color: rgba(255,165,0.1); }
+    .menu-inner .expend { width: 20px; height: 80px; border-top-left-radius: 5px; border-bottom-left-radius: 5px; background-color: rgba(0,0,0,0.3); transform: translate(0, 40vh); cursor: pointer; visibility: hidden; }
+    .video-player-warpper:hover .expend { visibility: visible; }
+    .video-player-warpper:hover .menu-inner { right: 0; }
+    .menu-inner .menu-item.is-active { background-color: rgba(255,165,0.1); }
+  </style>
+</head>
+<body>
+  <div class="upload-file">
+    请选择本地视频文件夹
+    <input type="file" id="file" hidden webkitdirectory>
+  </div>
+  <div class="video-player-warpper">
+    <video id="video" src="" width="100%" height="100%"></video>
+    <div class="menu-inner">
+      <div class="expend"></div>
+      <ul class="menu-list"></ul>
+    </div>
+  </div>
+  <script>
+    const menu_list = []
+    const video = document.getElementById('video')
+    const file_elem = document.getElementById('file')
+    const menu_list_elem = document.querySelector('.menu-list')
+    const upload_file_elem = document.querySelector('.upload-file')
+    const menu_inner_elem = document.querySelector('.menu-inner')
+    const menu_expend_elem = document.querySelector('.menu-inner .expend')
+    // 文件夹上传
+    function handleUpload(event) {
+      const files = event.target.files
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        if (menu_list.some(v => v.name === file.name)) {
+          console.log(`${file.name} 已存在列表中！`)
+        } else {
+          menu_list.push({ url: URL.createObjectURL(file), name: file.name })
+        }
+      }
+      setMenuListHtml()
+    }
+    // 创建菜单DOM元素
+    async function setMenuListHtml(file) {
+      let menu_list_html = ''
+      menu_inner_elem.classList.add('is-loading')
+      for (let i = 0; i < menu_list.length; i++) {
+        const { url, name } = menu_list[i]
+        let duration = await getVideoDuration(url)
+        const H = Math.floor(duration / 60 / 60)
+        const M = Math.floor((duration - H * 60 * 60) / 60)
+        const S = Math.floor((duration - H * 60 * 60) % 60)
+        const times = `${H}:${M > 9 ? M : '0' + M}:${S > 9 ? S : '0' + S}`
+        let menu_item_class = 'menu-item'
+        if (video.src === url) {
+          menu_item_class = 'menu-item is-active'
+        }
+        menu_list_html += `<li class="${menu_item_class}" data-url="${url}" title="${name}"><span>${name}</span></span>${times}</span></li>`
+      } 
+      menu_list_elem.innerHTML = menu_list_html
+      menu_inner_elem.classList.remove('is-loading')
+    }
+    // 计算时长
+    function getVideoDuration(url) {
+      let audio = new Audio(url)
+      function handleLoadedmetadata([resolve]) {
+        resolve(audio.duration)
+        audio.removeEventListener('loadedmetadata', handleLoadedmetadata)
+        audio = null
+      }
+      return new Promise(resolve => {
+        audio.addEventListener('loadedmetadata', handleLoadedmetadata.bind(audio, [resolve]))
+      })
+    }
+    // 菜单选择
+    function handleMenuItem(event) {
+      if (event.target.nodeName === 'LI') {
+        video.src = event.target.dataset.url
+        video.controls = true
+        menuItemSelected(event.target)
+      }
+    }
+    // 切换选中的菜单项
+    function menuItemSelected(menuItem) {
+      const menu_item_elem = document.querySelectorAll('.menu-item')
+      for (let i = 0; i < menu_item_elem.length; i++) {
+        const menu_item_title = menu_item_elem[i].title
+        if (menu_item_title === menuItem.title) {
+          menu_item_elem[i].classList.add('is-active')
+        } else {
+          menu_item_elem[i].classList.remove('is-active')
+        }
+      }
+    }
+    // 菜单折叠展开
+    function handleMenuExpend() {
+      if (parseFloat(menu_inner_elem.style.right) < 0) {
+        menu_inner_elem.style.right = 0
+      } else {
+        menu_inner_elem.style.right = '-600px'
+      }
+    }
+    // 选择文件夹
+    function handleSelectFile() {
+      file_elem.click()
+    }
+    window.onload = function () {
+      // 展开折叠菜单
+      menu_expend_elem.onclick = handleMenuExpend
+      // 选择文件夹
+      upload_file_elem.onclick = handleSelectFile
+      // 处理文件夹内的所有视频文件
+      file_elem.onchange = handleUpload
+      // 选择视频
+      menu_list_elem.addEventListener('click', handleMenuItem)
+    }
+    window.onbeforeunload = function () {
+      // 移除选择视频click事件
+      menu_list_elem.removeEventListener('click', handleMenuItem)
+    }
+  </script>
+</body>
+</html>
