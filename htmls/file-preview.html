@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件预览：png,jpg,jpeg,doc,docx,xls,xlsx,ppt,pdf,video,audio,txt,markdown 文件在线预览</title>
+  <style>
+    html, body { margin: 0; padding: 0; box-sizing: border-box; }
+    .page-title { margin: 0; text-align: center; padding: 10px; font-size: 20px; color: #000; background-color: aquamarine; box-sizing: border-box; }
+    #app { display: grid; grid-template-columns: 1fr 3fr; box-sizing: border-box; }
+    aside { height: calc(100vh - 47px); padding-top: 10px; color: #FFF; background-color: #000; box-sizing: border-box; }
+    aside nav { padding: 10px; box-sizing: border-box; }
+    aside nav:hover { background-color: #52ccba; cursor: pointer; }
+    #main { padding: 10px; height: calc(100vh - 47px); overflow: auto; box-sizing: border-box; }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/styles/default.min.css">
+
+  <script src="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/highlight.min.js"></script>
+  <!-- and it's easy to individually load additional languages -->
+  <script src="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/languages/go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <h1 class="page-title">PNG,JPG,JPEG,VIDEO,AUDIO,DOC,EXCEL,PPT,PDF,TXT,MARKDOWN,第三方链接 文件在线预览</h1>
+  <div id="app">
+    <aside>
+      <nav id="png">PNG 预览</nav>
+      <nav id="jpg">JPG 预览</nav>
+      <nav id="jpeg">JPEG 预览</nav>
+      <nav id="mp4">MP4 预览</nav>
+      <nav id="mp3">MP3 预览</nav>
+      <nav id="txt">TXT 预览</nav>
+      <nav id="md">MARKDOWN 预览</nav>
+      <nav id="doc">DOC 预览</nav>
+      <nav id="excel">EXCEL 预览</nav>
+      <nav id="ppt">PPT 预览</nav>
+      <nav id="pdf">PDF 预览</nav>
+      <nav id="url">URL 预览</nav>
+    </aside>
+    <main id="main"></main>
+  </div>
+  <script>
+    const main_elem = document.getElementById('main')
+    // PNG,JPG,JPEG 预览
+    function handlePicture(url) {
+      main_elem.innerHTML = `<img src="${url}" width="auto" height="auto">`
+    }
+    // video 预览
+    function handleVideo(url) {
+      main_elem.innerHTML = `<video src="${url}" controls muted controlsList="nodownload" width="100%" height="100%">
+        <track kind="captions" />
+        <source src="${url}" type="video/mp4" />  
+      </video>`
+    }
+    // audio 预览
+    function handleAudio(url) {
+      main_elem.innerHTML = `<audio controls width="100%" height="100%">
+        <track kind="captions" />
+        <source src="${url}" type="audio/mpeg" />
+      </audio>`
+    }
+    // txt 预览
+    function handleText(url) {
+      main_elem.innerHTML = `<div width="100%" height="100%">${url}</div>`
+    }
+    // doc,docx,xls,xlsx,ppt 预览
+    function handleIframe(url) {
+      const iframe_url = `https://view.officeapps.live.com/op/view.aspx?src=${url}`
+      main_elem.innerHTML = `<iframe src="${iframe_url}" controls width="100%" height="100%" allow="microphone;camera;midi;encrypted-media;"></iframe>`
+    }
+    // pdf 预览
+    function handlePdf(params) {
+      const url = params.sourcePage ? `${params.url}#page=${params.sourcePage}` : params.url
+      main_elem.innerHTML = `<embed src="${url}" style="width: 100%; height: 100%;"></embed>`
+    }
+    // 链接预览
+    function handleUrl(url) {
+      main_elem.innerHTML = `<iframe src="${url}" controls width="100%" height="100%" allow="microphone;camera;midi;encrypted-media;"></iframe>`
+    }
+    window.onload = function () {
+      const app_elem = document.getElementById('app')
+      const png_elem = document.getElementById('png')
+      const jpg_elem = document.getElementById('jpg')
+      const jpeg_elem = document.getElementById('jpeg')
+      const mp4_elem = document.getElementById('mp4')
+      const mp3_elem = document.getElementById('mp3')
+      const txt_elem = document.getElementById('txt')
+      const md_elem = document.getElementById('md')
+      const doc_elem = document.getElementById('doc')
+      const excel_elem = document.getElementById('excel')
+      const ppt_elem = document.getElementById('ppt')
+      const pdf_elem = document.getElementById('pdf')
+      const url_elem = document.getElementById('url')
+
+      png_elem.onclick = function () {
+        handlePicture('https://csdnimg.cn/release/mp_new/img/dialog-title.9ff9b369.png')
+      }
+      jpg_elem.onclick = function () {
+        handlePicture('http://webimg.maibaapp.com/content/img/avatars/20172320/14/23/01963.jpg')
+      }
+      jpeg_elem.onclick = function () {
+        handlePicture('https://pic.rmb.bdstatic.com/cms/3d14a8e1bd4b56686a00df73e77f0d40_1678960747.9185_510.jpeg')
+      }
+      mp4_elem.onclick = function () {
+        handleVideo('http://mirror.aarnet.edu.au/pub/TED-talks/911Mothers_2010W-480p.mp4')
+      }
+      mp3_elem.onclick = function () {
+        handleAudio('https://img02.tuke88.com/newpreview_music/08/99/15/5c88e63ca74e859434.mp3')
+      }
+      txt_elem.onclick = function () {
+        handleText('这是一段文本')
+      }
+      md_elem.onclick = async function () {
+        const markdown = '# markdown 文档标题\n'
+          + '```javascript\n var a = 123;\n console.log(123);\n ```\n'
+          + '## 标题 1-1\n'
+          + '### 标题 1-2\n'
+          + '#### 标题 1-3\n'
+          + '##### 标题2\n'
+          + '> HTML 结构\n'
+          + '```html\n<!DOCTYPE html>\n  <head></head>\n  <body></body>\n</html>\n```\n'
+          + '> CSS 样式\n'
+          + '```css\n#app {\n  width: 100%;\n  height: 100vh;\n}\n```\n'
+        marked.use({
+          renderer: {
+            code(code, infostring) {
+              console.log(code, infostring)
+              const validLang = !!(infostring && hljs.getLanguage(infostring))
+              const highlighted = validLang
+                ? hljs.highlight(code, { language: infostring, ignoreIllegals: true }).value
+                : code
+                return `<pre><code class="hljs ${infostring}">${highlighted}</code></pre>`
+            }
+          }
+        })
+        main_elem.innerHTML = marked.parse(markdown)
+      }
+      doc_elem.onclick = function () {
+        // 此地址需要是线上可以访问的资源地址才可以使用在线预览功能，本地启动的服务无用
+        handleIframe('')
+      }
+      excel_elem.onclick = function () {
+        // 此地址需要是线上可以访问的资源地址才可以使用在线预览功能，本地启动的服务无用
+        handleIframe('')
+      }
+      ppt_elem.onclick = function () {
+        // 此地址需要是线上可以访问的资源地址才可以使用在线预览功能，本地启动的服务无用
+        handleIframe('')
+      }
+      pdf_elem.onclick = function () {
+        handlePdf({ url: 'http://127.0.0.1:8080/前端工程师面试题手册.pdf', sourcePage: 11 })
+      }
+      url_elem.onclick = function () {
+        handleUrl('https://juejin.cn/frontend/%E5%89%8D%E7%AB%AF')
+      }
+    }
+  </script>
+</body>
+</html>
