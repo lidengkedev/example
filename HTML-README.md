@@ -21,6 +21,7 @@
 - [使用 echarts 绘制一个 3d 地图](https://lidengkedev.github.io/example/htmls/echarts-map-3d.html)
 - [Ehcarts-pie-3D饼状图效果](https://lidengkedev.github.io/example/htmls/echarts-pie-3d.html)
 - [公共英语三级试题](https://lidengkedev.github.io/example/htmls/en-3.html)
+- [文件预览：png,jpg,jpeg,doc,docx,xls,xlsx,ppt,pdf,video,audio,txt,markdown 文件在线预览](https://lidengkedev.github.io/example/htmls/file-preview.html)
 - [文件上传](https://lidengkedev.github.io/example/htmls/file-upload.html)
 - [使用 js 实现在输入框内输入文本，输出打字机效果](https://lidengkedev.github.io/example/htmls/font-print.html)
 - [使用 js 实现浏览器全屏功能实现](https://lidengkedev.github.io/example/htmls/fullscreen.html)
