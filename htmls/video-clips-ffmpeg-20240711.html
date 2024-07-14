@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="ffmpeg,node,js,video,audio">
+  <title>选择本地文件夹中的MP4视频文件后，根据视频播放进度设置剪辑的视频的命令行，并支持文件将剪辑的命令行复制到系统剪切板</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; }
+    h4 { margin: 10px auto; text-align: center; }
+    main { width: 1000px; margin: 0 auto; }
+    .upload-file { width: 100%; margin: 0 auto; padding: 10px; text-align: center; color: #FFF; background-color: #52ccba; cursor: pointer; }
+    .video-box { width: 100%; margin: 0 auto; padding: 5px 0; text-align: center; }
+    .video-box #video { width: 100%; }
+    .video-play-controls { width: 100%; margin: 0 auto; padding: 10px; display: flex; align-items: center; justify-content: space-between; background-color: blanchedalmond; }
+    .video-play-controls .video-clips-time-inner { width: 100%; margin: 0 auto; line-height: 32px; display: flex; justify-content: start; }
+    .video-play-controls .video-clips-time-inner.end { justify-content: flex-end; }
+    .video-play-controls .video-clips-time-inner #video-clips-start-time,
+    .video-play-controls .video-clips-time-inner #video-clips-end-time { width: 150px; height: 32px; margin-left: 10px; border: 1px solid #000; background-color: #FFF; color: #000; text-align: center; line-height: 32px; }
+    #video-clips-button { width: 100px; height: 32px; margin-left: 10px; border: 1px solid #000; background-color: #FFF; color: #000; text-align: center; line-height: 32px; cursor: pointer; }
+    #video-clips-shell-list { width: 100%; margin: 0 auto; padding: 10px 0; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
+   .video-clips-shell { width: 100%; margin: 0 auto; padding: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; background-color: lightblue; }
+   .video-clips-shell-text { width: calc(100% - 144px); margin: 0 auto; line-height: 32px; }
+   .video-clips-shell-action { width: 144px; margin: 0 auto; }
+   .video-clips-shell-copy { width: 60px; height: 32px; margin: 0 10px; border: 1px solid #000; background-color: #FFF; color: #000; text-align: center; line-height: 32px; cursor: pointer; }
+   .video-clips-shell-delete { width: 60px; height: 32px; margin: 0 auto; border: 1px solid #000; background-color: #FFF; color: #000; text-align: center; line-height: 32px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <main>
+    <h4>选择本地文件夹中的MP4视频文件后，根据视频播放进度设置剪辑的视频的命令行，并支持文件将剪辑的命令行复制到系统剪切板。</h4>
+    <div class="upload-file">
+      请选择本地文件夹中的MP4视频文件
+      <input type="file" id="file" hidden>
+    </div>
+    <div class="video-box">
+      <video id="video" controls muted preload="auto"></video>
+    </div>
+    <div class="video-play-controls">
+      <div class="video-clips-time-inner start">
+        开始时间:
+        <div id="video-clips-start-time"></div>
+      </div>
+      <div class="video-clips-time-inner end">
+        结束时间:
+        <div id="video-clips-end-time"></div>
+      </div>
+      <div id="video-clips-button">剪辑</div>
+    </div>
+    <div id="video-clips-shell-list"></div>
+  </main>
+  <script>
+    // 初始化
+    // 1. 获取视频资源地址
+    // 2. 获取视频总时长
+    // 3. 实时计算视频播放时间
+    // 4. 实时显示视频播放时间
+    // 5. 点击视频剪辑开始时间，控制视频进度来设置视频剪辑开始时间
+    // 6. 点击视频剪辑结束时间，控制视频进度来设置视频剪辑结束时间
+    // 7. 使用 ffmpeg 开始剪辑视频 ffmpeg -ss 00:00:00.00 -to 00:00:00.00 -i video.mp4 -c copy output.mp4
+
+
+    window.onload = function() {
+      const upload_file_elem = document.querySelector('.upload-file')
+      const input_elem = document.getElementById('file');
+      const video_elem = document.getElementById('video');
+      const video_box_elem = document.querySelector('.video-box')
+      const video_clips_start_time_elem = document.getElementById('video-clips-start-time')
+      const video_clips_end_time_elem = document.getElementById('video-clips-end-time')
+      const video_clips_btn_elem = document.getElementById('video-clips-button')
+      const video_clips_shell_list_elem = document.getElementById('video-clips-shell-list')
+
+      let local_video_file_path = ''
+      let local_video_file_name = ''
+
+
+      // 点击上传文件按钮
+      upload_file_elem.onclick = function() {
+        input_elem.click();
+      }
+
+      // 选择文件后播放视频
+      input_elem.onchange = function(e) {
+        const file = input_elem.files[0];
+        local_video_file_path = e.target.value
+        local_video_file_name = file.name
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          video_elem.src = e.target.result;
+          video_elem.play();
+          let duration = await getVideoDuration(e.target.result)
+          video_clips_start_time_elem.innerText = '00:00:00'
+          video_clips_end_time_elem.innerText = getVideoPlayStartTime(duration)
+          getVideoLoadingTime()
+          getVideoPlayTime()
+          getVideoUnloadTime()
+        }
+        reader.readAsDataURL(file);
+      }
+      
+      // 点击视频剪辑按钮
+      video_clips_btn_elem.onclick = async function() {
+        const currentTime = new Date()
+        const Y = currentTime.getFullYear()
+        const M = (currentTime.getMonth() + 1).toString().padStart(2, '0')
+        const D = (currentTime.getDate()).toString().padStart(2, '0')
+        const H = (currentTime.getHours()).toString().padStart(2, '0')
+        const m = (currentTime.getMinutes()).toString().padStart(2, '0')
+        const s = (currentTime.getSeconds()).toString().padStart(2, '0')
+        const miss = (currentTime.getMilliseconds()).toString().padStart(3, '0')
+
+        let shell = `ffmpeg -ss ${video_clips_start_time_elem.innerText} -to ${video_clips_end_time_elem.innerText} -i "${local_video_file_name}" -c copy "${Y}.${M}.${D}.${H}.${m}.${s}.${miss}.mp4"`
+        const index = document.querySelectorAll('.video-clips-shell').length
+        video_clips_shell_list_elem.innerHTML += `<div class="video-clips-shell">${index + 1}、<div class="video-clips-shell-text">${shell}</div><div class="video-clips-shell-action"><button class="video-clips-shell-copy">复制</button><button class="video-clips-shell-delete">删除</button></div></div>`
+      }
+
+      // 复制视频剪辑命令
+      video_clips_shell_list_elem.addEventListener('click', function(e) {
+        if (e.target.classList.contains('video-clips-shell-copy')) {
+          const parentElement = e.target.parentElement.parentElement
+          const text = parentElement.querySelector('.video-clips-shell-text').innerText
+          navigator.clipboard.writeText(text)
+          alert('复制成功')
+        } else if (e.target.classList.contains('video-clips-shell-delete')) {
+          e.target.parentElement.parentElement.remove()
+        }
+      })
+      // 获取视频已经加载完成的时间
+      function getVideoPlayTime() {
+        return new Promise(resolve => {
+          video_elem.addEventListener('timeupdate', function() {
+            video_clips_start_time_elem.innerText = getVideoPlayStartTime(video_elem.currentTime)
+            resolve(video_elem.currentTime)
+          })
+        })
+      }
+      
+      // 获取视频未加载完成的时间
+      function getVideoUnloadTime() {
+        return new Promise(resolve => {
+          video_elem.addEventListener('waiting', function() {
+            console.log('waiting', video_elem.currentTime)
+            resolve(video_elem.currentTime)
+          })
+        })
+      }
+
+      // 获取视频正在加载中的时间
+      function getVideoLoadingTime() {
+        return new Promise(resolve => {
+          video_elem.addEventListener('playing', function() {
+            console.log('playing', video_elem.currentTime)
+            resolve(video_elem.currentTime)
+          })
+        })
+      }
+    }
+
+    // 通过视频资源地址计算视频总时长
+    function getVideoDuration(url) {
+      let audio = new Audio(url)
+      function handleLoadedmetadata([resolve]) {
+        resolve(audio.duration)
+        audio.removeEventListener('loadedmetadata', handleLoadedmetadata)
+        audio = null
+      }
+      return new Promise(resolve => {
+        audio.addEventListener('loadedmetadata', handleLoadedmetadata.bind(audio, [resolve]))
+      })
+    }
+    function getVideoPlayStartTime(duration) {
+      let H = 0
+      let M = 0
+      let S = 0
+      let miss = 0
+      // 计算当前时间
+      if (duration >= 60) {
+        H = Math.floor(duration / 60 / 60)
+        M = Math.floor((duration - H * 60 * 60) / 60)
+        S = Math.floor((duration - H * 60 * 60) % 60)
+        miss = Math.floor((duration - (H * 60 * 60) - (M * 60) - S) * 1000)
+      } else {
+        M = 0
+        S = Math.floor(duration)
+        miss = Math.floor((duration - (H * 60 * 60) - (M * 60) - S) * 1000)
+      }
+      return `${H.toString().padStart(2, '0')}:${M.toString().padStart(2, '0')}:${S.toString().padStart(2, '0')}.${miss.toString().padStart(3, '0')}`
+      // return `${H.toString().padStart(2, '0')}:${M.toString().padStart(2, '0')}:${S.toString().padStart(2, '0')}`
+    }
+  </script>
+</body>
+</html>

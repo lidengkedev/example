@@ -33,6 +33,7 @@
 - [使用vue@2.6.5制作一个横向条形纹进度条或者占比情况说明组件](https://lidengkedev.github.io/example/htmls/process-dashed.html)
 - [使用svg实现文本不同渐变方向的线性渐变效果和径向渐变效果](https://lidengkedev.github.io/example/htmls/svg-gradient.html)
 - [使用 SVG 画一个进度圆环](https://lidengkedev.github.io/example/htmls/svg-ring.html)
+- [选择本地文件夹中的MP4视频文件后，根据视频播放进度设置剪辑的视频的命令行，并支持文件将剪辑的命令行复制到系统剪切板](https://lidengkedev.github.io/example/htmls/video-clips-ffmpeg-20240711.html)
 - [使用 vis 中的 Network 功能 绘制关系图](https://lidengkedev.github.io/example/htmls/vis-network.html)
 - [使用 Vue 框架添加 容器分屏拖动功能](https://lidengkedev.github.io/example/htmls/vue-box-resize.html)
 - [使用 vue 编写一个工序拆分页面](https://lidengkedev.github.io/example/htmls/vue-working-procedure.html)

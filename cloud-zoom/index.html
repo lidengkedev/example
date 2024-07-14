@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>图片放大镜-cloud-zoom</title>
+    <link href="img/cloud-zoom.css"  rel="stylesheet" type="text/css">
+    <link href="img/main.css"  rel="stylesheet" type="text/css">
+    <script src="img/jquery.js" type="text/javascript"></script>
+    <script src="img/cloud-zoom.1.0.2.min.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="main">
+    <h2 class="top_title"><a>图片放大镜-Cloud Zoom</a></h2>
+    <div class="demo">
+        <h2>标准设置</h2>
+        <a class="cloud-zoom" id="zoom1" href="img/bigimage00.jpg" rel="adjustX: 10, adjustY:-4, softFocus:true">
+        	<img src="img/smallimage.jpg" title="Optional title display" alt="" />
+        </a>
+        <a href='img/bigimage00.jpg' class='cloud-zoom-gallery' title='Thumbnail 1' rel="useZoom: 'zoom1', smallImage: 'img/smallimage.jpg' ">
+            <img src="img/tinyimage.jpg" alt = "Thumbnail 1"/>
+        </a>   
+        <a href='img/bigimage01.jpg' class='cloud-zoom-gallery' title='Thumbnail 2' rel="useZoom: 'zoom1', smallImage: 'img/smallimage-1.jpg'">
+            <img src="img/tinyimage-1.jpg" alt = "Thumbnail 2"/>
+        </a>                  
+                
+        <a href='img/bigimage02.jpg' class='cloud-zoom-gallery' title='Thumbnail 3' rel="useZoom: 'zoom1', smallImage: 'img/smallimage-2.jpg' ">
+                <img src="img/tinyimage-2.jpg" alt = "Thumbnail 3"/>
+        </a>
+    </div>
+
+    <div class="demo">
+      <h2>色彩设置</h2>
+      <a class="cloud-zoom" id="zoom1" href="img/bigimage02.jpg" rel="tint: 'pink',tintOpacity:0.5 ,smoothMove:5,zoomWidth:480, adjustY:-4, adjustX:10,showTitle:false "><img src="img/smallimage-2.jpg" title="Optional title display" alt="" /></a>
+      <p>参数设置：<br/>tint: '#ff0000',tintOpacity:0.5 ,smoothMove:5,zoomWidth:480, adjustY:-4, adjustX:10</p>
+    </div>
+
+    <div class="demo">
+      <h2>在小图片里放大</h2>
+      <a class="cloud-zoom" id="zoom1" href="img/bigimage01.jpg" rel="position: 'inside' , showTitle: false, adjustX:-4, adjustY:-4"><img src="img/smallimage-1.jpg" title="Optional title display" alt="" /></a>
+      <p>参数设置：<br/>position: 'inside' , showTitle: false, adjustX:-4, adjustY:-4</p>
+    </div>
+
+    <div class="demo">
+      <h2>设置缩放窗口位置</h2>
+      <a class="cloud-zoom" id="zoom1" href="img/bigimage00.jpg" rel="softFocus: true, position:'anypos', smoothMove:2"><img src="img/smallimage.jpg" title="Optional title display" alt="" /></a>
+      <div class="zoom-desc" style="position:relative">
+         <div id="anypos" style="position:absolute;top:-188px; left: 328px;width:256px; height:256px;"></div>
+      </div>
+      <p>参数设置：<br/>softFocus: true, position:'anypos', smoothMove:2</p>
+    </div>
+
+    <div class="ad_demo"><script src="/js/ad_js/ad_demo.js" type="text/javascript"></script></div>
+    </div>
+    <p id="stat"><script type="text/javascript" src="/js/tongji.js"></script></p>
+</body>
+</html>
