@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>原生JS编写拖拽弹框效果</title>
+  <style>
+    nav { text-align: center; margin-top: 20px; }
+    #model-box-click { width: 120px; height: 48px; border: 1px solid #1770FF; border-radius: 3px; font-size: 20px; color: #FFF; background-color: #1770FF; cursor: pointer; }
+  </style>
+  <style>
+    html,
+    body,
+    ul,
+    li,
+    tr,
+    th,
+    td,
+    dd,
+    ol,
+    p,
+    label,
+    form,
+    a,
+    button,
+    input {
+      margin: 0px;
+      padding: 0px;
+      box-sizing: border-box;
+      font-weight: 0;
+      font-size: 16px;
+      font-family: '微软雅黑';
+      outline: none;
+      list-style: none;
+      text-decoration: none;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #model-box {
+      position: fixed;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      display: none;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .model-box-lg,
+    .model-box-md,
+    .model-box-sm {
+      position: absolute;
+      left: 25%;
+      top: 10%;
+      border-radius: 5px;
+      background-color: #FFFFFF;
+    }
+
+    .model-box-lg {
+      width: 100%;
+    }
+
+    .model-box-md {
+      width: 50%;
+    }
+
+    .model-box-sm {
+      width: 25%;
+    }
+
+    #model-box-title {
+      width: 100%;
+      position: relative;
+      background-color: #E0E7F0;
+      height: 30px;
+      line-height: 30px;
+      cursor: move;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+    }
+
+    #model-box-title>label {
+      padding-left: 20px;
+    }
+
+    #model-box-title>span {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      position: absolute;
+      right: 20px;
+      top: 0px;
+      cursor: pointer;
+    }
+
+    #model-box-body,
+    #model-box-footer {
+      padding: 20px;
+      clear: both;
+      overflow: hidden;
+      display: block;
+    }
+
+    #model-box-footer-reset,
+    #model-box-footer-sure {
+      width: 80px;
+      height: 30px;
+      line-height: 30px;
+      background-color: #FFFFFF;
+      float: right;
+      border: 1px solid gray;
+      border-radius: 5px;
+      font-size: 18px;
+      margin: 0px 10px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    #model-box-footer-sure {
+      background-color: #1770FF;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <button id="model-box-click">Model</button>
+  </nav>
+  <div id="model-box">
+    <div id="model-box-content" class="model-box-md">
+      <div id="model-box-title">
+        <label>Title</label>
+        <span id="model-box-close">Close</span>
+      </div>
+      <div id="model-box-body">
+        <p>这是一个可以拖动的弹框</p>
+      </div>
+      <div id="model-box-footer">
+        <button id="model-box-footer-reset">取消</button>
+        <button id="model-box-footer-sure">确定</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    var model_box = (function () {
+
+      var model_box = document.getElementById('model-box');
+
+      var model_content = document.getElementById('model-box-content');
+
+      var model_box_title = document.getElementById('model-box-title');
+
+      var showbtn = document.getElementById('model-box-click');
+
+      var closebtn = document.getElementById('model-box-close');
+
+      var resetbtn = document.getElementById('model-box-footer-reset');
+
+      var surebtn = document.getElementById('model-box-footer-sure');
+
+      var showbody = function () {
+
+        model_box.style.display = 'block';
+
+      }
+
+      var close = function () {
+
+        model_box.style.display = 'none';
+
+      }
+
+      var sure = function () {
+
+        //处理机制
+        //xxx
+        model_box.style.display = 'none';
+
+      }
+
+      var attrEvent = function () {
+
+        showbtn.onclick = showbody;
+
+        closebtn.onclick = close;
+
+        resetbtn.onclick = close;
+
+        surebtn.onclick = sure;
+
+        model_box_title.onmousedown = function (event) {
+
+          var x_x = event.clientX - model_content.offsetLeft;
+          var y_y = event.clientY - model_content.offsetTop;
+
+          document.onmousemove = function (e) {
+
+            var left = e.clientX - x_x;
+
+            var top = e.clientY - y_y;
+
+            left = left < 0 ? 0 : left;
+
+            top = top < 0 ? 0 : top;
+
+            if (left > document.body.clientWidth - model_content.clientWidth) {
+
+              left = document.body.clientWidth - model_content.clientWidth;
+
+            }
+
+            if (top > document.body.clientHeight - model_content.clientHeight) {
+
+              top = document.body.clientHeight - model_content.clientHeight;
+
+            }
+
+            model_content.style.left = left + "px";
+
+            model_content.style.top = top + "px";
+          }
+        }
+
+        document.onmouseup = function () {
+          document.onmousemove = null;
+        }
+
+      }
+
+      return {
+        attrEvent: attrEvent
+      }
+    })();
+  </script>
+  <script>
+    model_box.attrEvent();
+  </script>
+</body>
+
+</html>
