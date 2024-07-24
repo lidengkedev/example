@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>原生JS全选与多选功能实现效果</title>
+  <style>
+    #cartTable { width: 100%; border-collapse: collapse; }
+    #cartTable td, #cartTable th { border: 1px solid #ddd; padding: 8px; }
+    #cartTable input[type=checkbox] { margin: 0; padding: 0; cursor: pointer; }
+    #cartTable input[type=checkbox]:checked { background-color: #2196F3; color: white; }
+    #cartTable input[type=checkbox]:disabled { background-color: #ddd; }
+    #cartTable input[type=checkbox]:disabled + label { color: #999; }
+    #cartTable thead { background-color: #f5f5f5; text-align: center; }
+    #cartTable thead th { padding: 10px 0; }
+    #cartTable thead th:first-child { width: 100px; }
+    #cartTable thead th:last-child { width: 100px; }
+    #cartTable tbody td { text-align: center; }
+  </style>
+</head>
+
+<body>
+  <table id="cartTable" border>
+    <thead>
+      <tr>
+        <th> <label for=""><input type="checkbox" class="check-all check" type="checkbox" />&nbsp;全选</label> </th>
+        <th>商品</th>
+        <th>单价</th>
+        <th>数量</th>
+        <th>小计</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="checkbox"><input class="check-one check" type="checkbox"></td>
+        <td class="goods"><img src="../images/1.jpg" /><span>Casio/卡西欧 EX-TR350</span></td>
+        <td class="price">5999.88</td>
+        <td class="count">
+          <span class="reduce"></span>
+          <input type="text" class="count-input" value="1" />
+          <span class="add">+</span>
+        </td>
+        <td class="subtotal">5999.88</td>
+        <td class="operation"><span class="delete">删除</span></td>
+      </tr>
+      <tr>
+        <td class="checkbox"><input class="check-one check" type="checkbox"></td>
+        <td class="goods"><img src="../images/2.jpg" /><span>Casio/卡西欧 EX-TR350</span></td>
+        <td class="price">5999.88</td>
+        <td class="count">
+          <span class="reduce"></span>
+          <input type="text" class="count-input" value="1" />
+          <span class="add">+</span>
+        </td>
+        <td class="subtotal">5999.88</td>
+        <td class="operation"><span class="delete">删除</span></td>
+      </tr>
+      <tr>
+        <td class="checkbox"><input class="check-one check" type="checkbox"></td>
+        <td class="goods"><img src="../images/3.jpg" /><span>Casio/卡西欧 EX-TR350</span></td>
+        <td class="price">5999.88</td>
+        <td class="count">
+          <span class="reduce"></span>
+          <input type="text" class="count-input" value="1" />
+          <span class="add">+</span>
+        </td>
+        <td class="subtotal">5999.88</td>
+        <td class="operation"><span class="delete">删除</span></td>
+      </tr>
+      <tr>
+        <td class="checkbox"><input class="check-one check" type="checkbox"></td>
+        <td class="goods"><img src="../images/4.jpg" /><span>Casio/卡西欧 EX-TR350</span></td>
+        <td class="price">5999.88</td>
+        <td class="count">
+          <span class="reduce"></span>
+          <input type="text" class="count-input" value="1" />
+          <span class="add">+</span>
+        </td>
+        <td class="subtotal">5999.88</td>
+        <td class="operation"><span class="delete">删除</span></td>
+      </tr>
+      <tr>
+        <td class="checkbox"><input class="check-one check" type="checkbox"></td>
+        <td class="goods"><img src="../images/5.jpg" /><span>Casio/卡西欧 EX-TR350</span></td>
+        <td class="price">5999.88</td>
+        <td class="count">
+          <span class="reduce"></span>
+          <input type="text" class="count-input" value="1" />
+          <span class="add">+</span>
+        </td>
+        <td class="subtotal">5999.88</td>
+        <td class="operation"><span class="delete">删除</span></td>
+      </tr>
+      <tr>
+        <td class="checkbox"><input class="check-one check" type="checkbox"></td>
+        <td class="goods"><img src="../images/6.jpg" /><span>Casio/卡西欧 EX-TR350</span></td>
+        <td class="price">5999.88</td>
+        <td class="count">
+          <span class="reduce"></span>
+          <input type="text" class="count-input" value="1" />
+          <span class="add">+</span>
+        </td>
+        <td class="subtotal">5999.88</td>
+        <td class="operation"><span class="delete">删除</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="footer" id="foot">
+    <label class="fl select-all"><input type="checkbox" class="check-all check" />&nbsp;全选</label>
+    <a href="javascript:void(0);" class="fl delete" id="deleteAll">删除</a>
+    <div class="fr closing">结算</div>
+    <div class="fr total">合计：￥<span id="priceTotal">0.00</span></div>
+    <div class="fr selected" id="selected">已选商品
+      <span id="selectedTotal">0</span>件
+      <span class="arrow up">up</span>
+      <span class="arrow down">down</span>
+    </div>
+    <div class="selected-view">
+      <div id="selectedViewList" class="clearfix"></div>
+      <span class="arrow">.<span>.</span></span>
+    </div>
+  </div>
+  <script>
+    window.onload = function () {
+      if (!document.getElementsByClassName) {
+        document.getElementsByClassName = function (cls) {
+          var ret = [];
+          var els = document.getElementsByName('*');
+          for (var i = 0, len = els.length; i < len; i++) {
+            if (els[i].className === cls
+              || els[i].className.indexOf(cls + ' ') >= 0
+              || els[i].className.indexOf(' ' + cls) >= 0
+              || els[i].className.indexOf(' ' + cls + ' ') >= 0) {
+              ret.push(els[i]);
+            }
+          }
+          return ret;
+        }
+      }
+      var cartTable = document.getElementById('cartTable');
+      var tr = cartTable.children[1].rows;
+      var checkInputs = document.getElementsByClassName('check');
+      var checkAllInputs = document.getElementsByClassName('check-all');
+      var selectedTotal = document.getElementById('selectedTotal');
+      var priceTotal = document.getElementById('priceTotal');
+      //计算
+      function getTotal() {
+        var selected = 0;
+        var price = 0;
+        for (var i = 0, len = tr.length; i < len; i++) {
+          if (tr[i].getElementsByTagName('input')[0].checked) {
+            selected += parseInt(tr[i].getElementsByTagName('input')[1].value);
+            price += parseFloat(tr[i].cells[4].innerHTML);
+          }
+        }
+        selectedTotal.innerHTML = selected;
+        priceTotal.innerHTML = price.toFixed(2);
+      }
+      for (var i = 0, len = checkInputs.length; i < len; i++) {
+        checkInputs[i].onclick = function () {
+          if (this.className === 'check-all check') {
+            for (var j = 0; j < checkInputs.length; j++) {
+              checkInputs[j].checked = this.checked;
+            }
+          }
+          if (this.checked == false) {
+            for (var k = 0; k < checkAllInputs.length; k++) {
+              checkAllInputs[k].checked = false;
+            }
+          }
+          getTotal();
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>
