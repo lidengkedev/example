@@ -41,3 +41,4 @@
 - [使用 Vue 框架添加 容器分屏拖动功能](https://lidengkedev.github.io/example/htmls/vue-box-resize.html)
 - [使用 vue 编写一个工序拆分页面](https://lidengkedev.github.io/example/htmls/vue-working-procedure.html)
 - [使用 js 实现页面水印效果](https://lidengkedev.github.io/example/htmls/water-mark.html)
+- [在线运行JS程序，并查看执行效果](https://lidengkedev.github.io/example/htmls/zai-xian-yun-xing-js.html)

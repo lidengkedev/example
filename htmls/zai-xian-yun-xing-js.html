@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>在线运行JS程序，并查看执行效果</title>
+  <style>
+    body { margin: 0px; padding: 20px; font-family: "微软雅黑"; }
+    textarea { width: 500px; height: 200px; }
+    input { width: 100px; height: 30px; font-size: 16px; }
+    .run-footer { width: 100%; height: 50px; line-height: 50px; text-align: center; font-size: 20px; color: #000; background-color: #fff; }
+  </style>
+</head>
+<body>
+  <div align="center">
+    <textarea id="textarea1"></textarea>
+    <div class="run-footer">
+      <input id="button2" type="button" value="执行程序" onclick="return Button1_onclick()">
+    </div>
+  </div>
+  <script>
+    window.onload = function () {
+      var textarea1 = document.getElementById("textarea1");
+      textarea1.value = "alert('Hello World!')";
+    }
+    // 方法一：使用 eval()
+    function Button1_onclick() {
+      var textarea1 = document.getElementById("textarea1");
+      var textarea1_value = textarea1.value;
+      eval(textarea1_value);
+    }
+    // 方法二：使用 try {} catch() {}
+    // function Button1_onclick(){
+    //   try {
+    //     var cmdWin = document.getElementById('textarea1');
+    //     var str = 'try{' + cmdWin.value + '}catch( e ){alert("你的代码有错：" +e.description);}';
+    //     var cmd = new Function(str);
+    //     cmd();
+    //   } catch(e) {
+    //     alert('错误：' + e.description);
+    //     console.log(e);
+    //   }
+    // }
+  </script>
+</body>
+</html>
