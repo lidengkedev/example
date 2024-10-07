@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>乐吾乐2D可视化网络拓扑图</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    button { padding: 5px 20px; border: 1px solid #52ccba; background-color: #52ccba; color: #FFF; font-size: 16px; cursor: pointer; }
+    #meta2d { border: 1px solid #EAEAEA; }
+  </style>
+  <script src="./meta2d.js"></script>
+</head>
+<body>
+  <!-- 
+    1.支持行内不同品牌异构网络设备的配置自动化获取。
+    2.实时生成现网拓扑。
+    3.支持自动化拓扑保鲜。
+    4.网络拓扑具备较好的可读性。
+    5.可实现网络区域的分级展示，包括子网内部终端和服务器等节点再拓扑中的状态。
+    6.支持快速导出网络边界的IP、端口等数据，揭示可能过大的网络暴露面。
+    7.支持再拓扑视图下观测网络设备的运行状态。
+    8.计算指定地址通讯的网络路径，揭示可能的故障点，生成基于整体网络的运行报表。
+  -->
+  <button id="meta2d-button-1">画布1</button>
+  <button id="meta2d-button-2">画布2</button>
+  <div id="meta2d" style="height:95vh;width:100vw;"></div>
+  <script>
+    var meta2d = new Meta2d("meta2d");
+    meta2d.setOptions({
+      disableClipboard: true,
+      disableAnchor: true,
+      disableRepeatLine: true,
+      resizeMode: false,
+      autoPolyline: true, // 是否自动计算多线段锚点
+      lineCross: true, // 连线相交弯曲
+      autoAlignGrid: true, // 是否自动对齐网格
+      autoSizeinPc: true, // 是否自动计算画布大小
+    })
+    registerCommonDiagram(); //注册图形库
+    drawCanvas1()
+    document.getElementById("meta2d-button-1").onclick = drawCanvas1
+    document.getElementById("meta2d-button-2").onclick = drawCanvas2
+
+    function drawCanvas1() {
+      fetch('./meta2d.2024107125821.json').then((res) => res.json()).then((data) => {
+        console.log(data)
+        data.pens.forEach(item => {
+          item.animateSpan = 5
+          // if (item.text?.indexOf('server') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './networks.Hub.png'
+          // } else if (item.text?.indexOf('transition') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './server_normal.png'
+          // } else if (item.text?.indexOf('cloud') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './cloud.png'
+          // } else if (item.text?.indexOf('transform1') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './routers.png'
+          // } else if (item.text?.indexOf('transform2') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './wireless.png'
+          // } else if (item.text?.indexOf('WDM2') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './mail.png'
+          // } else if (item.text?.indexOf('phone') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './phone.png'
+          // } else if (item.text?.indexOf('PC') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './pc.png'
+          // } else if (item.text?.indexOf('IPTV') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './monitor.png'
+          // } else if (item.text?.indexOf('STB') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './load.png'
+          // } else if (item.text?.indexOf('Mocem') > -1) {
+          //   item.lineWidth = 0
+          //   item.image = './load.png'
+          // }
+        })
+        meta2d.open(data)
+        meta2d.startAnimate()
+        console.log(meta2d.data())
+        meta2d.fitView();
+        meta2d.lock(1)
+      })
+    }
+    function drawCanvas2() {
+      fetch('./meta2d-2.json').then((res) => res.json()).then((data) => {
+        console.log(data)
+        data.pens.forEach(item => {
+          item.lineWidth = 1
+          switch (item.name) {
+            case'networks.Satellite Dish':
+              item.image = './networks.Satellite_Dish.png'
+              break;
+            case 'cisco.wireless.Radio Tower':
+              item.image = './cisco.wireless.Radio_Tower.png'
+              break;
+            case 'networks.Copier':
+              item.image = './networks.Copier.png'
+              break;
+            case 'networks.Hub':
+              item.image = './networks.Hub.png'
+              break;
+            case 'networks.Comm Link':
+              item.image = './networks.Comm_Link.png'
+              break;
+            case 'networks.Switch':
+              item.image = './server_normal.png'
+              break;
+            case'networks.Cloud':
+              item.image = './cloud.png'
+              break;
+            case'cisco.routers.Router In Building':
+              item.image = './routers.png'
+              break;
+            case'networks.Mail Server':
+              item.image = item.animateType === 'heart' ? './mail_error.png' : './mail.png'
+              break;
+            case'cisco.wireless.Wireless Transport':
+              item.image = './wireless.png'
+              break;
+            case'networks.UPS Enterprise':
+              item.image = './ups.png'
+              break;
+            case 'networks.Phone 1':
+              item.image = './phone.png'
+              break;
+            case 'networks.PC':
+              item.image = './pc.png'
+              break;
+            case 'networks.Load Balancer':
+              item.image = './load.png'
+              break;
+            case 'networks.Monitor':
+              item.image = './monitor.png'
+              break;
+          }
+        })
+        meta2d.open(data)
+        meta2d.startAnimate()
+        console.log(meta2d.data())
+        meta2d.fitView();
+        meta2d.lock(1)
+      })
+    }
+  </script>
+</body>
+</html>
