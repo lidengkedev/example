@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用@ant/G6制作一个网络拓扑图，并且支持动态变更状态。</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* body { background-color: rgb(47, 47, 47); } */
+    #container { width: 100vw; height: 100vh; border: 1px solid #EAEAEA; }
+  </style>
+  <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script> -->
+  <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js"></script>
+  <!-- @antv/g6 参考文档：https://g6-next.antv.antgroup.com/manual/getting-started/quick-start -->
+</head>
+<body>
+  <!-- 
+    1.支持行内不同品牌异构网络设备的配置自动化获取。
+    2.实时生成现网拓扑。
+    3.支持自动化拓扑保鲜。
+    4.网络拓扑具备较好的可读性。
+    5.可实现网络区域的分级展示，包括子网内部终端和服务器等节点再拓扑中的状态。
+    6.支持快速导出网络边界的IP、端口等数据，揭示可能过大的网络暴露面。
+    7.支持再拓扑视图下观测网络设备的运行状态。
+    8.计算指定地址通讯的网络路径，揭示可能的故障点，生成基于整体网络的运行报表。
+  -->
+  <div id="container"></div>
+  <script>
+    const { Graph } = G6
+    const options = {
+      container: 'container',
+      // theme: 'ligh',
+      animation: false,
+      autoFit: 'view',
+      data: {
+        nodes: [],
+        edges: []
+      },
+      node: {
+        type: 'rect',
+        palette: {
+          field: 'group',
+          color: 'tableau'
+        },
+        style: {
+          size: [100, 30],
+          portR: 5, // 节点端口半径
+        }
+      },
+      edge: {
+        type: 'polyline',
+        size: 60,
+        style: {
+          router: {
+            type: 'orth', // 正交线
+          },
+          labelText: t => t.id,
+          label: false,
+          endArrow: true,
+          stroke: '#7e3feb',
+          labelPadding: 5,
+          labelBackground: true,
+          labelBackgroundFill: '#f9f0ff',
+          labelBackgroundStroke: '#7e3feb',
+          labelBackgroundLineDash: 0,
+          labelBackgroundLineWidth: 1,
+          labelBackgroundRadius: 4,
+        }
+      },
+      layout: {
+        // type: 'd3-force',
+        type: 'force',
+        // type: 'dagre',
+        linkDistance: 200
+      },
+      behaviors: ['drag-canvas', 'zoom-canvas', 'drag-element']
+    }
+    const graph = new Graph(options)
+    const nodes = [
+      // type 类型：circle、diamond、donut、ellipse、hexagon、image、rect、star、triangle
+      { id: 'node_001', group: '1', style: { labelText: '卫星' } },
+      { id: 'node_002', group: '1', style: { labelText: '基站' } },
+      { id: 'node_003', group: '1', style: { labelText: '主服务' } },
+      { id: 'node_004', group: '2', style: { labelText: '服务器节点1', ports: [{ key: 'port-1', placement: [0, 0.5] }] }  },
+      { id: 'node_005', group: '2', style: { labelText: '服务器节点2' } },
+      { id: 'node_006', group: '2', style: { labelText: '服务器节点3' } },
+      { id: 'node_007', group: '2', style: { labelText: '服务器节点4' } },
+      { id: 'node_008', group: '2', style: { labelText: '服务器节点5' } },
+      { id: 'node_009', group: '2', style: { labelText: '服务器节点6' } },
+      { id: 'node_010', group: '3',
+        style: {
+          labelText: '服务器节点7',
+          ports: [
+            { key: 'port-1', placement: [0, 0.15], r: 5, stroke: '#000', fill: 'red' },
+            { key: 'port-2', placement: [0, 0.5] },
+            { key: 'port-3', placement: [0, 0.85] },
+            { key: 'port-4', placement: [0.5, 0] },
+            { key: 'port-5', placement: [0.5, 1] },
+          ]
+        }
+      },
+      { id: 'node_011', group: '4', style: { labelText: '云1' } },
+      { id: 'node_012', group: '4', style: { labelText: '云2' } },
+      { id: 'node_013', group: '5', style: { labelText: '转换' } },
+      { id: 'node_014', group: '6', style: { labelText: 'WDM1' } },
+      { id: 'node_015', group: '7', style: { labelText: 'Node1' } },
+      { id: 'node_016', group: '8', style: { labelText: 'WDM2' } },
+      { id: 'node_017', group: '9', style: { labelText: '服务器节点8' } },
+      { id: 'node_018', group: '10', style: { labelText: 'Phone' } },
+      { id: 'node_019', group: '10', style: { labelText: 'PC' } },
+      { id: 'node_020', group: '10', style: { labelText: 'STB' } },
+      { id: 'node_021', group: '11', style: { labelText: 'IPTV/SDV' } },
+    ]
+    const edges = [
+      // type 类型：line、polyline、quadratic、cubic、cubic-horizontal、cubic-radial、cubic-vertical
+      { id: 'edge_018', source: 'node_001', target: 'node_004', style: { targetPort: '' } },
+      { id: 'edge_019', source: 'node_001', target: 'node_005', style: { targetPort: '' } },
+      { id: 'edge_020', source: 'node_001', target: 'node_006', style: { targetPort: '' } },
+      { id: 'edge_001', source: 'node_004', target: 'node_010', style: { targetPort: '' } },
+      { id: 'edge_002', source: 'node_005', target: 'node_010', style: { targetPort: '' } },
+      { id: 'edge_003', source: 'node_006', target: 'node_010', style: { targetPort: '' } },
+      { id: 'edge_004', source: 'node_007', target: 'node_010', style: { targetPort: '' } },
+      { id: 'edge_005', source: 'node_008', target: 'node_010', style: { targetPort: '' } },
+      { id: 'edge_006', source: 'node_009', target: 'node_010', style: { targetPort: '' } },
+      { id: 'edge_007', source: 'node_010', target: 'node_011', style: { targetPort: '' } },
+      { id: 'edge_008', source: 'node_012', target: 'node_013', style: { targetPort: '' } },
+      { id: 'edge_009', source: 'node_011', target: 'node_013', style: { targetPort: '' } },
+      { id: 'edge_010', source: 'node_013', target: 'node_014', style: { targetPort: '' } },
+      { id: 'edge_011', source: 'node_014', target: 'node_015', style: { targetPort: '' } },
+      { id: 'edge_012', source: 'node_015', target: 'node_016', style: { targetPort: '' } },
+      { id: 'edge_013', source: 'node_016', target: 'node_017', style: { targetPort: '' } },
+      { id: 'edge_014', source: 'node_017', target: 'node_018', style: { targetPort: '' } },
+      { id: 'edge_015', source: 'node_017', target: 'node_019', style: { targetPort: '' } },
+      { id: 'edge_016', source: 'node_017', target: 'node_020', style: { targetPort: '' } },
+      { id: 'edge_017', source: 'node_020', target: 'node_021', style: { targetPort: '' } },
+    ]
+    graph.addNodeData(nodes)
+    graph.addEdgeData(edges)
+    graph.render()
+  </script>
+</body>
+</html>
