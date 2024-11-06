@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>通过 Fetch 来请求 blob 地址，并成功把 blob 地址转化为明文 http 地址</title>
+  <style>
+    #app, #url, #blob-string, #result {
+      padding: 10px;
+      border-bottom: 1px solid #eaeaea;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <p>通过测试得到的结论是，本地新生成的blob字符串地址是可以反转为blob对象，并获取得到blob原始数据的，但是仅限于当前环境，离开当前执行环境，则无法获取blob原始文件，这也是为什么在其他网站的blob地址无法反转为原始文件的原因。</p>
+  <script>
+    getBlobStringToUrl(setUrlToBlobString('http://txmov2.a.yximgs.com/upic/2019/10/09/02/BMjAxOTEwMDkwMjI4NDhfNTAzOTk0NDE4XzE4MzUzMjA5NTk5XzFfMw==_b_B31bb9255a0702eb0a5240777fd9cd372.mp4'))
+    setTimeout(() => {
+      getBlobStringToUrl(setUrlToBlobString('https://cryptojs.gitbook.io/docs'))
+    }, 3000)
+    function creteElement(tag, text) {
+      const elem = document.createElement(tag)
+      elem.innerText = text
+      return elem
+    }
+    function setUrlToBlobString(url) {
+      document.getElementById('app').appendChild(creteElement('p', `url: ${url}`))
+      const blob = new Blob([url], { type: 'text/plain' })
+      const blobString = URL.createObjectURL(blob)
+      document.getElementById('app').appendChild(creteElement('p', `blobString: ${blobString}`))
+      return blobString
+    }
+    function getBlobStringToUrl(blobString) {
+      fetch(blobString).then(res => res.blob()).then(blob => {
+        console.log(blob)
+        const reader = new FileReader()
+        reader.readAsText(blob)
+        reader.onload = function (event) {
+          console.log(event.target.result)
+          document.getElementById('app').appendChild(creteElement('p', `result: ${event.target.result}`))
+        }
+      })
+    }
+  </script>
+</body>
+</html>
