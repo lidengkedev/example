@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Worker 通信</title>
+</head>
+<body>
+  <button type="button">点击按钮</button>
+  <script>
+    // Worker 
+    // 先判断浏览器是否支持 Worker
+    if ( typeof(Worker) !== 'undefined' ) {
+      var worker = new Worker('work.js');
+      // 监听从work.js里面传出来的message
+      worker.addEventListener('message', function(e){
+        console.log(e.data);
+        console.log('message success');
+      });
+      console.log('message begin.....');
+  
+      // 发送信息 work.js可以监听到
+      worker.postMessage( 'hello work.js' );
+    } else {
+      alert('不支持worker功能')
+    }
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>

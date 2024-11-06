@@ -1,31 +1,31 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>将图片添加到画布中</title>
 </head>
-
 <body>
-    <img id="img" src="4.jpg" alt="">
-    <canvas id="canvas" width="500" height="500"></canvas>
-    <script>
+  <img id="img" src="4.jpg" alt="">
+  <canvas id="canvas" width="500" height="500"></canvas>
+  <script>
     window.onload = function() {
-        var canvas = document.getElementById('canvas');
-        var domImg = document.getElementById('img');
-        // 兼容性判断 支持canvas画布再执行操作
-        if (canvas.getContext) {
-            var ctx = canvas.getContext('2d');
-            canvas.width = domImg.width;
-            canvas.height = domImg.height;
-            ctx.beginPath();
-            // 画图片函数
-            // drawImage( domimg, x, y, width, height )
-            ctx.drawImage(domImg, 0, 0, domImg.width, domImg.height);
-            ctx.closePath();
-            console.log( document.getElementById('canvas').toDataURL() );
-        }
+      var canvas = document.getElementById('canvas');
+      var domImg = document.getElementById('img');
+      // 兼容性判断 支持canvas画布再执行操作
+      if (canvas.getContext) {
+        var ctx = canvas.getContext('2d');
+        canvas.width = domImg.width;
+        canvas.height = domImg.height;
+        ctx.beginPath();
+        // 画图片函数
+        // drawImage( domimg, x, y, width, height )
+        ctx.drawImage(domImg, 0, 0, domImg.width, domImg.height);
+        ctx.closePath();
+        console.log( document.getElementById('canvas').toDataURL() );
+      }
     }
-    </script>
+  </script>
+  
 </body>
-
 </html>
