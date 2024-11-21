@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用 canvas 在本地选择一张照片并给照片添加水印效果，支持水印文本编写、撤回操作和下载操作</title>
+  <style>
+    body { width: 750px; margin: 0 auto; padding: 20px 20px 0 20px; }
+    .photo-upload { margin-bottom: 20px; }
+    #canvas { width: 100%; height: 400px; border: 1px solid #eaeaea; }
+  </style>
+</head>
+<body>
+  <div class="photo-upload">
+    <input id="upload-photo-btn" type="button" value="上传照片">
+    <input id="file" type="file" hidden>
+    <input id="photo-water-mark-text" type="text" value="这是一段测试水印文本内容" placeholder="请输入水印内容">
+    <input id="add-water-mark-btn" type="button" value="添加水印">
+    <input id="undo-btn" type="button" value="撤销">
+    <input id="download-btn" type="button" value="下载">
+  </div>
+  <canvas id="canvas" width="500" height="400"></canvas>
+  <script>
+    const uploadBtn = document.getElementById('upload-photo-btn') // 上传图片按钮
+    const photoInput = document.getElementById('file') // 文件选择框
+    const watermarkTextInput = document.getElementById('photo-water-mark-text') // 水印文本输入框
+    const addWatermarkBtn = document.getElementById('add-water-mark-btn') // 添加水印按钮
+    const undoBtn = document.getElementById('undo-btn') // 撤销按钮
+    const downloadBtn = document.getElementById('download-btn') // 下载按钮
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    //  定义一个变量，用来存储图片名称
+    let photoName = ''
+    // 定义一个容器，用来存储操作步骤
+    const operationStack = []
+    //  定义一个函数，用来执行操作步骤
+    uploadBtn.onclick = function () {
+      photoInput.click()
+    }
+    //  监听文件选择事件，读取文件内容
+    photoInput.onchange = function(event) {
+      const file = event.target.files[0]
+      photoName = file.name
+      const reader = new FileReader()
+      reader.onload = function () {
+        const photoImg = new Image()
+        photoImg.src = reader.result
+        // 监听图片加载完成事件
+        photoImg.onload = function () {
+          // 设置画布的宽度为图片的宽度
+          canvas.width = photoImg.width
+          // 设置画布的高度为图片的高度
+          canvas.height = photoImg.height
+          // 清空画布区域的内容
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          //  绘制图片到画布上
+          ctx.drawImage(photoImg, 0, 0, photoImg.width, photoImg.height)
+          // 保存画布状态
+          ctx.save()
+          //  将操作步骤添加到容器中
+          operationStack.push({
+            type: 'drawImage',
+            data: {
+              image: photoImg,
+              x: 0,
+              y: 0,
+              width: photoImg.width,
+              height: photoImg.height
+            },
+            ctx: ctx,
+            imageData: ctx.getImageData(0, 0, canvas.width, canvas.height)
+          })
+        }
+      }
+      // 读取文件内容
+      reader.readAsDataURL(file)
+    }
+    //  定义一个函数，用来撤销操作步骤
+    undoBtn.onclick = function () {
+      //  清空画布区域的内容
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (operationStack.length > 0) {
+        //  从容器中移除最后一个操作步骤
+        operationStack.pop()
+        const operation = operationStack.slice(-1)[0] || {} //  获取最后一个操作步骤
+        if (operation.type === 'drawImage') {
+          //  绘制图片到画布上
+          ctx.putImageData(operation.imageData, 0, 0)
+        } else if (operation.type === 'fillText') {
+          //  绘制图片到画布上
+          ctx.putImageData(operation.imageData, 0, 0)
+        }
+      }
+    }
+    //  定义一个函数，用来获取水印文本的宽度
+    function getTextWidth(text, font) {
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      ctx.font = font
+      const metrics = ctx.measureText(text)
+      return metrics.width
+    }
+    //  定义一个函数，用来获取水印文本的高度
+    function getTextHeight(text, font) {
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      ctx.font = font
+      const metrics = ctx.measureText(text)
+      return metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+    }
+    // 添加水印的按钮单击事件
+    addWatermarkBtn.onclick = function () {
+      // 水印文本内容
+      const watermarkText = watermarkTextInput.value
+      // 获取水印文本内容的宽度
+      const width = getTextWidth(watermarkText, '30px Arial')
+      // 获取水印文本内容的高度
+      const height = getTextHeight(watermarkText, '30px Arial')
+      // 设置边框的宽度
+      ctx.lineWidth = 5
+      // 设置矩形的边框颜色
+      ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)'
+      // 绘制矩形框到画布上
+      ctx.strokeRect(canvas.width / 2 - width / 2, canvas.height / 2 - height / 2, width + 10, height + 10)
+      // 还原画布状态
+      ctx.restore()
+      // 设置文本大小和字体类型
+      ctx.font = '30px Arial'
+      // 设置文本内容填充的颜色
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.3)'
+      // 绘制水印文本内容到画布上
+      ctx.fillText(watermarkText, canvas.width / 2 - width / 2, canvas.height / 2 + height / 2)
+      ctx.save()
+      //  将操作步骤添加到容器中
+      operationStack.push({
+        type: 'fillText',
+        data: {
+          text: watermarkText,
+          x: canvas.width / 2 - width / 2,
+          y: canvas.height / 2 + height / 2,
+          width: width,
+          height: height
+        },
+        ctx: ctx,
+        imageData: ctx.getImageData(0, 0, canvas.width, canvas.height)
+      })
+    }
+    //  定义一个函数，用来下载图片
+    downloadBtn.onclick = function () {
+      //  获取画布上的图片数据
+      const dataURL = canvas.toDataURL('image/png')
+      //  创建一个链接元素
+      const link = document.createElement('a')
+      //  设置链接元素的 href 属性为图片数据
+      link.href = dataURL
+      //  设置链接元素的 download 属性为图片文件名
+      link.download = photoName + '_water_mark.png'
+      //  触发链接元素的点击事件
+      link.click()
+    }
+  </script>
+</body>
+</html>

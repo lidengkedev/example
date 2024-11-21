@@ -34,6 +34,7 @@
 - [使用 js 本地存储功能之 本地数据库 IndexedDB 数据库操作](https://lidengkedev.github.io/example/htmls/indexed-db.html)
 - [Layers Control Tutorial - Leaflet](https://lidengkedev.github.io/example/htmls/leaflet.html)
 - [原生JS实现轮播图效果](https://lidengkedev.github.io/example/htmls/lun-bo-tu.html)
+- [使用 canvas 在本地选择一张照片并给照片添加水印效果，支持水印文本编写、撤回操作和下载操作](https://lidengkedev.github.io/example/htmls/photo-water-mark.html)
 - [使用vue@2.6.5制作一个横向条形纹进度条或者占比情况说明组件](https://lidengkedev.github.io/example/htmls/process-dashed.html)
 - [原生JS全选与多选功能实现效果](https://lidengkedev.github.io/example/htmls/quan-xuan-yu-duo-xuan.html)
 - [使用svg实现文本不同渐变方向的线性渐变效果和径向渐变效果](https://lidengkedev.github.io/example/htmls/svg-gradient.html)
