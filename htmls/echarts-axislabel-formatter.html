@@ -21,6 +21,7 @@
   <div class="container">
     <div id="echarts-1" class="echarts-inner"></div>
     <div id="echarts-2" class="echarts-inner"></div>
+    <div id="echarts-3" class="echarts-inner"></div>
   </div>
   <script>
     var seriesData = []
@@ -73,6 +74,42 @@
     })
     var echarts_2 = echarts.init(document.getElementById('echarts-2'), null, { locale: 'ZH' });
     echarts_2.setOption({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type:'shadow'
+        }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'time',
+        splitLine: {
+          show: false
+        }
+      },
+      yAxis: {
+        type: 'value',
+        boundaryGap: [0, '100%'],
+        splitLine: {
+          show: false
+        }
+      },
+      series: [
+        {
+          type: 'line',
+          showSymbol: false,
+          hoverAnimation: false,
+          data: seriesData
+        }
+      ]
+    })
+    var echarts_3 = echarts.init(document.getElementById('echarts-3'));
+    echarts_3.setOption({
       tooltip: {
         trigger: 'axis',
         axisPointer: {
