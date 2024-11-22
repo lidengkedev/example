@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用 echarts 处理 时间轴刻度跨年份、跨月份、跨日期（天）、跨小时、跨分钟显示英文分割刻度标签</title>
+  <style>
+    html, body { margin: 0; padding: 0; box-sizing: border-box; width: 100%; height: 100vh; }
+    .container { width: 750px; margin: 0 auto; margin-top: 10px; }
+    .echarts-inner { width: 100%; height: 200px; border: 1px solid black; margin-bottom: 10px; }
+  </style>
+  <!-- <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script> -->
+  <!-- <script src="https://cdn.bootcdn.net/ajax/libs/echarts-gl/2.0.8/echarts-gl.min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script> -->
+   <script src="./plugins/echarts@5.4.1.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div id="echarts-1" class="echarts-inner"></div>
+    <div id="echarts-2" class="echarts-inner"></div>
+  </div>
+  <script>
+    var seriesData = []
+    var year = 2024
+    for (let month = 1; month <= 3; month++) {
+      for (let day = 0, len = new Date(year, month, 0).getDate(); day <= len; day++) {
+        // for (let hour = 0; hour < 24; hour++) {
+        //   for (let minute = 0; minute < 60; minute = minute + 15) {
+        //     seriesData.push({ value: [`${year}-${month}-${day} ${hour}:${minute}:00`, Math.random() * 1000]})
+        //   }
+        // }
+        seriesData.push({ value: [`${year}-${month}-${day}`, Math.random() * 1000]})
+      }
+    }
+    var echarts_1 = echarts.init(document.getElementById('echarts-1'));
+    echarts_1.setOption({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'time',
+        splitLine: {
+          show: false
+        }
+      },
+      yAxis: {
+        type: 'value',
+        boundaryGap: [0, '100%'],
+        splitLine: {
+          show: false
+        }
+      },
+      series: [
+        {
+          type: 'line',
+          showSymbol: false,
+          hoverAnimation: false,
+          data: seriesData
+        }
+      ]
+    })
+    var echarts_2 = echarts.init(document.getElementById('echarts-2'), null, { locale: 'ZH' });
+    echarts_2.setOption({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type:'shadow'
+        }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'time',
+        splitLine: {
+          show: false
+        },
+        minInterval: 20 * 24 * 3600 * 1000,
+        maxInterval: 20 * 24 * 3600 * 1000,
+        axisLabel: {
+          formatter: '{MM}-{dd}'
+        }
+      },
+      yAxis: {
+        type: 'value',
+        boundaryGap: [0, '100%'],
+        splitLine: {
+          show: false
+        }
+      },
+      series: [
+        {
+          type: 'line',
+          showSymbol: false,
+          hoverAnimation: false,
+          data: seriesData
+        }
+      ]
+    })
+  </script>
+</body>
+
+</html>
