@@ -17,6 +17,7 @@
 - [使用 css3 展示 Flex 布局示例](https://lidengkedev.github.io/example/htmls/css3-flex.html)
 - [使用 CSS 的属性 transition 绘制多种动画效果](https://lidengkedev.github.io/example/htmls/css3-transition.html)
 - [使用 jQuery 仿写一个 EasyUI 弹窗插件](https://lidengkedev.github.io/example/htmls/easy-ui-message.html)
+- [使用 echarts 处理 时间轴刻度跨年份、跨月份、跨日期（天）、跨小时、跨分钟显示英文分割刻度标签](https://lidengkedev.github.io/example/htmls/echarts-axislabel-formatter.html)
 - [Echarts-仪表盘-180度仪表盘不同阶段显示不同色条](https://lidengkedev.github.io/example/htmls/echarts-gauge.html)
 - [使用 echarts 绘制一个2d 地图](https://lidengkedev.github.io/example/htmls/echarts-map-2d.html)
 - [江苏省3D地区-悬浮框显示区域数据-区域显示图片标注](https://lidengkedev.github.io/example/htmls/echarts-map-3d-jiangsu.html)
