@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>江苏省3D地区-悬浮框显示区域数据-区域显示图片标注</title>
+  <title>江苏省3D地图-悬浮框显示区域数据-区域显示图片标注</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     #map3d { width: 100%; height: 100vh; background-color: #000000; }
@@ -11,8 +11,8 @@
 </head>
 <body>
   <div id="map3d"></div>
-  <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.3/echarts.min.js"></script>
-  <script src="https://cdn.bootcdn.net/ajax/libs/echarts-gl/2.0.8/echarts-gl.min.js"></script>
+  <script src="./plugins/echarts@5.4.1.min.js"></script>
+  <script src="./plugins/echarts-gl@2.0.8.min.js"></script>
   <script>
     window.onload = function () {
       fetch('https://geojson.cn/api/data/320000.json').then(res => res.json()).then(res => {
