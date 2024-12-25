@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eacherts-示例：极坐标双数值轴</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    #echarts {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="echarts"></div>
+  <!-- <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.3/echarts.min.js"></script> -->
+   <script src="./plugins/echarts@5.4.1.min.js"></script>
+  <script>
+    var data = [];
+
+    for (var i = 0; i <= 360; i++) {
+      var t = i / 180 * Math.PI;
+      var r = Math.sin(2 * t) * Math.cos(2 * t);
+      data.push([r, i]);
+    }
+
+    const option = {
+      title: {
+        text: '极坐标双数值轴'
+      },
+      legend: {
+        data: ['line']
+      },
+      polar: {
+        center: ['50%', '54%']
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross'
+        }
+      },
+      angleAxis: {
+        type: 'value',
+        startAngle: 0
+      },
+      radiusAxis: {
+        min: 0
+      },
+      series: [{
+        coordinateSystem: 'polar',
+        name: 'line',
+        type: 'line',
+        showSymbol: false,
+        data: data
+      }],
+      animationDuration: 2000
+    };
+    window.onload = function() {
+      const echart = echarts.init(document.getElementById('echarts'))
+      echart.setOption(option)
+    }
+  </script>
+</body>
+</html>
