@@ -22,6 +22,7 @@
 - [使用 echarts 绘制一个2d 地图](https://lidengkedev.github.io/example/htmls/echarts-map-2d.html)
 - [江苏省3D地区-悬浮框显示区域数据-区域显示图片标注](https://lidengkedev.github.io/example/htmls/echarts-map-3d-jiangsu.html)
 - [使用 echarts 绘制一个 3d 地图](https://lidengkedev.github.io/example/htmls/echarts-map-3d.html)
+- [Eacherts-示例：全国主要城市空气质量](https://lidengkedev.github.io/example/htmls/echarts-map.html)
 - [Ehcarts-pie-3D饼状图效果](https://lidengkedev.github.io/example/htmls/echarts-pie-3d.html)
 - [公共英语三级试题](https://lidengkedev.github.io/example/htmls/en-3.html)
 - [通过 Fetch 来请求 blob 地址，并成功把 blob 地址转化为明文 http 地址](https://lidengkedev.github.io/example/htmls/fetch-blob-to-text.html)

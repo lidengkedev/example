@@ -1,312 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>使用 echarts 绘制一个 3d 地图</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            width: 100%;
-            height: 99vh;
-            background-color: black;
-        }
-        #canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        #echarts {
-            width: 100%;
-            height: 90vh;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用 echarts 绘制一个 3d 地图</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 100%;
+      height: 99vh;
+      background-color: black;
+    }
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #echarts {
+      width: 100%;
+      height: 90vh;
+    }
+  </style>
 </head>
 <body>
-    <canvas id="canvas" width="1300px" height="600px" style="pointer-events: none;"></canvas>
-    <div id="echarts"></div>
+  <canvas id="canvas" width="1300px" height="600px" style="pointer-events: none;"></canvas>
+  <div id="echarts"></div>
 </body>
 <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.3/echarts.min.js"></script>
 <script src="https://cdn.bootcdn.net/ajax/libs/echarts-gl/2.0.8/echarts-gl.min.js"></script>
 <script>
-    function createCanvas() {
-        var canvas = document.getElementById('canvas'),
-            ctx = canvas.getContext('2d'),
-            w = canvas.width = document.documentElement.clientWidth,
-            h = canvas.height = document.documentElement.clientHeight,
-            hue = 217,
-            stars = [],
-            count = 0,
-            maxStars = 1200;
+  function createCanvas() {
+    var canvas = document.getElementById('canvas'),
+      ctx = canvas.getContext('2d'),
+      w = canvas.width = document.documentElement.clientWidth,
+      h = canvas.height = document.documentElement.clientHeight,
+      hue = 217,
+      stars = [],
+      count = 0,
+      maxStars = 1200;
 
-        var canvas2 = document.createElement('canvas'),
-            ctx2 = canvas2.getContext('2d');
-        canvas2.width = 100;
-        canvas2.height = 100;
-        var half = canvas2.width / 2, gradient2 = ctx2.createRadialGradient(half, half, 0, half, half, half);
-        gradient2.addColorStop(0.025, '#fff');
-        gradient2.addColorStop(0.1, 'hsl(' + hue + ', 61%, 33%)');
-        gradient2.addColorStop(0.25, 'hsl(' + hue + ', 64%, 6%)');
-        gradient2.addColorStop(1, 'transparent');
+    var canvas2 = document.createElement('canvas'),
+      ctx2 = canvas2.getContext('2d');
+    canvas2.width = 100;
+    canvas2.height = 100;
+    var half = canvas2.width / 2, gradient2 = ctx2.createRadialGradient(half, half, 0, half, half, half);
+    gradient2.addColorStop(0.025, '#fff');
+    gradient2.addColorStop(0.1, 'hsl(' + hue + ', 61%, 33%)');
+    gradient2.addColorStop(0.25, 'hsl(' + hue + ', 64%, 6%)');
+    gradient2.addColorStop(1, 'transparent')
+    ctx2.fillStyle = gradient2;
+    ctx2.beginPath();
+    ctx2.arc(half, half, half, 0, Math.PI * 2);
+    ctx2.fill();
+    ctx2.closePath();
 
-        ctx2.fillStyle = gradient2;
-        ctx2.beginPath();
-        ctx2.arc(half, half, half, 0, Math.PI * 2);
-        ctx2.fill();
-        ctx2.closePath();
-
-        // End cache
-        function random(min, max) {
-            if (arguments.length < 2) {
-                max = min;
-                min = 0;
-            }
-
-            if (min > max) {
-                var hold = max;
-                max = min;
-                min = hold;
-            }
-
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-
-        function maxOrbit(x, y) {
-            var max = Math.max(x, y),
-                diameter = Math.round(Math.sqrt(max * max + max * max));
-            return diameter / 2;
-        }
-
-        var Star = function () {
-
-            this.orbitRadius = random(maxOrbit(w, h));
-            this.radius = random(60, this.orbitRadius) / 12;
-            this.orbitX = w / 2;
-            this.orbitY = h / 2;
-            this.timePassed = random(0, maxStars);
-            this.speed = random(this.orbitRadius) / 900000;
-            this.alpha = random(2, 10) / 10;
-
-            count++;
-            stars[count] = this;
-        }
-        // 星星背景
-        Star.prototype.draw = function () {
-            var x = Math.sin(this.timePassed) * this.orbitRadius + this.orbitX,
-                y = Math.cos(this.timePassed) * this.orbitRadius + this.orbitY,
-                twinkle = random(10);
-
-            if (twinkle === 1 && this.alpha > 0) {
-                this.alpha -= 0.05;
-            } else if (twinkle === 2 && this.alpha < 1) {
-                this.alpha += 0.05;
-            }
-
-            ctx.globalAlpha = this.alpha;
-            ctx.drawImage(canvas2, x - this.radius / 2, y - this.radius / 2, this.radius, this.radius);
-            this.timePassed += this.speed;
-        }
-
-        // 生产星星
-        for (var i = 0; i < maxStars; i++) {
-            new Star();
-        }
-
-        function animation() {
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 0.8;
-            ctx.fillStyle = 'hsla(' + hue + ', 64%, 6%, 1)';
-            ctx.fillRect(0, 0, w, h)
-
-            ctx.globalCompositeOperation = 'lighter';
-            for (var i = 1, l = stars.length; i < l; i++) {
-                stars[i].draw();
-            };
-
-            window.requestAnimationFrame(animation);
-        }
-
-        animation();
+    // End cache
+    function random(min, max) {
+      if (arguments.length < 2) {
+        max = min;
+        min = 0;
+      }
+      if (min > max) {
+        var hold = max;
+        max = min;
+        min = hold;
+      }
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-    createCanvas()
 
+    function maxOrbit(x, y) {
+      var max = Math.max(x, y),
+        diameter = Math.round(Math.sqrt(max * max + max * max));
+      return diameter / 2;
+    }
+
+    var Star = function () {
+      this.orbitRadius = random(maxOrbit(w, h));
+      this.radius = random(60, this.orbitRadius) / 12;
+      this.orbitX = w / 2;
+      this.orbitY = h / 2;
+      this.timePassed = random(0, maxStars);
+      this.speed = random(this.orbitRadius) / 900000;
+      this.alpha = random(2, 10) / 10;
+      count++;
+      stars[count] = this;
+    }
+    // 星星背景
+    Star.prototype.draw = function () {
+      var x = Math.sin(this.timePassed) * this.orbitRadius + this.orbitX,
+        y = Math.cos(this.timePassed) * this.orbitRadius + this.orbitY,
+        twinkle = random(10);
+      if (twinkle === 1 && this.alpha > 0) {
+        this.alpha -= 0.05;
+      } else if (twinkle === 2 && this.alpha < 1) {
+        this.alpha += 0.05;
+      }
+      ctx.globalAlpha = this.alpha;
+      ctx.drawImage(canvas2, x - this.radius / 2, y - this.radius / 2, this.radius, this.radius);
+      this.timePassed += this.speed;
+    }
+    // 生产星星
+    for (var i = 0; i < maxStars; i++) {
+      new Star();
+    }
+    function animation() {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = 'hsla(' + hue + ', 64%, 6%, 1)';
+      ctx.fillRect(0, 0, w, h)
+      ctx.globalCompositeOperation = 'lighter';
+      for (var i = 1, l = stars.length; i < l; i++) {
+        stars[i].draw();
+      };
+      window.requestAnimationFrame(animation);
+    }
+    animation();
+  }
+  createCanvas()
 </script>
 <script>
-    const data = [
-        { name: '南京市', value: 1 },
-        { name: '无锡市', value: 1 },
-        { name: '徐州市', value: 1 },
-        { name: '常州市', value: 1 },
-        { name: '苏州市', value: 1 },
-        { name: '南通市', value: 1 },
-        { name: '连云港市', value: 1 },
-        { name: '淮安市', value: 1 },
-        { name: '盐城市', value: 1 },
-        { name: '扬州市', value: 1 },
-        { name: '镇江市', value: 1 },
-        { name: '泰州市', value: 1 },
-        { name: '宿迁市', value: 1 },
-    ]
+  const data = [
+    { name: '南京市', value: 1 },
+    { name: '无锡市', value: 1 },
+    { name: '徐州市', value: 1 },
+    { name: '常州市', value: 1 },
+    { name: '苏州市', value: 1 },
+    { name: '南通市', value: 1 },
+    { name: '连云港市', value: 1 },
+    { name: '淮安市', value: 1 },
+    { name: '盐城市', value: 1 },
+    { name: '扬州市', value: 1 },
+    { name: '镇江市', value: 1 },
+    { name: '泰州市', value: 1 },
+    { name: '宿迁市', value: 1 },
+  ]
 
-    const gdGeoCoordMap = {
-        "南京市": [118.767413, 32.041544],
-        "无锡市": [120.301663, 31.574729],
-        "徐州市": [117.184811, 34.261792],
-        "常州市": [119.946973, 31.772752],
-        "苏州市": [120.619585, 31.299379],
-        "南通市": [120.864608, 32.016212],
-        "连云港市": [119.178821, 34.600018],
-        "淮安市": [119.021265, 33.597506],
-        "盐城市": [120.139998, 33.377631],
-        "扬州市": [119.421003, 32.393159],
-        "镇江市": [119.452753, 32.204402],
-        "泰州市": [119.915176, 32.484882],
-        "宿迁市": [118.275162, 33.963008],
-    }
+  const gdGeoCoordMap = {
+    "南京市": [118.767413, 32.041544],
+    "无锡市": [120.301663, 31.574729],
+    "徐州市": [117.184811, 34.261792],
+    "常州市": [119.946973, 31.772752],
+    "苏州市": [120.619585, 31.299379],
+    "南通市": [120.864608, 32.016212],
+    "连云港市": [119.178821, 34.600018],
+    "淮安市": [119.021265, 33.597506],
+    "盐城市": [120.139998, 33.377631],
+    "扬州市": [119.421003, 32.393159],
+    "镇江市": [119.452753, 32.204402],
+    "泰州市": [119.915176, 32.484882],
+    "宿迁市": [118.275162, 33.963008],
+  }
 
-    const convertData = function (data) {
-        var res = []
-        for (var i = 0; i < data.length; i++) {
-            var geoCoord = gdGeoCoordMap[data[i].name]
-            if (geoCoord) {
-                res.push({
-                    name: data[i].name,
-                    value: geoCoord.concat(data[i].value)
-                })
-            }
-        }
-        return res
-    }
-
-    let mapName = '江苏'
-    let seriesData = convertData(data)
-    window.onload = function () {
-        fetch('https://geojson.cn/api/data/320000.json').then(res => res.json()).then(res => {
-            echarts.registerMap(mapName, res)
-            createMap(seriesData)
+  const convertData = function (data) {
+    var res = []
+    for (var i = 0; i < data.length; i++) {
+      var geoCoord = gdGeoCoordMap[data[i].name]
+      if (geoCoord) {
+        res.push({
+          name: data[i].name,
+          value: geoCoord.concat(data[i].value)
         })
+      }
     }
+    return res
+  }
 
-    function createMap(data) {
-        let mapBgCanvas = document.createElement('img')
-        mapBgCanvas.setAttribute('src', './images/004.jpeg')
+  let mapName = '江苏'
+  let seriesData = convertData(data)
+  window.onload = function () {
+    fetch('https://geojson.cn/api/data/320000.json').then(res => res.json()).then(res => {
+      echarts.registerMap(mapName, res)
+      createMap(seriesData)
+    })
+  }
 
-        const echart = echarts.init(document.getElementById('echarts'))
-        echart.setOption({
-            geo3D: {
-                map: mapName,              // 地图类型。
-                roam: true,
-                zoom: 1,
-                boxDepth: 80,            // 三维地理坐标系组件在三维场景中的深度
-                regionHeight: 4,        // 三维地图每个区域的高度
-                // 用于鼠标的旋转，缩放等视角控制
-                viewControl: {
-                    autoRotate: false,          // 是否开启视角绕物体的自动旋转查看
-                    autoRotateSpeed: 0,//物体自传的速度
-                    rotateSensitivity: 0,       // 旋转操作的灵敏度，值越大越灵敏。支持使用数组分别设置横向和纵向的旋转灵敏度。
-                    zoomSensitivity: 0,         // 缩放操作的灵敏度，值越大越灵敏。
-                    panSensitivity: 0,          // 平移操作的灵敏度，值越大越灵敏。支持使用数组分别设置横向和纵向的平移灵敏度
-                    alpha: 50,                    // 视角绕 x 轴，即上下旋转的角度。配合 beta 可以控制视角的方向。
-                    beta: 0,                    // 视角绕 y 轴，即左右旋转的角度。
-                    maxBeta: 45,                // 左右旋转的最大 beta 值。即视角能旋转到达最右的角度。
-                    distance: 105,
-                    animation: true,
-                    animationEasingUpdate: 'cubicInOut'
-                },
-                label: {
-                    show: false,
-                    fontSize: 18,
-                    fontFamily: '微软雅黑',
-                    color: '#FFF'
-                },
-                // 三维地理坐标系组件 中三维图形的视觉属性，包括颜色，透明度，描边等
-                itemStyle: {
-                    color: 'rgb(5,101,123)', // 地图颜色
-                    opacity: 1,
-                    borderWidth: 1,         // 分界线wdith
-                    borderColor: 'rgba(17,255,255,0.5)', // 分界线颜色
-                },
-                // 鼠标 hover 高亮时图形和标签的样式。
-                emphasis: {
-                    label: {
-                        show: false,           // 是否显示高亮
-                        textStyle: {
-                            color: '#fff',
-                            fontSize: 13,
-                            backgroundColor: 'rgba(0,23,11,1)'
-                        }
-                    },
-                    itemStyle: {
-                        color: '#0489d6'    // 地图高亮颜色
-                    }
-                },
-                // 光照相关的设置。
-                light: {
-                    // 场景主光源的设置
-                    main: {
-                        color: '#fff',          // 主光源的颜色
-                        intensity: 1,         // 主光源的强度
-                        shadow: true,          // 主光源是否投射阴影
-                        shadowQuality: 'high',  // 阴影的质量
-                        // alpha: 55,              // 主光源绕 x 轴，即上下旋转的角度
-                        // beta: 4,               // 主光源绕 y 轴，即左右旋转的角度
-                    },
-                    // 全局的环境光设置
-                    ambient: {
-                        color: '#fff', // 环境光的颜色
-                        intensity: 1,  // 环境光的强度
-                        quality: 'high'
-                    },
-                    ambientCubemap: {
-                        exposure: 1.0,
-                        diffuseIntensity: 2, // 漫反射的强度
-                        specularIntensity: 2, // 高光反射的强度
-                    }
-                },
-                shading: 'color',
-                colorMaterial: {
-                    detailTexture: mapBgCanvas,
-                },
+  function createMap(data) {
+      let mapBgCanvas = document.createElement('img')
+      mapBgCanvas.setAttribute('src', './images/004.jpeg')
+
+      const echart = echarts.init(document.getElementById('echarts'))
+      echart.setOption({
+        geo3D: {
+          map: mapName,              // 地图类型。
+          roam: true,
+          zoom: 1,
+          boxDepth: 80,            // 三维地理坐标系组件在三维场景中的深度
+          regionHeight: 4,        // 三维地图每个区域的高度
+          // 用于鼠标的旋转，缩放等视角控制
+          viewControl: {
+            autoRotate: false,          // 是否开启视角绕物体的自动旋转查看
+            autoRotateSpeed: 0,//物体自传的速度
+            rotateSensitivity: 0,       // 旋转操作的灵敏度，值越大越灵敏。支持使用数组分别设置横向和纵向的旋转灵敏度。
+            zoomSensitivity: 0,         // 缩放操作的灵敏度，值越大越灵敏。
+            panSensitivity: 0,          // 平移操作的灵敏度，值越大越灵敏。支持使用数组分别设置横向和纵向的平移灵敏度
+            alpha: 50,                    // 视角绕 x 轴，即上下旋转的角度。配合 beta 可以控制视角的方向。
+            beta: 0,                    // 视角绕 y 轴，即左右旋转的角度。
+            maxBeta: 45,                // 左右旋转的最大 beta 值。即视角能旋转到达最右的角度。
+            distance: 105,
+            animation: true,
+            animationEasingUpdate: 'cubicInOut'
+          },
+          label: {
+            show: false,
+            fontSize: 18,
+            fontFamily: '微软雅黑',
+            color: '#FFF'
+          },
+          // 三维地理坐标系组件 中三维图形的视觉属性，包括颜色，透明度，描边等
+          itemStyle: {
+            color: 'rgb(5,101,123)', // 地图颜色
+            opacity: 1,
+            borderWidth: 1,         // 分界线wdith
+            borderColor: 'rgba(17,255,255,0.5)', // 分界线颜色
+          },
+          // 鼠标 hover 高亮时图形和标签的样式。
+          emphasis: {
+            label: {
+              show: false,           // 是否显示高亮
+              textStyle: {
+                color: '#fff',
+                fontSize: 13,
+                backgroundColor: 'rgba(0,23,11,1)'
+              }
             },
-            series: [
-                {
-                    type: "bar3D",
-                    coordinateSystem: 'geo3D', // 该系列使用的坐标系
-                    barSize: 4, // 柱子粗细
-                    bevelSize: 0.2, // 柱子的倒角尺寸。支持设置为从 0 到 1 的值。
-                    bevelSmoothness: 5, // 柱子倒角的光滑/圆润度，数值越大越光滑/圆润。
-                    silent: false,//图形是否不响应和触发鼠标事件
-                    minHeight: 2,
-                    label: {
-                        show: false,
-                        distance: 0.5, // 标签距离图形的距离，在三维的散点图中这个距离是屏幕空间的像素值，其它图中这个距离是相对的三维距离。
-                        textStyle: {
-                            color: '#FFF',
-                            fontSize: 14,
-                            fontWeight: '700',
-                            borderWidth: 0.5,
-                            borderColor: 'transparent'
-                        },
-                        formatter: function (data) {
-                            var res = data.value[2]
-                            return res
-                        }
-                    },
-                    data: convertData(data),
-                }
-            ]
-        }, true)
-
-        echart.on('click', (params) => {
-            console.log(params)
-            const { seriesType, name } = params
-            if (seriesType === 'bar3D' && name) {
-                console.log(name)
+            itemStyle: {
+              color: '#0489d6'    // 地图高亮颜色
             }
-        })
+          },
+          // 光照相关的设置。
+          light: {
+            // 场景主光源的设置
+            main: {
+              color: '#fff',          // 主光源的颜色
+              intensity: 1,         // 主光源的强度
+              shadow: true,          // 主光源是否投射阴影
+              shadowQuality: 'high',  // 阴影的质量
+              // alpha: 55,              // 主光源绕 x 轴，即上下旋转的角度
+              // beta: 4,               // 主光源绕 y 轴，即左右旋转的角度
+            },
+            // 全局的环境光设置
+            ambient: {
+              color: '#fff', // 环境光的颜色
+              intensity: 1,  // 环境光的强度
+              quality: 'high'
+            },
+            ambientCubemap: {
+              exposure: 1.0,
+              diffuseIntensity: 2, // 漫反射的强度
+              specularIntensity: 2, // 高光反射的强度
+            }
+          },
+          shading: 'color',
+          colorMaterial: {
+            detailTexture: mapBgCanvas,
+          },
+        },
+        series: [{
+          type: "bar3D",
+          coordinateSystem: 'geo3D', // 该系列使用的坐标系
+          barSize: 4, // 柱子粗细
+          bevelSize: 0.2, // 柱子的倒角尺寸。支持设置为从 0 到 1 的值。
+          bevelSmoothness: 5, // 柱子倒角的光滑/圆润度，数值越大越光滑/圆润。
+          silent: false,//图形是否不响应和触发鼠标事件
+          minHeight: 2,
+          label: {
+            show: false,
+            distance: 0.5, // 标签距离图形的距离，在三维的散点图中这个距离是屏幕空间的像素值，其它图中这个距离是相对的三维距离。
+            textStyle: {
+              color: '#FFF',
+              fontSize: 14,
+              fontWeight: '700',
+              borderWidth: 0.5,
+              borderColor: 'transparent'
+            },
+            formatter: function (data) {
+              var res = data.value[2]
+              return res
+            }
+        },
+        data: convertData(data),
+      }]
+    }, true)
 
-    }
+    echart.on('click', (params) => {
+      console.log(params)
+      const { seriesType, name } = params
+      if (seriesType === 'bar3D' && name) {
+        console.log(name)
+      }
+    })
+  }
 
 </script>
 </html>
