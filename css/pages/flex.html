@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flexbox 每个属性的使用教程示例</title>
+  <style>
+    /* pre { background-color: lightgray; } */
+    .item { padding: 20px; background-color: lightblue; }
+    .item:nth-child(2) { background-color: lightcoral; }
+    .item:nth-child(3) { background-color: lightcyan; }
+    .item:nth-child(4) { background-color: lightgoldenrodyellow; }
+    .item:nth-child(5) { background-color: lightgreen; }
+  </style>
+</head>
+<body>
+  <fieldset>
+    <legend>flex-flow</legend>
+    <style>
+      .flexbox-flex-flow-row-nowrap { display: flex; flex-flow: row nowrap; width: calc(100vw - 60px); }
+      .flexbox-flex-flow-row-nowrap .item { width: 400px; }
+    </style>
+    <code>
+      .flexbox { display: flex; flex-flow: row nowrap; } <br>
+      .flexbox { display: flex; flex-direction: row; flex-wrap: nowrap; } <br>
+      .flexbox .item { width: 400px; }
+    </code>
+    <div class="flexbox-flex-flow-row-nowrap">
+      <div class="item">Item 1</div>
+      <div class="item">Item 2</div>
+      <div class="item">Item 3</div>
+      <div class="item">Item 4</div>
+      <div class="item">Item 5</div>
+    </div>
+    <style>
+      .flexbox-flex-flow-row-wrap { display: flex; flex-flow: row wrap; }
+      .flexbox-flex-flow-row-wrap .item { width: 400px; }
+    </style>
+    <code>
+      .flexbox { display: flex; flex-flow: row wrap; } <br>
+      .flexbox .item { width: 400px; }
+    </code>
+    <div class="flexbox-flex-flow-row-wrap">
+      <div class="item">Item 1</div>
+      <div class="item">Item 2</div>
+      <div class="item">Item 3</div>
+      <div class="item">Item 4</div>
+      <div class="item">Item 5</div>
+    </div>
+    <style>
+      .flexbox-flex-flow-column-nowrap { display: flex; flex-flow: column nowrap; }
+    </style>
+    <code>.flexbox { display: flex; flex-flow: column nowrap; }</code>
+    <div class="flexbox-flex-flow-column-nowrap">
+      <div class="item">Item 1</div>
+      <div class="item">Item 2</div>
+      <div class="item">Item 3</div>
+      <div class="item">Item 4</div>
+      <div class="item">Item 5</div>
+    </div>
+    <style>
+      .flexbox-flex-flow-column-wrap { display: flex; flex-flow: column wrap; height: 200px; }
+    </style>
+    <code>
+      .flexbox { display: flex; flex-flow: column wrap; } <br>
+      .flexbox { display: flex; flex-direction: column; flex-wrap: wrap; }
+    </code>
+    <div class="flexbox-flex-flow-column-wrap">
+      <div class="item">Item 1</div>
+      <div class="item">Item 2</div>
+      <div class="item">Item 3</div>
+      <div class="item">Item 4</div>
+      <div class="item">Item 5</div>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>justify-content</legend>
+    <fieldset>
+      <legend>flex-start</legend>
+      <style>
+        .flexbox-justify-content-flex-start { display: flex; justify-content: flex-start; }
+      </style>
+      <code>.flexbox { display: flex; justify-content: flex-start; }</code>
+      <div class="flexbox-justify-content-flex-start">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>flex-end</legend>
+      <style>
+        .flexbox-justify-content-flex-end { display: flex; justify-content: flex-end; }
+      </style>
+      <code>.flexbox { display: flex; justify-content: flex-end; }</code>
+      <div class="flexbox-justify-content-flex-end">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>center</legend>
+      <style>
+        .flexbox-justify-content-center { display: flex; justify-content: center; }
+      </style>
+      <code>.flexbox { display: flex; justify-content: center; }</code>
+      <div class="flexbox-justify-content-center">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>space-between</legend>
+      <style>
+        .flexbox-justify-content-space-between { display: flex; justify-content: space-between; }
+      </style>
+      <code>.flexbox { display: flex; justify-content: space-between; }</code>
+      <div class="flexbox-justify-content-space-between">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>space-around</legend>
+      <style>
+        .flexbox-justify-content-space-around { display: flex; justify-content: space-around; }
+      </style>
+      <code>.flexbox { display: flex; justify-content: space-around; }</code>
+      <div class="flexbox-justify-content-space-around">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>space-evenly</legend>
+      <style>
+        .flexbox-justify-content-space-evenly { display: flex; justify-content: space-evenly; }
+      </style>
+      <code>
+        .flexbox { display: flex; justify-content: space-evenly; }
+      </code>
+      <div class="flexbox-justify-content-space-evenly">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+  </fieldset>
+  <fieldset>
+    <legend>align-items</legend>
+    <fieldset>
+      <legend>flex-start</legend>
+      <style>
+        .flexbox-align-items-flex-start { height: 150px; border: 1px solid blue; display: flex; align-items: flex-start; }
+      </style>
+      <code>
+        .flexbox { display: flex; align-items: flex-start; } <br>
+      </code>
+      <div class="flexbox-align-items-flex-start">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>flex-end</legend>
+      <style>
+        .flexbox-align-items-flex-end { height: 150px; border: 1px solid blue; display: flex; align-items: flex-end; }
+      </style>
+      <code>
+        .flexbox { display: flex; align-items: flex-end; } <br>
+      </code>
+      <div class="flexbox-align-items-flex-end">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>center</legend>
+      <style>
+        .flexbox-align-items-flex-center { height: 150px; border: 1px solid blue; display: flex; align-items: center; }
+      </style>
+      <code>
+        .flexbox { display: flex; align-items: center; } <br>
+      </code>
+      <div class="flexbox-align-items-flex-center">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>baseline</legend>
+      <style>
+        .flexbox-align-items-baseline { height: 150px; border: 1px solid blue; display: flex; align-items: baseline; }
+      </style>
+      <code>
+        .flexbox { display: flex; align-items: baseline; } <br>
+      </code>
+      <div class="flexbox-align-items-baseline">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>stretch</legend>
+      <style>
+        .flexbox-align-items-stretch { height: 150px; border: 1px solid blue; display: flex; align-items: stretch; }
+      </style>
+      <code>
+        .flexbox { display: flex; align-items: stretch; } <br>
+      </code>
+      <div class="flexbox-align-items-stretch">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+  </fieldset>
+  <fieldset>
+    <legend>order</legend>
+    <style>
+      .item-order-1 { display: flex; }
+      .item-order-1 .item:nth-child(1) { order: 1; }
+      .item-order-1 .item:nth-child(2) { order: 0; }
+    </style>
+    <code>
+      .flexbox { display: flex; } <br>
+      .flexbox .item:nth-child(1) { order: 1; } <br>
+      .flexbox .item:nth-child(2) { order: 0; } <br>
+    </code>
+    <div class="item-order-1">
+      <div class="item">Item 1</div>
+      <div class="item">Item 2</div>
+      <div class="item">Item 3</div>
+      <div class="item">Item 4</div>
+      <div class="item">Item 5</div>
+    </div>
+    <style>
+      .item-order-2 { display: flex; }
+      .item-order-2 .item:nth-child(1) { order: 5; }
+      .item-order-2 .item:nth-child(2) { order: 1; }
+      .item-order-2 .item:nth-child(3) { order: 4; }
+      .item-order-2 .item:nth-child(4) { order: 3; }
+      .item-order-2 .item:nth-child(5) { order: 3; }
+    </style>
+    <code>
+      .flexbox { display: flex; } <br>
+      .flexbox .item:nth-child(1) { order: 5; } <br>
+      .flexbox .item:nth-child(2) { order: 1; } <br>
+      .flexbox .item:nth-child(3) { order: 4; } <br>
+      .flexbox .item:nth-child(4) { order: 3; } <br>
+      .flexbox .item:nth-child(5) { order: 3; } <br>
+    </code>
+    <div class="item-order-2">
+      <div class="item">Item 1</div>
+      <div class="item">Item 2</div>
+      <div class="item">Item 3</div>
+      <div class="item">Item 4</div>
+      <div class="item">Item 5</div>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>flex</legend>
+    <fieldset>
+      <legend>none</legend>
+      <style>
+        .item-flex-1 { display: flex; }
+        .item-flex-1 .item:nth-child(1) { flex: none; }
+      </style>
+      <code>
+        .flexbox { display: flex; } <br>
+        .flexbox .item:nth-child(1) { flex: none; } <br>
+      </code>
+      <div class="item-flex-1">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>auto</legend>
+      <style>
+        .item-flex-2 { display: flex; }
+        .item-flex-2 .item:nth-child(1) { flex: auto; }
+      </style>
+      <code>
+        .flexbox { display: flex; } <br>
+        .flexbox .item:nth-child(1) { flex: auto; } <br>
+      </code>
+      <div class="item-flex-2">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+      <style>
+        .item-flex-3 { display: flex; }
+        .item-flex-3 .item:nth-child(2) { flex: auto; }
+      </style>
+      <code>
+        .flexbox { display: flex; } <br>
+        .flexbox .item:nth-child(2) { flex: auto; } <br>
+      </code>
+      <div class="item-flex-3">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+      <style>
+        .item-flex-4 { display: flex; }
+        .item-flex-4 .item:nth-child(2) { flex: auto; }
+        .item-flex-4 .item:nth-child(3) { flex: auto; }
+      </style>
+      <code>
+        .flexbox { display: flex; } <br>
+        .flexbox .item:nth-child(2) { flex: auto; } <br>
+        .flexbox .item:nth-child(3) { flex: auto; }
+      </code>
+      <div class="item-flex-4">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+      <style>
+        .item-flex-5 { display: flex; }
+        .item-flex-5 .item:nth-child(2) { flex: auto; }
+        .item-flex-5 .item:nth-child(3) { flex: 0 1 200px; }
+      </style>
+      <code>
+        .flexbox { display: flex; } <br>
+        .flexbox .item:nth-child(2) { flex: auto; } <br>
+        .flexbox .item:nth-child(3) { flex: 0 1 200px; }
+      </code>
+      <div class="item-flex-5">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+      <style>
+        .item-flex-6 { display: flex; }
+        .item-flex-6 .item:nth-child(2) { flex: auto; }
+        .item-flex-6 .item:nth-child(3) { flex-grow: 0; flex-shrink: 1; flex-basis: 200px; }
+      </style>
+      <code>
+        .flexbox { display: flex; } <br>
+        .flexbox .item:nth-child(2) { flex: auto; } <br>
+        .flexbox .item:nth-child(3) { flex-grow: 0; flex-shrink: 1; flex-basis: 200px; }
+      </code>
+      <div class="item-flex-6">
+        <div class="item">Item 1</div>
+        <div class="item">Item 2</div>
+        <div class="item">Item 3</div>
+        <div class="item">Item 4</div>
+        <div class="item">Item 5</div>
+      </div>
+    </fieldset>
+  </fieldset>
+</body>
+</html>

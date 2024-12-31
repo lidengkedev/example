@@ -6,6 +6,7 @@
 - [纯 CSS3 3D 绘制一个鼠标上浮 可以打开盖子的 3D 立体盒子](https://lidengkedev.github.io/example/css/pages/cube3d.html)
 - [使用 CSS3 实现一个 鼠标上浮 像打开折叠扇一样展开明星照片](https://lidengkedev.github.io/example/css/pages/fan3d.html)
 - [使用 CSS3 实现一个正在燃烧的蜡烛](https://lidengkedev.github.io/example/css/pages/fire.html)
+- [Flexbox 每个属性的使用教程示例](https://lidengkedev.github.io/example/css/pages/flex.html)
 - [使用 CSS3 实现几个文本逐个跳动的效果](https://lidengkedev.github.io/example/css/pages/letter.html)
 - [使用 CSS3 实现一个文本下划线的多种样式](https://lidengkedev.github.io/example/css/pages/link-decoration.html)
 - [使用 CSS3 实现一个旋转圆环 加载中的动画效果](https://lidengkedev.github.io/example/css/pages/loading-2.html)
