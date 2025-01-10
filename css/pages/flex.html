@@ -215,10 +215,17 @@
     <fieldset>
       <legend>baseline</legend>
       <style>
-        .flexbox-align-items-baseline { height: 150px; border: 1px solid blue; display: flex; align-items: baseline; }
+        .flexbox-align-items-baseline { position: relative; height: 150px; border: 1px solid blue; display: flex; align-items: baseline; }
+        .flexbox-align-items-baseline::before { content: ''; display: block; width: 485px; height: 1px; background-color: red; position: absolute; top: 54px; left: 0; }
+        .flexbox-align-items-baseline .item:nth-child(1) { font-size: 20px; }
+        .flexbox-align-items-baseline .item:nth-child(2) { font-size: 12px; }
+        .flexbox-align-items-baseline .item:nth-child(4) { font-size: 30px; }
       </style>
       <code>
         .flexbox { display: flex; align-items: baseline; } <br>
+        .flexbox .item:nth-child(1) { font-size: 20px; } <br>
+        .flexbox .item:nth-child(2) { font-size: 12px; } <br>
+        .flexbox .item:nth-child(4) { font-size: 30px; }
       </code>
       <div class="flexbox-align-items-baseline">
         <div class="item">Item 1</div>
