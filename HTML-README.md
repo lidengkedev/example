@@ -19,6 +19,7 @@
 - [使用 jQuery 仿写一个 EasyUI 弹窗插件](https://lidengkedev.github.io/example/htmls/easy-ui-message.html)
 - [使用 echarts 处理 时间轴刻度跨年份、跨月份、跨日期（天）、跨小时、跨分钟显示英文分割刻度标签](https://lidengkedev.github.io/example/htmls/echarts-axislabel-formatter.html)
 - [Eacherts-示例：3D堆叠柱状图效果实现](https://lidengkedev.github.io/example/htmls/echarts-bar-202501101510.html)
+- [Eacherts-示例：3D柱状图效果实现](https://lidengkedev.github.io/example/htmls/echarts-bar-202501161421.html)
 - [Echarts-仪表盘-180度仪表盘不同阶段显示不同色条](https://lidengkedev.github.io/example/htmls/echarts-gauge.html)
 - [Eacherts-示例：极坐标双数值轴](https://lidengkedev.github.io/example/htmls/echarts-line-202412250917.html)
 - [Eacherts-示例：大数据量面积图](https://lidengkedev.github.io/example/htmls/echarts-line-202412250920.html)
