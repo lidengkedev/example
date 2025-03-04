@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS3新属性 anchor 锚点定位</title>
+</head>
+<body>
+  <p>
+    <code>anchor 属性 在 Chrome 125之后被支持</code>
+  </p>
+  <style>
+    .box-btn { height: 100px; }
+    .btn-a, .btn-b { width: 100px; padding: 5px 0; text-align: center; cursor: pointer; display: inline-block; margin-right: 100px; outline: none; background-color: #ddd; }
+    .anchor-2 { position: absolute; transition: all .2s; padding: 10px; background-color: #52ccba; color: #FFF; }
+    .btn-a { anchor-name: --btn-a; }
+    .btn-b { anchor-name: --btn-b; }
+    .btn-a:hover ~ .anchor-2 { position-anchor: --btn-a; left: anchor(--btn-a center); top: anchor(--btn-a bottom); transform: translate(50%, 5px); }
+    .btn-b:hover ~ .anchor-2 { position-anchor: --btn-b; left: anchor(--btn-b center); top: anchor(--btn-b bottom); transform: translate(50%, 5px); }
+  </style>
+  <div class="box-btn">
+    <div class="btn-a">按钮A</div>
+    <div class="btn-b">按钮B</div>
+    <div class="anchor-2">被定位元素C</div>
+  </div>
+  <style>
+    .box-scroll { position: relative; overflow: auto; height: 200px; margin: 0 auto; border: 1px solid red; }
+    .box-content { height: 500px; padding-top: 100px; }
+    .btn { display: inline-block; text-align: center; padding: 10px; anchor-name: --btn; background-color: #ddd; }
+    .anchor-1 { padding: 10px; position: absolute; position-anchor: --btn; position-try-fallbacks: --position-top,--position-bottom; transform: translate(50%, 5px); transition: all .2s; background-color: #52ccba; color: #FFF; }
+    @position-try --position-top { left: anchor(--btn center); top: anchor(--btn bottom); }
+    @position-try --position-bottom { left: anchor(--btn center); bottom: anchor(--btn top); top: unset; margin-bottom: 10px; }
+  </style>
+  <div class="box-scroll">
+    <div class="box-content">
+      <div class="btn">reference</div>
+      <div class="anchor-1">Popover弹框元素</div>
+    </div>
+  </div>
+</body>
+</html>

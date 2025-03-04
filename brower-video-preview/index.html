@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频预览管理器</title>
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --watched-color: rgba(46, 204, 113, 0.9);
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--background-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .video-card {
+            position: relative;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .video-card.watched::after {
+            content: "✓";
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: var(--watched-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .thumbnail-container {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .thumbnail.loaded {
+            opacity: 1;
+        }
+
+        .preview-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            object-fit: cover;
+        }
+
+        .video-card:hover .preview-video {
+            opacity: 1;
+        }
+
+        .video-title {
+            padding: 12px;
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.4;
+            display: -webkit-box;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #folderInput {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        #folderInput:hover {
+            opacity: 0.9;
+        }
+
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 全屏播放样式 */
+        .fullscreen-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fullscreen-video.active {
+            display: flex;
+        }
+
+        .fullscreen-header {
+            width: 95%;
+            max-width: 1200px;
+            margin-bottom: 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fullscreen-title {
+            font-size: 24px;
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            max-width: 80%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .fullscreen-video video {
+            width: 95%;
+            max-width: 1200px;
+            max-height: 80vh;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .close-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .close-button::before,
+        .close-button::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 2px;
+            background: white;
+        }
+
+        .close-button::before {
+            transform: rotate(45deg);
+        }
+
+        .close-button::after {
+            transform: rotate(-45deg);
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="folderInput" webkitdirectory directory multiple accept="video/*">
+    <div class="container" id="videoContainer"></div>
+    <!-- 全屏播放容器 -->
+    <div class="fullscreen-video" id="fullscreenContainer">
+        <div class="fullscreen-header">
+            <div class="fullscreen-title" id="fullscreenTitle"></div>
+            <div class="close-button" id="closeButton"></div>
+        </div>
+        <video controls id="fullscreenVideo"></video>
+    </div>
+
+    <script>
+        const container = document.getElementById('videoContainer');
+        const fullscreenContainer = document.getElementById('fullscreenContainer');
+        const fullscreenVideo = document.getElementById('fullscreenVideo');
+        const fullscreenTitle = document.getElementById('fullscreenTitle');
+        const watchedVideos = new Set();
+
+        // 观察者实例 - 用于懒加载缩略图 & 观看状态 & 标题 & 进入全屏 & 退出全屏 & ESC退出全屏 & 空格键暂停/播放 & F键全屏 & 点击视频卡片 & 点击关闭按钮 & 点击非视频区域退出全屏 & 点击预览视频暂停/播放 & 悬停预览视频 & 选择文件夹加载视频 & 处理空格键暂停/播放 & 处理ESC键退出全屏 & 修改缩略图加载函数 & 修改进入全屏函数 & 在创建视频卡片时存储标题 & 修改视频卡片创建函数 & 修改文件名格式化函数 & 修改进入全屏函数 & 修改退出全屏函数 & 修改ESC键退出全屏 & 修改空格键暂停/播放 & 修改悬停预览逻辑 & 修改缩略图加载函数 & 修改格式化文件名函数
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const videoCard = entry.target;
+                    loadThumbnail(videoCard);
+                    observer.unobserve(videoCard);
+                }
+            });
+        }, { rootMargin: '200px' });
+
+        // 修改进入全屏函数
+        function enterFullscreen(videoUrl, title) {
+            fullscreenVideo.src = videoUrl;
+            fullscreenTitle.textContent = title;
+            fullscreenContainer.classList.add('active');
+            fullscreenVideo.play().catch(console.error);
+        }
+
+        function exitFullscreen() {
+            fullscreenContainer.classList.remove('active');
+            fullscreenVideo.pause();
+            fullscreenVideo.currentTime = 0;
+            fullscreenVideo.removeAttribute('src');
+        }
+
+        // 事件监听优化
+        document.getElementById('closeButton').addEventListener('click', function(e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            exitFullscreen();
+        });
+        fullscreenContainer.addEventListener('click', (e) => {
+            // 仅当点击非视频区域时退出
+            if (!e.target.closest('video')) {
+                exitFullscreen();
+            }
+        });
+        fullscreenVideo.addEventListener('click', (e) => {
+            e.stopPropagation(); // 阻止点击视频时冒泡到容器
+        });
+
+        document.getElementById('folderInput').addEventListener('change', (e) => {
+            container.innerHTML = '';
+            const files = Array.from(e.target.files).filter(file => file.type.startsWith('video/'));
+            
+            files.forEach(file => {
+                const videoCard = createVideoCard(file);
+                container.appendChild(videoCard);
+                observer.observe(videoCard);
+            });
+        });
+
+        // 在创建视频卡片时存储标题
+        function createVideoCard(file) {
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            const formattedTitle = formatFileName(file.name);
+            
+            const thumbnailContainer = document.createElement('div');
+            thumbnailContainer.className = 'thumbnail-container';
+            
+            const thumbnail = document.createElement('img');
+            thumbnail.className = 'thumbnail';
+            
+            const previewVideo = document.createElement('video');
+            previewVideo.className = 'preview-video';
+            previewVideo.muted = true;
+            previewVideo.loop = true;
+            
+            const loader = document.createElement('div');
+            loader.className = 'loading-indicator';
+            
+            const title = document.createElement('div');
+            title.className = 'video-title';
+            title.textContent = formatFileName(file.name);
+
+            // 点击事件处理
+            card.addEventListener('click', (e) => {
+                watchedVideos.add(card.dataset.src);
+                card.classList.add('watched');
+                enterFullscreen(card.dataset.src, formattedTitle); // 传递标题
+            });
+
+            // 悬停预览逻辑
+            let hoverTimeout;
+            thumbnailContainer.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(() => {
+                    previewVideo.currentTime = 0;
+                    previewVideo.play().catch(() => {});
+                }, 300);
+            });
+            
+            thumbnailContainer.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+                previewVideo.pause();
+            });
+
+            thumbnailContainer.appendChild(thumbnail);
+            thumbnailContainer.appendChild(previewVideo);
+            thumbnailContainer.appendChild(loader);
+            card.appendChild(thumbnailContainer);
+            card.appendChild(title);
+            
+            card.dataset.src = URL.createObjectURL(file);
+            card.dataset.title = formattedTitle; // 存储格式化后的标题
+            return card;
+        }
+
+        function formatFileName(filename) {
+            return filename
+                .replace(/\.[^/.]+$/, "")
+                .replace(/[-_]/g, " ")
+                .trim();
+        }
+        // 修改缩略图加载函数
+        async function loadThumbnail(card) {
+            const video = document.createElement('video');
+            video.src = card.dataset.src;
+            video.muted = true;
+            
+            try {
+                await new Promise((resolve, reject) => {
+                    video.addEventListener('loadedmetadata', resolve, { once: true });
+                    video.addEventListener('error', reject, { once: true });
+                });
+
+                video.currentTime = 0.1;
+                await new Promise(resolve => 
+                    video.addEventListener('seeked', resolve, { once: true }));
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 360;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const thumbnail = card.querySelector('.thumbnail');
+                thumbnail.src = canvas.toDataURL();
+                thumbnail.classList.add('loaded');
+                card.querySelector('.preview-video').src = card.dataset.src;
+                card.querySelector('.loading-indicator').remove();
+                
+                // 恢复观看状态
+                if (watchedVideos.has(card.dataset.src)) {
+                    card.classList.add('watched');
+                }
+                // 恢复标题信息
+                if (card.dataset.title) {
+                    card.querySelector('.video-title').textContent = card.dataset.title;
+                }
+            } catch (error) {
+                console.error('生成缩略图失败:', error);
+                card.querySelector('.thumbnail').src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666666"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>';
+                card.querySelector('.loading-indicator').remove();
+            } finally {
+                URL.revokeObjectURL(video.src);
+                video.remove();
+            }
+        }
+
+        // 处理ESC键退出全屏
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && fullscreenContainer.classList.contains('active')) {
+                exitFullscreen();
+            }
+        });
+        // 处理空格键暂停/播放
+        document.addEventListener('keydown', (e) => {
+            if (fullscreenContainer.classList.contains('active')) {
+                if (e.key === ' ') {
+                    e.preventDefault();
+                    fullscreenVideo.paused ? fullscreenVideo.play() : fullscreenVideo.pause();
+                }
+                if (e.key === 'f') {
+                    fullscreenVideo.requestFullscreen();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -3,6 +3,7 @@
 [TOC]
 ## CSS 文件示例
 - [纯 CSS 绘制一个铜钱 并让其从左到右滚动](https://lidengkedev.github.io/example/css/pages/copper.html)
+- [CSS3新属性 anchor 锚点定位](https://lidengkedev.github.io/example/css/pages/css-anchor.html)
 - [纯 CSS3 3D 绘制一个鼠标上浮 可以打开盖子的 3D 立体盒子](https://lidengkedev.github.io/example/css/pages/cube3d.html)
 - [使用 CSS3 实现一个 鼠标上浮 像打开折叠扇一样展开明星照片](https://lidengkedev.github.io/example/css/pages/fan3d.html)
 - [使用 CSS3 实现一个正在燃烧的蜡烛](https://lidengkedev.github.io/example/css/pages/fire.html)
