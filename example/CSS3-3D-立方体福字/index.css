@@ -2,7 +2,6 @@ html, body {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    background-color: rosybrown;
 }
 .container {
     position: relative;
@@ -18,7 +17,6 @@ html, body {
     top: 0;
     left: 0;
     background-color: tomato;
-    border: 1px solid tomato;
     border-radius: 4px;
 }
 .container .box-1 {
