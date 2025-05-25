@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS3-物体环绕椭圆形边缘旋转</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* body { width: 400px; margin: 15vh auto; } */
+    /* .ellipse-outside {
+      width: 300px;
+      height: 300px;
+    } */
+    .section-1 {
+      margin-left: 50px;
+    }
+    .ellipse-inner {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      transform-style: preserve-3d;
+      transform: rotateZ(90deg) rotateY(60deg);
+    }
+    /* .ellipse-outside, */
+    .ellipse-inner {
+      border: 5px solid #000;
+      border-top-color: red;
+      border-radius: 50%;
+    }
+    .block-item {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-radius: 50%;
+      margin: auto;
+      line-height: 40px;
+      text-align: center;
+      background-color: #52ccba;
+      animation: move-1 10s linear infinite;
+    }
+    .block-item:nth-child(2) {
+      animation: move-2 10s linear infinite;
+    }
+    .block-item:nth-child(3) {
+      animation: move-3 10s linear infinite;
+    }
+    @keyframes move-1 {
+      from { transform: rotateZ(0deg) translateX(80px) rotateY(0deg) translateY(-70px) rotateX(0deg); }
+      to { transform: rotateZ(-360deg) translateX(80px) rotateY(0deg) translateY(-70px) rotateX(0deg); }
+    }
+    @keyframes move-2 {
+      from { transform: rotateZ(90deg) translateX(80px) rotateY(0deg) translateY(-70px) rotateX(0deg); }
+      to { transform: rotateZ(-270deg) translateX(80px) rotateY(0deg) translateY(-70px) rotateX(0deg); }
+    }
+    @keyframes move-3 {
+      from { transform: rotateZ(180deg) translateX(80px) rotateY(0deg) translateY(-70px) rotateX(0deg); }
+      to { transform: rotateZ(-180deg) translateX(80px) rotateY(0deg) translateY(-70px) rotateX(0deg); }
+    }
+  </style>
+</head>
+<body>
+  <section class="section-1">
+    <div class="ellipse-outside">
+      <div class="ellipse-inner">
+        <div class="block-item">1</div>
+        <div class="block-item">2</div>
+        <div class="block-item">3</div>
+      </div>
+    </div>
+  </section>
+  <style>
+    .section-2 {
+      position: relative;
+      margin: 0 auto;
+    }
+    @keyframes spin {
+      0% { transform: scaleY(0.5) rotate(0deg); }
+      100% { transform: scaleY(0.5) rotate(360deg); }
+    }
+    @keyframes anti-spin {
+      0% { transform: rotate(0deg) scaleY(2) scale(1); }
+      100% { transform: rotate(-360deg) scaleY(2) scale(1); }
+    }
+    .center {
+      z-index: 999;
+      position: absolute;
+      top: 40px;
+      left: 110px;
+      width: 80px;
+      height: 80px;
+      color: #FFF;
+      background: #52ccba;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .orbit {
+      position: absolute;
+      top: 10px;
+      left: 50px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 3px solid black;
+      border-top-color: red;
+      z-index: 900;
+      animation: spin 10s infinite linear;
+    }
+    .orbit .item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #407EFF;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: anti-spin 10s infinite linear;
+      color: #fff;
+      position: absolute;
+      text-align: center;
+    }
+    .orbit .item1 {
+      left: 176.60254038px;
+      bottom: 140px;
+    }
+    .orbit .item2 {
+      left: 176.60254038px;
+      bottom: 40px;
+    }
+    .orbit .item3 {
+      left: 90px;
+      bottom: -10px;
+    }
+    .orbit .item4 {
+      left: 3.39745962px;
+      bottom: 40px;
+    }
+    .orbit .item5 {
+      left: 3.39745962px;
+      bottom: 140px;
+    }
+    .orbit .item6 {
+      left: 90px;
+      bottom: 190px;
+    }
+    .orbit:hover,
+    .orbit:hover .item,
+    .orbit .item:hover {
+      animation-play-state: paused;
+    }
+  </style>
+  <section class="section-2">
+    <div class="center">center</div>
+    <div class="orbit">
+      <div class="item item1">1</div>
+      <div class="item item2">2</div>
+      <div class="item item3">3</div>
+      <div class="item item4">4</div>
+      <div class="item item5">5</div>
+      <div class="item item6">6</div>
+    </div>
+  </section>
+</body>
+</html>

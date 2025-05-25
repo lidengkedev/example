@@ -6,3 +6,4 @@ dist-ssr
 electron/**/*.exe
 electron/**/*.zip
 electron/out/*
+python/*.mp4

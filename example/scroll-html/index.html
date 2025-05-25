@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    /* 容器样式 */
+    .alarm-container {
+      height: 200px; /* 固定高度 */
+      width: 100%;
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 滚动区域 */
+    .alarm-scroller {
+      position: absolute;
+      width: 100%;
+      transition: transform 0.5s linear; /* 平滑滚动效果 */
+    }
+
+    /* 报警条目样式 */
+    .alarm-item {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      font-family: monospace;
+    }
+
+    /* 报警类型颜色映射 */
+    .alarm-item.critical { background: rgba(255, 0, 0, 0.1); }
+    .alarm-item.warning { background: rgba(255, 165, 0, 0.1); }
+
+    /* 文字部分样式 */
+    .alarm-device { 
+      width: 30%;
+      color: #00ff9d;
+    }
+    .alarm-time {
+      width: 30%;
+      color: #888;
+    }
+    .alarm-type {
+      width: 40%;
+      color: #ff7675;
+    }
+  </style>
+</head>
+<body>
+  <div class="alarm-container">
+    <div class="alarm-scroller" id="alarmScroller">
+      <!-- 报警条目通过 JS 动态插入 -->
+    </div>
+  </div>
+  <script>
+    // 模拟 WebSocket 数据推送
+    setInterval(() => {
+      const newAlarm = {
+        device: `Device_${Math.floor(Math.random() * 100)}`,
+        time: new Date().toLocaleTimeString(),
+        type: Math.random() > 0.5 ? '温度过高' : '压力过低',
+        level: Math.random() > 0.8 ? 'critical' : 'warning'
+      };
+      addAlarmItem(newAlarm);
+    }, 2000); // 实际应替换为 WebSocket 监听
+
+    const scroller = document.getElementById('alarmScroller');
+    let isScrolling = false;
+
+    function addAlarmItem(alarm) {
+      const item = document.createElement('div');
+      item.className = `alarm-item ${alarm.level}`;
+      
+      item.innerHTML = `
+        <span class="alarm-device">${alarm.device}</span>
+        <span class="alarm-time">${alarm.time}</span>
+        <span class="alarm-type">${alarm.type}</span>
+      `;
+
+      // 文档片段优化批量插入
+      const fragment = document.createDocumentFragment();
+      fragment.appendChild(item);
+      
+      // 插入新条目到顶部
+      scroller.insertBefore(fragment, scroller.firstChild);
+
+      // 控制最大条目数
+      if (scroller.children.length > 20) {
+        scroller.removeChild(scroller.lastChild);
+      }
+
+      startScrolling();
+    }
+    function startScrolling() {
+      if (isScrolling) return;
+
+      const containerHeight = document.querySelector('.alarm-container').offsetHeight;
+      const scrollerHeight = scroller.offsetHeight;
+
+      // 仅当内容超过容器高度时滚动
+      if (scrollerHeight <= containerHeight) return;
+
+      isScrolling = true;
+      const duration = Math.max(5000, scrollerHeight * 15); // 动态计算时长
+
+      // 使用 CSS transform 实现硬件加速
+      scroller.style.transform = `translateY(-${scrollerHeight - containerHeight}px)`;
+      scroller.style.transitionDuration = `${duration}ms`;
+
+      // 滚动完成后重置
+      scroller.ontransitionend = () => {
+        scroller.style.transition = 'none';
+        scroller.style.transform = 'translateY(0)';
+        setTimeout(() => {
+          scroller.style.transition = 'transform 0.5s linear';
+          isScrolling = false;
+          startScrolling();
+        }, 50);
+      };
+    }
+    // 悬停暂停
+    alarmContainer.addEventListener('mouseenter', () => {
+      scroller.style.transitionProperty = 'none';
+      scroller.style.transform = getComputedStyle(scroller).transform;
+    });
+
+    alarmContainer.addEventListener('mouseleave', () => {
+      scroller.style.transitionProperty = 'transform';
+      startScrolling();
+    });
+  </script>
+</body>
+</html>
