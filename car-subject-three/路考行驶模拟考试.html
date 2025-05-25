@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="科目三上路行驶模拟考试过程">
+  <meta name="keywords" content="科目三,上路行驶,请起步,掉头,左转弯,右转弯,保持直行,通过学校区域,通过公交站台,通过人行横道,通过路口,发生会车,加减档,靠边停车">
+  <title>科目三上路行驶模拟考试过程</title>
+  <style>
+    * { padding: 0; margin: 0; box-sizing: border-box; }
+    body { width: 750px; margin: 0 auto; }
+    h1 { text-align: center; margin-bottom: 20px; }
+    .button { width: 100%; padding: 10px; margin-bottom: 10px; text-align: center; cursor: pointer; }
+    .button:disabled { cursor: not-allowed; }
+    .button-group button { padding: 10px;  margin-right: 10px; margin-bottom: 10px; cursor: pointer; }
+    .header { padding: 20px  0; }
+    #title { margin-bottom: 10px; }
+    #audio { display: none; }
+    #result { text-align: center; font-size: 24px; color: #52ccba; }
+  </style>
+</head>
+<body>
+  <h1>科目三驾驶技能模拟考试过程</h1>
+  <button id="start-1-1" class="button">一号线</button>
+  <button id="start-1-2" class="button">二号线</button>
+  <button id="start-1-3" class="button">三号线</button>
+  <button id="start-2" class="button">手动控制模拟考试</button>
+  <div class="button-group"></div>
+  <div class="header">
+    <span id="sort"></span><span id="title"></span><span id="time"></span>
+  </div>
+  <audio id="audio" autoplay></audio>
+  <p id="result"></p>
+  <script>
+    const exam_line_1_config = [
+      { title: '请起步，继续完成考试。', src: './audio-2/请起步继续完成考试.mp3', time: 120 },
+      { title: '前方路口直行', src: './audio-2/前方路口直行.mp3', time: 3 },
+      { title: '通过公交车站', src: './audio-2/通过公交车站.mp3', time: 3 },
+      { title: '通过学校区域', src: './audio-2/通过学校区域.mp3', time: 50 },
+      { title: '前方请选择合适地点掉头', src: './audio-2/前方请选择合适地点掉头.mp3', time: 90 },
+      { title: '通过人行横道', src: './audio-2/通过人行横道.mp3', time: 3 },
+      { title: '前方路口左转', src: './audio-2/前方路口左转.mp3', time: 50 },
+      { title: '机动车会车', src: './audio-2/机动车会车.mp3', time: 3 },
+      { title: '超越前方车辆', src: './audio-2/超越前方车辆.mp3', time: 50 },
+      { title: '前方请选择合适地点掉头', src: './audio-2/前方请选择合适地点掉头.mp3', time: 90 },
+      { title: '请保持直线行驶', src: './audio-2/请保持直线行驶.mp3', time: 3 },
+      { title: '前方路口右转', src: './audio-2/前方路口右转.mp3', time: 50 },
+      { title: '请靠边停车', src: './audio-2/请靠边停车.mp3', time: 50 },
+    ]
+    const exam_line_2_config = [
+      { title: '请起步，继续完成考试。', src: './audio-2/请起步继续完成考试.mp3', time: 120 },
+      { title: '通过人行横道', src: './audio-2/通过人行横道.mp3', time: 3 },
+      { title: '前方路口右转', src: './audio-2/前方路口右转.mp3', time: 50 },
+      { title: '前方路口直行', src: './audio-2/前方路口直行.mp3', time: 3 },
+      { title: '前方请选择合适地点掉头', src: './audio-2/前方请选择合适地点掉头.mp3', time: 90 },
+      { title: '机动车会车', src: './audio-2/机动车会车.mp3', time: 3 },
+      { title: '超越前方车辆', src: './audio-2/超越前方车辆.mp3', time: 50 },
+      { title: '前方路口左转', src: './audio-2/前方路口左转.mp3', time: 50 },
+      { title: '通过公交车站', src: './audio-2/通过公交车站.mp3', time: 3 },
+      { title: '通过学校区域', src: './audio-2/通过学校区域.mp3', time: 50 },
+      { title: '请保持直线行驶', src: './audio-2/请保持直线行驶.mp3', time: 3 },
+      { title: '前方请选择合适地点掉头', src: './audio-2/前方请选择合适地点掉头.mp3', time: 90 },
+      { title: '请靠边停车', src: './audio-2/请靠边停车.mp3', time: 50 },
+    ]
+    const exam_line_3_config = [
+      { title: '请起步，继续完成考试。', src: './audio-2/请起步继续完成考试.mp3', time: 120 },
+      { title: '请保持直线行驶', src: './audio-2/请保持直线行驶.mp3', time: 3 },
+      { title: '前方请选择合适地点掉头', src: './audio-2/前方请选择合适地点掉头.mp3', time: 90 },
+      { title: '通过公交车站', src: './audio-2/通过公交车站.mp3', time: 3 },
+      { title: '前方路口左转', src: './audio-2/前方路口左转.mp3', time: 50 },
+      { title: '前方路口直行', src: './audio-2/前方路口直行.mp3', time: 3 },
+      { title: '机动车会车', src: './audio-2/机动车会车.mp3', time: 3 },
+      { title: '超越前方车辆', src: './audio-2/超越前方车辆.mp3', time: 50 },
+      { title: '前方请选择合适地点掉头', src: './audio-2/前方请选择合适地点掉头.mp3', time: 90 },
+      { title: '通过学校区域', src: './audio-2/通过学校区域.mp3', time: 50 },
+      { title: '通过人行横道', src: './audio-2/通过人行横道.mp3', time: 3 },
+      { title: '前方路口右转', src: './audio-2/前方路口右转.mp3', time: 50 },
+      { title: '请靠边停车', src: './audio-2/请靠边停车.mp3', time: 50 },
+    ]
+    let config = exam_line_1_config
+    const sort_elem = document.getElementById('sort')
+    const title_elem = document.getElementById('title')
+    const audio_elem = document.getElementById('audio')
+    const start_elem_1 = document.getElementById('start-1-1')
+    const start_elem_2 = document.getElementById('start-1-2')
+    const start_elem_3 = document.getElementById('start-1-3')
+    const start_2_elem = document.getElementById('start-2')
+    const result_elem = document.getElementById('result')
+    let index = 0
+    let exam_state = ''
+    let timer = null
+    let exam_line_sort = 1
+    // 全自动模拟考试
+    start_elem_1.onclick = function () {
+      exam_line_sort = 1
+      config = exam_line_1_config
+      if (exam_state === '') {
+        watchStartButtonState('start')
+      } else if (exam_state === 'start') {
+        watchStartButtonState('finish')
+      }
+      clearInterval(timer)
+      examProcessStepItem()
+      timer = setInterval(examProcessStepItem, 1000 * 15);
+    }
+    start_elem_2.onclick = function () {
+      exam_line_sort = 2
+      config = exam_line_2_config
+      if (exam_state === '') {
+        watchStartButtonState('start')
+      } else if (exam_state === 'start') {
+        watchStartButtonState('finish')
+      }
+      clearInterval(timer)
+      examProcessStepItem()
+      timer = setInterval(examProcessStepItem, 1000 * 15);
+    }
+    start_elem_3.onclick = function () {
+      exam_line_sort = 3
+      config = exam_line_3_config
+      if (exam_state === '') {
+        watchStartButtonState('start')
+      } else if (exam_state === 'start') {
+        watchStartButtonState('finish')
+      }
+      clearInterval(timer)
+      examProcessStepItem()
+      timer = setInterval(examProcessStepItem, 1000 * 15);
+    }
+    function examProcessStepItem() {
+      title_elem.innerText = config[index].title
+      audio_elem.src = config[index].src
+      index++
+      sort_elem.innerText = index + '、'
+      if (index >= config.length) {
+        index = 0
+        clearInterval(timer)
+        watchStartButtonState('finish')
+      }
+    }
+    function watchStartButtonState(state) {
+      exam_state = state
+      switch (state) {
+        case 'start':
+          // start_elem_1.setAttribute('disabled', 'disabled')
+          // start_elem_1.innerText = '考试中...'
+          // start_elem_2.setAttribute('disabled', 'disabled')
+          // start_elem_2.innerText = '考试中...'
+          // start_elem_3.setAttribute('disabled', 'disabled')
+          // start_elem_3.innerText = '考试中...'
+          break
+        case 'finish':
+          start_elem_1.removeAttribute('disabled')
+          start_elem_1.innerText  = '1号线'
+          start_elem_2.removeAttribute('disabled')
+          start_elem_2.innerText  = '2号线'
+          start_elem_3.removeAttribute('disabled')
+          start_elem_3.innerText  = '3号线'
+          break
+        default:
+          break
+      }
+    }
+    window.onbeforeunload = function() {
+      clearInterval(timer)
+    }
+    // 手动控制分步模拟考试
+    class HandleStepItem {
+      constructor() {
+        this.timer = null
+        this.index = 0
+        this.start_elem = document.getElementById('start-2')
+        this.title_elem = document.getElementById('title')
+        this.audio_elem = document.getElementById('audio')
+        this.start_elem.onclick = () => {
+          this.stepItem()
+        }
+      }
+      stepItem() {
+        const { title, src } = config[this.index]
+        this.title_elem.innerText = (this.index + 1) + '、' + title
+        this.audio_elem.src = src
+        this.index++
+        if (this.index >= config.length) {
+          this.index = 0
+        }
+      }
+    }
+    new HandleStepItem()
+  </script>
+  <script>
+    const button_group_elem = document.querySelector('.button-group')
+    let button_html = ''
+    for (let i = 0; i < config.length; i++) {
+      button_html += `<button data-index="${i}" data-title="${config[i].title}">${config[i].title}</button>`
+    }
+    button_group_elem.innerHTML = button_html
+    button_group_elem.onclick = function (event) {
+      if (event.target.tagName === 'BUTTON') {
+        const index = event.target.dataset.index
+        document.getElementById('audio').src = config[index].src
+      }
+    }
+  </script>
+</body>
+</html>
