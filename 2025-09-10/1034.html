@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="JavaScript,Web Speech API,语音合成下载">
+  <title>制作一个文本转为语音并将语音下载到本地的工具</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    .wrapper {width: 750px; margin: 10px auto;}
+    textarea { width: 100%; padding: 7px; outline: none; }
+    button { background-color: #407EFF; color: #FFFFFF; border: 1px solid #407EFF; padding: 7px 10px; cursor: pointer;border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <p>文本转为语音并将语音下载到本地</p>
+  </div>
+  <div class="wrapper">
+    <textarea id="textarea" rows="5" placeholder="请输入将要转为语音的文本内容！"></textarea>
+    <button id="play">播放语音</button>
+    <button id="download">下载语音</button>
+    <button id="clear">清空文本</button>
+  </div>
+  <script>
+    if ('webkitSpeechRecognition' in window) {
+      var textarea_elem = document.getElementById('textarea')
+      var clear_elem = document.getElementById('clear')
+      var play_elem = document.getElementById('play')
+      var download_elem = document.getElementById('download')
+      textarea_elem.value = '这是一段测试文本内容！'
+      clear_elem.onclick = () => textarea_elem.value = ''
+      play_elem.onclick = () => playAudioFromText()
+      download_elem.onclick = () => downloadAudioToMP3()
+    } else {
+      alert('你的浏览器不支持语音识别功能，请使用 Chrome 浏览器。')
+    }
+
+    var audio_to_blob = null // 音频的blob地址
+    
+    // 将文本转为语音，并录制语音流数据
+    function playAudioFromText() {
+      var audio_record_chunks = [] // 用于存储录制的音频流数据
+      
+      const audio_context = new AudioContext() // 生成语音实例对象
+      const destination = audio_context.createMediaStreamDestination()
+      
+      const audio_media_stream_destination = audio_context.createMediaStreamDestination()
+
+      // 将指定文本合成为语音
+      const utterance = new SpeechSynthesisUtterance(textarea_elem.value)
+      navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(stream => {
+        mediaStream = stream
+        const audio_media_recorder = new MediaRecorder(stream) // 创建一个录音器
+        // const audio_media_recorder = new MediaRecorder(audio_media_stream_destination.stream) // 创建一个录音器
+        const media_stream_source = audio_context.createMediaStreamSource(stream)
+        // const media_stream_source = audio_context.createMediaStreamSource(audio_media_stream_destination.stream)
+        media_stream_source.connect(audio_media_stream_destination)
+        // console.log(media_stream_source)
+  
+        audio_media_recorder.addEventListener('start', function (e) {
+          console.log('监听：开始录音！')
+        })
+        // 录音中
+        audio_media_recorder.addEventListener('dataavailable', function (e) {
+          audio_record_chunks.push(e.data)
+          console.log('监听：录音中，', e)
+        })
+        // 录音结束
+        audio_media_recorder.addEventListener('stop', function (e) {
+          audio_to_blob = new Blob(audio_record_chunks, { type: 'audio/mp3; codecs=opus' })
+          console.log('监听：录音结束！')
+        })
+  
+        utterance.addEventListener('end', function (e) {
+          // 语音播放结束，停止录音
+          console.log('语音播放结束！')
+          setTimeout(() => {
+            audio_media_recorder.stop()
+            mediaStream.getTracks().forEach(track => track.stop())
+            console.log('停止录音！')
+
+          }, 500)  // 留500ms缓冲时间
+        })
+  
+        console.log('开始录音！')
+        audio_media_recorder.start(100) // 每100ms收集一次数据
+  
+        console.log('开始播放语音！')
+        speechSynthesis.speak(utterance) // 开始播放语音
+      })
+      
+    }
+    // 将合成的语音转为mp3并下载到本地
+    function downloadAudioToMP3() {
+      const url = URL.createObjectURL(audio_to_blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = Date.now() + '.mp3'
+      a.click()
+      URL.revokeObjectURL(url)
+    }
+  </script>
+</body>
+</html>
