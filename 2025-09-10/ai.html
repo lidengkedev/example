@@ -18,6 +18,8 @@
             height: 150px;
             margin: 10px 0;
             padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
         button {
             padding: 10px 15px;
@@ -27,16 +29,35 @@
             border-radius: 4px;
             cursor: pointer;
             margin-right: 10px;
+            transition: background 0.3s;
         }
         button:hover {
             background: #3367d6;
         }
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
         .controls {
             margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
         }
-        select, input {
+        select, input[type="range"] {
             padding: 8px;
             margin-right: 10px;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background: #f5f5f5;
+        }
+        #audioPreview {
+            margin-top: 20px;
+            width: 100%;
         }
     </style>
 </head>
@@ -57,9 +78,14 @@
         <span id="pitchValue">1</span>
     </div>
     
-    <button id="speakBtn">朗读</button>
-    <button id="stopBtn">停止</button>
-    <button id="downloadBtn">下载语音</button>
+    <div>
+        <button id="speakBtn">朗读</button>
+        <button id="stopBtn" disabled>停止</button>
+        <button id="downloadBtn" disabled>下载语音</button>
+    </div>
+    
+    <div class="status" id="status"></div>
+    <audio id="audioPreview" controls></audio>
     
     <script>
         // 获取DOM元素
@@ -72,19 +98,22 @@
         const speakBtn = document.getElementById('speakBtn');
         const stopBtn = document.getElementById('stopBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+        const status = document.getElementById('status');
+        const audioPreview = document.getElementById('audioPreview');
         
-        // 语音合成器和音频相关变量
-        let speechSynthesis = window.speechSynthesis;
+        // 语音合成和音频捕获相关变量
         let audioChunks = [];
         let mediaRecorder;
         let audioContext;
-        let audioStream;
         let isRecording = false;
+        let currentUtterance = null;
+        let audioStream;
 
         // 初始化语音列表
         function populateVoiceList() {
             const voices = speechSynthesis.getVoices();
             voiceSelect.innerHTML = '';
+            
             voices.forEach(voice => {
                 const option = document.createElement('option');
                 option.textContent = `${voice.name} (${voice.lang})`;
@@ -92,8 +121,21 @@
                 option.setAttribute('data-lang', voice.lang);
                 voiceSelect.appendChild(option);
             });
+            
+            // 默认选择中文语音
+            const chineseVoice = voices.find(voice => voice.lang.includes('zh') || voice.lang.includes('cmn'));
+            if (chineseVoice) {
+                const options = voiceSelect.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].getAttribute('data-name') === chineseVoice.name) {
+                        voiceSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
         }
 
+        // 语音列表加载
         speechSynthesis.onvoiceschanged = populateVoiceList;
         if (speechSynthesis.getVoices().length > 0) {
             populateVoiceList();
@@ -103,33 +145,54 @@
         rate.addEventListener('input', () => {
             rateValue.textContent = rate.value;
         });
+        
         pitch.addEventListener('input', () => {
             pitchValue.textContent = pitch.value;
         });
 
-        // 关键改进：使用AudioContext捕获音频
+        // 开始录制音频
         async function startRecording() {
             if (isRecording) return;
             
-            audioChunks = [];
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // 创建虚拟音频节点
-            const destination = audioContext.createMediaStreamDestination();
-            audioStream = destination.stream;
-            
-            // 创建媒体录制器
-            mediaRecorder = new MediaRecorder(audioStream);
-            mediaRecorder.ondataavailable = event => {
-                if (event.data.size > 0) {
-                    audioChunks.push(event.data);
-                }
-            };
-            
-            mediaRecorder.start(100); // 每100ms收集一次数据
-            isRecording = true;
+            try {
+                audioChunks = [];
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // 获取用户媒体设备（麦克风）
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioStream = stream;
+                
+                // 创建媒体录制器
+                mediaRecorder = new MediaRecorder(stream);
+                
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    audioPreview.src = audioUrl;
+                    
+                    // 停止所有轨道
+                    audioStream.getTracks().forEach(track => track.stop());
+                };
+                
+                mediaRecorder.start(100); // 每100ms收集一次数据
+                isRecording = true;
+                
+                status.textContent = "正在录制音频...";
+                stopBtn.disabled = false;
+                downloadBtn.disabled = true;
+            } catch (error) {
+                console.error('音频录制初始化失败:', error);
+                status.textContent = "音频录制初始化失败，请确保已授予麦克风权限";
+            }
         }
 
+        // 停止录制
         function stopRecording() {
             if (mediaRecorder && isRecording) {
                 mediaRecorder.stop();
@@ -137,12 +200,17 @@
                     audioContext.close();
                 }
                 isRecording = false;
+                
+                status.textContent = "音频录制完成，可以下载";
+                downloadBtn.disabled = false;
+                stopBtn.disabled = true;
             }
         }
 
+        // 下载音频
         function downloadAudio() {
             if (audioChunks.length === 0) {
-                alert('没有可下载的音频内容');
+                status.textContent = "没有可下载的音频内容";
                 return;
             }
             
@@ -151,7 +219,7 @@
             
             const a = document.createElement('a');
             a.href = audioUrl;
-            a.download = `speech_${new Date().toISOString().slice(0,10)}.wav`;
+            a.download = `语音_${new Date().toISOString().slice(0,19).replace(/[:T]/g, '-')}.wav`;
             document.body.appendChild(a);
             a.click();
             
@@ -159,41 +227,64 @@
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(audioUrl);
             }, 100);
+            
+            status.textContent = "音频下载已开始";
         }
 
         // 朗读按钮事件
         speakBtn.addEventListener('click', () => {
             speechSynthesis.cancel();
-            const text = textInput.value;
-            if (!text) return;
+            const text = textInput.value.trim();
             
-            const utterance = new SpeechSynthesisUtterance(text);
+            if (!text) {
+                status.textContent = "请输入要朗读的文本";
+                return;
+            }
+            
+            currentUtterance = new SpeechSynthesisUtterance(text);
             const selectedOption = voiceSelect.selectedOptions[0];
             const voices = speechSynthesis.getVoices();
             const selectedVoice = voices.find(voice => 
                 voice.name === selectedOption.getAttribute('data-name'));
             
-            utterance.voice = selectedVoice;
-            utterance.rate = parseFloat(rate.value);
-            utterance.pitch = parseFloat(pitch.value);
+            currentUtterance.voice = selectedVoice;
+            currentUtterance.rate = parseFloat(rate.value);
+            currentUtterance.pitch = parseFloat(pitch.value);
             
-            // 关键改进：连接语音合成到音频上下文
-            utterance.onstart = () => {
-                startRecording();
+            // 开始录制
+            startRecording();
+            
+            currentUtterance.onstart = () => {
+                status.textContent = "正在朗读文本...";
+                speakBtn.disabled = true;
             };
             
-            utterance.onend = () => {
-                setTimeout(stopRecording, 500); // 留500ms缓冲时间
+            currentUtterance.onend = () => {
+                setTimeout(() => {
+                    stopRecording();
+                    speakBtn.disabled = false;
+                }, 500); // 留500ms缓冲时间
             };
             
-            speechSynthesis.speak(utterance);
+            currentUtterance.onerror = (event) => {
+                console.error('语音合成错误:', event);
+                status.textContent = "朗读过程中发生错误";
+                stopRecording();
+                speakBtn.disabled = false;
+            };
+            
+            speechSynthesis.speak(currentUtterance);
         });
 
+        // 停止按钮事件
         stopBtn.addEventListener('click', () => {
             speechSynthesis.cancel();
             stopRecording();
+            status.textContent = "已停止朗读和录制";
+            speakBtn.disabled = false;
         });
 
+        // 下载按钮事件
         downloadBtn.addEventListener('click', downloadAudio);
     </script>
 </body>

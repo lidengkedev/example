@@ -8,8 +8,10 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     .wrapper {width: 750px; margin: 10px auto;}
+    .wrapper div { margin: 10px 0; }
     textarea { width: 100%; padding: 7px; outline: none; }
     button { background-color: #407EFF; color: #FFFFFF; border: 1px solid #407EFF; padding: 7px 10px; cursor: pointer;border-radius: 3px; }
+    select { padding: 7px; }
   </style>
 </head>
 <body>
@@ -18,6 +20,24 @@
   </div>
   <div class="wrapper">
     <textarea id="textarea" rows="5" placeholder="请输入将要转为语音的文本内容！"></textarea>
+    <div>
+      <select id="lang"></select>
+    </div>
+    <div>
+      <label for="rate">语速：</label>
+      <input type="range" id="rate" min="0.5" max="2" step="0.1" value="1">
+      <span>1</span>
+    </div>
+    <div>
+      <label for="pitch">音调：</label>
+      <input type="range" id="pitch" min="0.5" max="2" step="0.1" value="1">
+      <span>1</span>
+    </div>
+    <div>
+      <label for="volume">音量：</label>
+      <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
+      <span>1</span>
+    </div>
     <button id="play">播放语音</button>
     <button id="download">下载语音</button>
     <button id="clear">清空文本</button>
@@ -28,43 +48,78 @@
       var clear_elem = document.getElementById('clear')
       var play_elem = document.getElementById('play')
       var download_elem = document.getElementById('download')
+      var lang_elem = document.getElementById('lang')
+      var rate_elem = document.getElementById('rate')
+      var rate_value_elem = document.querySelector('#rate+span')
+      var pitch_elem = document.getElementById('pitch')
+      var pitch_value_elem = document.querySelector('#pitch+span')
+      var volume_elem = document.getElementById('volume')
+      var volume_value_elem = document.querySelector('#volume+span')
+
+      speechSynthesis.onvoiceschanged = setLangSelectOptionList // 语音列表加载
+
       textarea_elem.value = '这是一段测试文本内容！'
-      clear_elem.onclick = () => textarea_elem.value = ''
-      play_elem.onclick = () => playAudioFromText()
-      download_elem.onclick = () => downloadAudioToMP3()
+      clear_elem.onclick = () => textarea_elem.value = '' // 清空文本
+      // play_elem.onclick = () => method1RecordAudioFormText()       // 语音合成
+      // play_elem.onclick = () => method2RecordAudioFormText()       // 语音合成
+      play_elem.onclick = () => method3RecordAudioFormText()       // 语音合成
+      download_elem.onclick = () => downloadAudioToMP3()  // 下载语音
+      lang_elem.onchange = () => handleLangChange()
+      rate_elem.oninput = () => (rate_value_elem.innerText = rate_elem.value)
+      pitch_elem.oninput = () => (pitch_value_elem.innerText = pitch_elem.value)
+      volume_elem.oninput = () => (volume_value_elem.innerText = volume_elem.value)
     } else {
       alert('你的浏览器不支持语音识别功能，请使用 Chrome 浏览器。')
     }
 
+    var voice = null  // 语音播放的语言
+
+    function setLangSelectOptionList() {
+      const voices = speechSynthesis.getVoices()
+      lang_elem.innerHTML = ''
+      voices.forEach(voice => {
+        const option = document.createElement('option');
+        option.textContent = `${voice.name} (${voice.lang})`;
+        option.setAttribute('data-name', voice.name);
+        option.setAttribute('data-lang', voice.lang);
+        lang_elem.appendChild(option);
+      })
+      voice = voices[0]
+    }
+
+    function handleLangChange() {
+      const voices = speechSynthesis.getVoices()
+      const selectedOption = voiceSelect.selectedOptions[0]
+      voice = voices.find(v => v.name === selectedOption.getAttribute('data-name'))
+    }
+
+    function handleRateChange() {
+      rate_value_elem.innerText = rate_elem.value
+    }
+    
     var audio_to_blob = null // 音频的blob地址
     
     // 将文本转为语音，并录制语音流数据
-    function playAudioFromText() {
+    function method1RecordAudioFormText() {
       var audio_record_chunks = [] // 用于存储录制的音频流数据
-      
-      const audio_context = new AudioContext() // 生成语音实例对象
-      const destination = audio_context.createMediaStreamDestination()
-      
-      const audio_media_stream_destination = audio_context.createMediaStreamDestination()
 
       // 将指定文本合成为语音
       const utterance = new SpeechSynthesisUtterance(textarea_elem.value)
+      utterance.voice = voice // 嗓音
+      utterance.rate = Number(rate_elem.value) // 语速
+      utterance.pitch = Number(pitch_elem.value) // 音调
+      utterance.volume = Number(volume_elem.value) // 音量
       navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(stream => {
         mediaStream = stream
         const audio_media_recorder = new MediaRecorder(stream) // 创建一个录音器
-        // const audio_media_recorder = new MediaRecorder(audio_media_stream_destination.stream) // 创建一个录音器
-        const media_stream_source = audio_context.createMediaStreamSource(stream)
-        // const media_stream_source = audio_context.createMediaStreamSource(audio_media_stream_destination.stream)
-        media_stream_source.connect(audio_media_stream_destination)
-        // console.log(media_stream_source)
   
         audio_media_recorder.addEventListener('start', function (e) {
-          console.log('监听：开始录音！')
+          console.info('监听：开始录音！')
         })
         // 录音中
         audio_media_recorder.addEventListener('dataavailable', function (e) {
           audio_record_chunks.push(e.data)
-          console.log('监听：录音中，', e)
+          console.log('监听：录音中...\n'+ Object.prototype.toString.call(e.data).slice(8,-1) + ',size:' + e.data.size + ',type:' + e.data.type)
         })
         // 录音结束
         audio_media_recorder.addEventListener('stop', function (e) {
@@ -79,7 +134,6 @@
             audio_media_recorder.stop()
             mediaStream.getTracks().forEach(track => track.stop())
             console.log('停止录音！')
-
           }, 500)  // 留500ms缓冲时间
         })
   
@@ -91,6 +145,85 @@
       })
       
     }
+
+    // 方式二：通过生成音频实例对象来获取浏览器音频流数据来录制音频
+    function method2RecordAudioFormText() {
+      audio_record_chunks = []
+      const audio_context = new AudioContext()
+      const audio_media_stream_destination = audio_context.createMediaStreamDestination()
+
+      const utterance = new SpeechSynthesisUtterance(textarea_elem.value)
+      utterance.voice = voice // 嗓音
+      utterance.rate = Number(rate_elem.value) // 语速
+      utterance.pitch = Number(pitch_elem.value) // 音调
+      utterance.volume = Number(volume_elem.value) // 音量
+
+      const audio_media_recorder = new MediaRecorder(audio_media_stream_destination.stream)
+      const media_stream_source = audio_context.createMediaStreamSource(audio_media_stream_destination.stream)
+      media_stream_source.connect(audio_media_stream_destination)
+      // 录音中
+      audio_media_recorder.addEventListener('dataavailable', function (e) {
+        audio_record_chunks.push(e.data)
+        console.log('监听：录音中...\n'+ Object.prototype.toString.call(e.data).slice(8,-1) + ',size:' + e.data.size + ',type:' + e.data.type)
+      })
+      // 录音结束
+      audio_media_recorder.addEventListener('stop', function (e) {
+        audio_to_blob = new Blob(audio_record_chunks, { type: 'audio/mp3; codecs=opus' })
+        console.log('监听：录音结束！')
+      })
+      utterance.addEventListener('end', function (e) {
+        // 语音播放结束，停止录音
+        console.log('语音播放结束！')
+        setTimeout(() => {
+          audio_media_recorder.stop()
+          audio_media_stream_destination.stream.getTracks().forEach(track => track.stop())
+          console.log('停止录音！')
+        }, 500)  // 留500ms缓冲时间
+      })
+      audio_media_recorder.start(100) // 每100ms收集一次数据
+      speechSynthesis.speak(utterance) // 开始播放语音
+    }
+
+    // 方式三：通过录制屏幕来获取音频流数据并保存到本地
+    async function method3RecordAudioFormText() {
+      audio_record_chunks = []
+      const video_stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
+
+      const utterance = new SpeechSynthesisUtterance(textarea_elem.value)
+      utterance.voice = voice // 嗓音
+      utterance.rate = Number(rate_elem.value) // 语速
+      utterance.pitch = Number(pitch_elem.value) // 音调
+      utterance.volume = Number(volume_elem.value) // 音量
+
+      const media_recorder = new MediaRecorder(video_stream)
+      media_recorder.ondataavailable = e => {
+        if (e.data.size > 0) {
+          audio_record_chunks.push(e.data)
+        }
+      }
+      media_recorder.onstop = () => {
+        const video_blob = new Blob(audio_record_chunks, { type: 'video/mp4' })
+        audio_to_blob = new Blob(audio_record_chunks, { type: 'audio/mp3' })
+        const url = URL.createObjectURL(video_blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = 'screen_' + Date.now() + '.mp4'
+        link.click()
+        URL.revokeObjectURL(url)
+      }
+      utterance.addEventListener('end', function (e) {
+        // 语音播放结束，停止录音
+        console.log('语音播放结束！')
+        setTimeout(() => {
+          media_recorder.stop()
+          video_stream.getTracks().forEach(track => track.stop())
+          console.log('停止录音！')
+        }, 500)  // 留500ms缓冲时间
+      })
+      media_recorder.start()
+      speechSynthesis.speak(utterance) // 开始播放语音
+    }
+
     // 将合成的语音转为mp3并下载到本地
     function downloadAudioToMP3() {
       const url = URL.createObjectURL(audio_to_blob)
