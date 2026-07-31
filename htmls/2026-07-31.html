@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测评：自主掌控者|外物掌控者</title>
+</head>
+<body>
+
+  <h1>测评：你是自主掌控者还是外务掌控者？快来测试一番吧！</h1>
+
+  <p>这项测试可以帮助你确定你更倾向于自我掌控者还是外物掌控者。下面罗列的这些特点都有些极端，但这样可以凸显出两种类型的差别。另外，人的某些性格如同光谱一样，具有连续性，但大多数人还是会更加倾向于其中一种。</p>
+
+  <!-- <div class="question">
+    1. 对生活的态度：是否活在当下，不考虑未来？
+    <div>
+      <input type="radio" name="radio-1"> 是
+      <input type="radio" name="radio-1"> 否
+    </div>
+  </div> -->
+
+  <div v-scope>
+    <div v-for="(item, index) in questions" :key="index" class="question">
+      {{ index + 1 }}、{{ item.question }}
+      <div>
+        <input :id="'radio-yes-' + index" type="radio" :name="'radio-' + index" :checked="item.yes" @change="handleChangeRadio">
+        <label :for="'radio-yes-' + index">是</label>
+        <input :id="'radio-no-' + index" type="radio" :name="'radio-' + index" :checked="item.no" @change="handleChangeRadio">
+        <label :for="'radio-no-' + index">否</label>
+      </div>
+    </div>
+
+    <button :disabled="isDisabled" @click="handleResult">查看结果</button>
+
+    <div style="font-size: 24px; font-weight: bold;">{{ result }}</div>
+  </div>
+
+  <script type="module">
+    import { createApp } from 'https://unpkg.com/petite-vue?module'
+    const questions = [
+      { yes: false, no: false, type: 'WAIWU', question: '对生活的态度：是否活在当下，不考虑未来？' },
+      { yes: false, no: false, type: 'WAIWU', question: '对生活的态度：是否思考外在的解决方案？' },
+      { yes: false, no: false, type: 'WAIWU', question: '对生活的态度：是否期望别人来改善一切“其他人怎样可以让一切变好呢？”？' },
+      { yes: false, no: false, type: 'WAIWU', question: '对生活的态度：是否先行动后思考？' },
+      { yes: false, no: false, type: 'WAIWU', question: '对生活的态度：是否低估困难？' },
+      { yes: false, no: false, type: 'WAIWU', question: '对待问题的回应：是否对一切正在进行的事都会做出反应？' },
+      { yes: false, no: false, type: 'WAIWU', question: '对待问题的回应：是否把问题看作他人的错？' },
+      { yes: false, no: false, type: 'WAIWU', question: '对待问题的回应：是否埋怨所处的环境？' },
+      { yes: false, no: false, type: 'WAIWU', question: '对待问题的回应：是否让他人也陷入麻烦？' },
+      { yes: false, no: false, type: 'WAIWU', question: '对待问题的回应：是否否认或逃避现实？' },
+      { yes: false, no: false, type: 'WAIWU', question: '心理学类型：是否冲动而且以自我为中心？' },
+      { yes: false, no: false, type: 'WAIWU', question: '心理学类型：是否思想情感难以控制？' },
+      { yes: false, no: false, type: 'WAIWU', question: '心理学类型：是否容易生气？' },
+      { yes: false, no: false, type: 'WAIWU', question: '心理学类型：是否对内心世界不感兴趣？' },
+      { yes: false, no: false, type: 'WAIWU', question: '与人关系的特点：是否期望别人提供帮助？' },
+      { yes: false, no: false, type: 'WAIWU', question: '与人关系的特点：是否认为别人应该做出改变来改善环境？' },
+      { yes: false, no: false, type: 'WAIWU', question: '与人关系的特点：是否期望别人聆听自己，并且常常自言自语？' },
+      { yes: false, no: false, type: 'WAIWU', question: '与人关系的特点：是否要求别人不要“唠叨”？' },
+      { yes: false, no: false, type: 'ZIWO', question: '对生活的态度：是否担忧未来？' },
+      { yes: false, no: false, type: 'ZIWO', question: '对生活的态度：是否从内心世界出发寻找解决方案？' },
+      { yes: false, no: false, type: 'ZIWO', question: '对生活的态度：是否很体贴，很有同理心：“我怎样做才可以让事情变好？”？' },
+      { yes: false, no: false, type: 'ZIWO', question: '对生活的态度：是否常思考未来将会发生什么？' },
+      { yes: false, no: false, type: 'ZIWO', question: '对生活的态度：是否高估困难？' },
+      { yes: false, no: false, type: 'ZIWO', question: '对待问题的回应：是否试图明白正在发生的事情？' },
+      { yes: false, no: false, type: 'ZIWO', question: '对待问题的回应：是否出问题会从自身找原因：“我做错过什么？”？' },
+      { yes: false, no: false, type: 'ZIWO', question: '对待问题的回应：是否常常自我反思并且很负责？' },
+      { yes: false, no: false, type: 'ZIWO', question: '对待问题的回应：是否独立地把问题理清并试图解决它们？' },
+      { yes: false, no: false, type: 'ZIWO', question: '对待问题的回应：是否接受现实本身的样子并且愿意改变？' },
+      { yes: false, no: false, type: 'ZIWO', question: '心理学类型：是否三四后行？' },
+      { yes: false, no: false, type: 'ZIWO', question: '心理学类型：是否思想情感可以控制？' },
+      { yes: false, no: false, type: 'ZIWO', question: '心理学类型：是否容易感到自己有罪？' },
+      { yes: false, no: false, type: 'ZIWO', question: '心理学类型：是否认为内心世界很迷人？' },
+      { yes: false, no: false, type: 'ZIWO', question: '与人关系的特点：是否首先考虑他人的需求？' },
+      { yes: false, no: false, type: 'ZIWO', question: '与人关系的特点：是否会考虑做出改变来改善环境？' },
+      { yes: false, no: false, type: 'ZIWO', question: '与人关系的特点：是否想要帮助别人理解问题的来源？' },
+      { yes: false, no: false, type: 'ZIWO', question: '与人关系的特点：是否会就一个问题与人进行讨论？' },
+    ]
+    createApp({
+
+      questions, // 问题集合
+
+      result: '', // 定义结果消息
+
+      isDisabled: true, // 判断查看按钮是否禁用，只有所有选项均已填写完成才可以解除按钮禁用
+
+      // get isDisabled() { // 判断查看按钮是否禁用，只有所有选项均已填写完成才可以解除按钮禁用
+
+      //   return this.questions.some(item => item.yes === item.no)
+
+      // },
+
+      // 单选框选中变化时，更新查看按钮的禁用效果，只有所有选项均已填写完成才可以解除按钮禁用
+      handleChangeRadio() {
+        this.isDisabled = this.questions.some((item) => (item.yes === item.no))
+      },
+
+      handleResult() { // 查看按钮事件
+
+        // 选择外物掌控者的数量
+        const wai_wu_count = this.questions.filter(item => (item.type === 'WAIWU' && item.yes === true))
+
+        // 选择自我掌控者的数量
+        const zi_wo_count = this.questions.filter(item => (item.type === 'ZIWO' && item.yes === true))
+
+        if (wai_wu_count > zi_wo_count) {
+
+          this.result = '测评结果：您是一位外物掌控者哦！'
+
+        } else if (wai_wu_count < zi_wo_count) {
+
+          this.result = '测评结果：您是一位自我掌控者哦！'
+
+        } else {
+
+          this.result = '测评结果：您是既是一位外物掌控者，但同时也是一位自我掌控者哦！'
+
+        }
+      }
+    }).mount()
+  </script>
+</body>
+</html>
