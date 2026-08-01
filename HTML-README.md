@@ -2,6 +2,7 @@
 [TOC]
 ## HTML 文件示例
 
+- [测评 · 自主掌控者 | 外物掌控者](https://lidengkedev.github.io/example/htmls/2026-07-31.html)
 - [通过浏览器选择本地视频文件并播放本地视频的播放器](https://lidengkedev.github.io/example/htmls/brower-video-player.html)
 - [使用 js 制作一本万年历](https://lidengkedev.github.io/example/htmls/calendar.html)
 - [使用 Canvas 绘制一个类似于 Echarts 的柱状图](https://lidengkedev.github.io/example/htmls/canvas-bar.html)
@@ -10,6 +11,7 @@
 - [使用 canvas 实现电子签名](https://lidengkedev.github.io/example/htmls/canvas-font.html)
 - [使用 canvas 实现益智五子棋游戏](https://lidengkedev.github.io/example/htmls/canvas-gobang.html)
 - [Hi Canvas](https://lidengkedev.github.io/example/htmls/canvas-somke.html)
+- [聊天室对话](https://lidengkedev.github.io/example/htmls/chat.html)
 - [Color-径向颜色渐变计算](https://lidengkedev.github.io/example/htmls/color-linear.html)
 - [Grid 网格布局](https://lidengkedev.github.io/example/htmls/css-grid.html)
 - [使用 CSS 中的 background-image、background-clip 或 mask-image 实现 文本线性渐变效果](https://lidengkedev.github.io/example/htmls/css-text-gradient.html)
