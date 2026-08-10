@@ -1,6 +1,6 @@
 
 # CSS 示例文件访问链接汇总目录
-[TOC]
+
 ## CSS 文件示例
 - [纯 CSS 绘制一个铜钱 并让其从左到右滚动](https://lidengkedev.github.io/example/css/pages/copper.html)
 - [CSS3新属性 anchor 锚点定位](https://lidengkedev.github.io/example/css/pages/css-anchor.html)

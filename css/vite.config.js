@@ -6,7 +6,7 @@ import fs from 'fs'
 // 定义 CSS-README.md 文件的标题内容
 const CSS_README_MD = `
 # CSS 示例文件访问链接汇总目录
-[TOC]
+
 ## CSS 文件示例
 `
 // 初始化写入 HTML-README.md 文件的标题内容

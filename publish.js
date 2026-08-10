@@ -127,7 +127,6 @@ function createHtmlReadmeFile() {
     // 定义 HTML-README.md 文件的标题内容
     const HTML_README_MD = (
         '# HTML 示例文件访问链接汇总目录\r\n' +
-        '[TOC]\r\n' +
         '## HTML 文件示例\n\n'
     )
     // 初始化写入 HTML-README.md 文件的标题内容
@@ -139,5 +138,18 @@ createHtmlReadmeFile()
 
 // 复制文件夹
 copyDirSync('htmls', 'dist/htmls')
+console.log('================================')
+console.log('htmls => dist/htmls is complate.')
+console.log('================================')
 
+// 卫星地图
+copyDirSync('gis-map-demo', 'dist/gis-map-demo')
+console.log('==============================================')
+console.log('gis-map-demo => dist/gis-map-demo is complate.')
+console.log('==============================================')
 
+// 网络拓扑图
+copyDirSync('le5le-meta2d-demo', 'dist/le5le-meta2d-demo')
+console.log('========================================================')
+console.log('le5le-meta2d-demo => dist/le5le-meta2d-demo is complate.')
+console.log('========================================================')
