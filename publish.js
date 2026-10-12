@@ -148,8 +148,14 @@ console.log('==============================================')
 console.log('gis-map-demo => dist/gis-map-demo is complate.')
 console.log('==============================================')
 
-// 网络拓扑图
-copyDirSync('le5le-meta2d-demo', 'dist/le5le-meta2d-demo')
+// 常规页面
+copyDirSync('pages', 'dist/pages')
 console.log('========================================================')
-console.log('le5le-meta2d-demo => dist/le5le-meta2d-demo is complate.')
+console.log('pages => dist/pages is complate.')
+console.log('========================================================')
+
+// 根文件
+copyFileSync('index.html', 'dist/index.html')
+console.log('========================================================')
+console.log('index.html => dist/index.html is complate.')
 console.log('========================================================')
