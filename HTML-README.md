@@ -64,7 +64,7 @@
 - [GIS 天地图 2D 在地图上完成地理空间目标（点、线、面、圆、多边形）操作](https://lidengkedev.github.io/example/gis-map-demo/tianditu.html)
 - [BMI 计算器](https://lidengkedev.github.io/example/pages/202505252220-bmi.html)
 - [语音转文本](https://lidengkedev.github.io/example/pages/202505252220-speech_to_text.html)
-- [文本转为语音并下载工具](https://lidengkedev.github.io/example/pages/202509101034.html)
+- [文本转语音并下载工具](https://lidengkedev.github.io/example/pages/202509101034.html)
 - [文本转语音下载工具](https://lidengkedev.github.io/example/pages/202509101730.html)
 - [江苏省电厂分布图](https://lidengkedev.github.io/example/pages/202610120920.html)
 - [我的导航页](https://lidengkedev.github.io/example/index.html)

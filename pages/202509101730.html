@@ -1,292 +1,714 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="将文本转为语音并下载录音内容">
-    <title>文本转语音下载工具</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="输入文字，调节语速音调，朗读并导出音频文件">
+<title>文本转语音下载工具</title>
+<style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+        color-scheme: light dark;
+        --bg: #f5f7fb;
+        --surface: #ffffff;
+        --surface-2: #f8fafc;
+        --text: #111827;
+        --muted: #6b7280;
+        --border: #e5e9f0;
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --primary-soft: #eef2ff;
+        --danger: #dc2626;
+        --success: #059669;
+        --radius: 16px;
+        --shadow: 0 1px 2px rgb(16 24 40 / 5%), 0 12px 32px -18px rgb(16 24 40 / 35%);
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg: #0f1115;
+            --surface: #171a21;
+            --surface-2: #1e222b;
+            --text: #e8eaed;
+            --muted: #9aa3b2;
+            --border: #2a2f3a;
+            --primary: #6366f1;
+            --primary-hover: #7c7ff2;
+            --primary-soft: #232739;
+            --danger: #f87171;
+            --success: #34d399;
+            --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px -18px rgb(0 0 0 / 70%);
         }
-        textarea {
-            width: 100%;
-            height: 150px;
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 15px;
-            background: #4285f4;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #3367d6;
-        }
-        button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-        }
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-        select, input[type="range"] {
-            padding: 8px;
-            margin-right: 10px;
-        }
-        .status {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-            background: #f5f5f5;
-        }
-        #audioPreview {
-            margin-top: 20px;
-            width: 100%;
-        }
-    </style>
+    }
+
+    body {
+        margin: 0;
+        padding: 40px 20px 72px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                     "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        font-size: 15px;
+        line-height: 1.6;
+        color: var(--text);
+        background: var(--bg);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap { max-width: 760px; margin: 0 auto; }
+
+    header { margin-bottom: 26px; }
+    h1 {
+        margin: 0 0 6px;
+        font-size: clamp(22px, 4vw, 28px);
+        letter-spacing: -0.02em;
+        font-weight: 700;
+    }
+    .sub { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 20px;
+        margin-bottom: 16px;
+    }
+
+    .field-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 0.02em;
+        margin-bottom: 10px;
+    }
+
+    /* ---------- 输入区 ---------- */
+    textarea {
+        width: 100%;
+        min-height: 170px;
+        resize: vertical;
+        padding: 14px 16px;
+        font: inherit;
+        line-height: 1.75;
+        color: var(--text);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        transition: border-color .18s, box-shadow .18s;
+    }
+    textarea::placeholder { color: var(--muted); opacity: .75; }
+    textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-soft);
+    }
+
+    .row-between {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+        font-size: 12.5px;
+        color: var(--muted);
+    }
+    .counter { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+    /* ---------- 参数区 ---------- */
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 18px 22px;
+    }
+    .field label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
+        margin-bottom: 9px;
+    }
+    .badge {
+        font-variant-numeric: tabular-nums;
+        background: var(--primary-soft);
+        color: var(--primary);
+        border-radius: 999px;
+        padding: 1px 10px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    select {
+        width: 100%;
+        padding: 10px 12px;
+        font: inherit;
+        font-size: 14px;
+        color: var(--text);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        transition: border-color .18s, box-shadow .18s;
+    }
+    select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-soft);
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 22px;
+        accent-color: var(--primary);
+        cursor: pointer;
+    }
+
+    /* ---------- 按钮 ---------- */
+    .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 22px 0 0;
+    }
+    .btn {
+        appearance: none;
+        font: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        padding: 11px 22px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: background .18s, border-color .18s, transform .1s, box-shadow .18s, opacity .18s;
+    }
+    .btn:active:not(:disabled) { transform: translateY(1px); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    .btn.primary {
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 8px 20px -12px var(--primary);
+    }
+    .btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+
+    .btn.ghost {
+        background: var(--surface);
+        color: var(--text);
+        border-color: var(--border);
+    }
+    .btn.ghost:hover:not(:disabled) {
+        background: var(--surface-2);
+        border-color: var(--muted);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+    }
+
+    /* ---------- 状态提示 ---------- */
+    .status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 16px;
+        padding: 12px 16px;
+        min-height: 46px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface-2);
+        color: var(--muted);
+        font-size: 14px;
+    }
+    .status::before {
+        content: "";
+        flex: none;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+    .status[data-type="info"]      { color: var(--primary); }
+    .status[data-type="success"]   { color: var(--success); }
+    .status[data-type="error"]     { color: var(--danger); }
+    .status[data-type="recording"] { color: var(--danger); }
+    .status[data-type="recording"]::before { animation: pulse 1.2s ease-in-out infinite; }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%      { opacity: .3; transform: scale(.65); }
+    }
+
+    /* ---------- 预览 ---------- */
+    #previewCard audio { width: 100%; display: block; }
+    .hidden { display: none !important; }
+
+    @media (max-width: 480px) {
+        body { padding: 24px 14px 56px; }
+        .card { padding: 16px; }
+        .btn { flex: 1 1 auto; justify-content: center; }
+    }
+</style>
 </head>
 <body>
-    <h1>文本转语音下载工具</h1>
-    <textarea id="textInput" placeholder="请输入要转换为语音的文本..."></textarea>
-    
-    <div class="controls">
-        <label for="voiceSelect">选择语音：</label>
-        <select id="voiceSelect"></select>
-        
-        <label for="rate">语速：</label>
-        <input type="range" id="rate" min="0.5" max="2" step="0.1" value="1">
-        <span id="rateValue">1</span>
-        
-        <label for="pitch">音调：</label>
-        <input type="range" id="pitch" min="0.5" max="2" step="0.1" value="1">
-        <span id="pitchValue">1</span>
-    </div>
-    
-    <div>
-        <button id="speakBtn">朗读</button>
-        <button id="stopBtn" disabled>停止</button>
-        <button id="downloadBtn" disabled>下载语音</button>
-    </div>
-    
-    <div class="status" id="status"></div>
-    <audio id="audioPreview" controls></audio>
-    
-    <script>
-        // 获取DOM元素
-        const textInput = document.getElementById('textInput');
-        const voiceSelect = document.getElementById('voiceSelect');
-        const rate = document.getElementById('rate');
-        const rateValue = document.getElementById('rateValue');
-        const pitch = document.getElementById('pitch');
-        const pitchValue = document.getElementById('pitchValue');
-        const speakBtn = document.getElementById('speakBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const status = document.getElementById('status');
-        const audioPreview = document.getElementById('audioPreview');
-        
-        // 语音合成和音频捕获相关变量
-        let audioChunks = [];
-        let mediaRecorder;
-        let audioContext;
-        let isRecording = false;
-        let currentUtterance = null;
-        let audioStream;
+<div class="wrap">
+    <header>
+        <h1>文本转语音下载工具</h1>
+        <p class="sub">输入文字，调节语速与音调，朗读的同时录制并导出为音频文件</p>
+    </header>
 
-        // 初始化语音列表
-        function populateVoiceList() {
-            const voices = speechSynthesis.getVoices();
-            voiceSelect.innerHTML = '';
-            
-            voices.forEach(voice => {
-                const option = document.createElement('option');
-                option.textContent = `${voice.name} (${voice.lang})`;
-                option.setAttribute('data-name', voice.name);
-                option.setAttribute('data-lang', voice.lang);
-                voiceSelect.appendChild(option);
-            });
-            
-            // 默认选择中文语音
-            const chineseVoice = voices.find(voice => voice.lang.includes('zh') || voice.lang.includes('cmn'));
-            if (chineseVoice) {
-                const options = voiceSelect.options;
-                for (let i = 0; i < options.length; i++) {
-                    if (options[i].getAttribute('data-name') === chineseVoice.name) {
-                        voiceSelect.selectedIndex = i;
-                        break;
-                    }
-                }
+    <!-- 文本输入 -->
+    <section class="card">
+        <label class="field-label" for="textInput">文本内容</label>
+        <textarea id="textInput" placeholder="请输入要转换为语音的文本…"></textarea>
+        <div class="row-between">
+            <span>提示：Ctrl / ⌘ + Enter 可快速开始朗读</span>
+            <span class="counter"><span id="charCount">0</span> 字</span>
+        </div>
+    </section>
+
+    <!-- 参数控制 -->
+    <section class="card">
+        <div class="grid">
+            <div class="field">
+                <label for="voiceSelect">语音</label>
+                <select id="voiceSelect"></select>
+            </div>
+            <div class="field">
+                <label for="rate">语速 <span class="badge" id="rateValue">1.0</span></label>
+                <input type="range" id="rate" min="0.5" max="2" step="0.1" value="1">
+            </div>
+            <div class="field">
+                <label for="pitch">音调 <span class="badge" id="pitchValue">1.0</span></label>
+                <input type="range" id="pitch" min="0.5" max="2" step="0.1" value="1">
+            </div>
+            <div class="field">
+                <label for="volume">音量 <span class="badge" id="volumeValue">1.0</span></label>
+                <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
+            </div>
+        </div>
+    </section>
+
+    <!-- 操作 -->
+    <div class="actions">
+        <button id="speakBtn" class="btn primary">▶ 朗读并录制</button>
+        <button id="stopBtn" class="btn ghost" disabled>■ 停止</button>
+        <button id="downloadBtn" class="btn ghost" disabled>↓ 下载音频</button>
+    </div>
+
+    <div id="status" class="status" data-type="info" role="status" aria-live="polite">
+        准备就绪，输入文本后点击「朗读并录制」
+    </div>
+
+    <!-- 预览 -->
+    <section class="card hidden" id="previewCard" style="margin-top:16px;">
+        <div class="field-label">录音预览</div>
+        <audio id="audioPreview" controls preload="metadata"></audio>
+    </section>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    /* ==================== DOM ==================== */
+    const $ = id => document.getElementById(id);
+    const textInput    = $('textInput');
+    const charCount    = $('charCount');
+    const voiceSelect  = $('voiceSelect');
+    const rate         = $('rate'),      rateValue    = $('rateValue');
+    const pitch        = $('pitch'),     pitchValue   = $('pitchValue');
+    const volume       = $('volume'),    volumeValue  = $('volumeValue');
+    const speakBtn     = $('speakBtn');
+    const stopBtn      = $('stopBtn');
+    const downloadBtn  = $('downloadBtn');
+    const statusEl     = $('status');
+    const previewCard  = $('previewCard');
+    const audioPreview = $('audioPreview');
+
+    /* ==================== 状态 ==================== */
+    let voices        = [];
+    let lastVoiceName = '';
+    let recorder      = null;
+    let stream        = null;
+    let chunks        = [];
+    let recording     = false;
+    let recordedBlob  = null;
+    let session       = 0;        // 会话令牌，用于作废过期的异步回调
+    let endTimer      = null;
+    let maxTimer      = null;
+
+    /* ==================== 工具 ==================== */
+    function setStatus(msg, type) {
+        statusEl.textContent = msg;
+        statusEl.dataset.type = type || 'info';
+    }
+
+    function setBusy(busy) {
+        speakBtn.disabled = busy;
+        stopBtn.disabled  = !busy;
+    }
+
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    }
+
+    /* ==================== 语音列表 ==================== */
+    function loadVoices() {
+        const list = speechSynthesis.getVoices();
+        if (!list || !list.length) return;
+
+        voices = list.slice().sort((a, b) => {
+            const az = /^(zh|cmn)/i.test(a.lang) ? 0 : 1;
+            const bz = /^(zh|cmn)/i.test(b.lang) ? 0 : 1;
+            if (az !== bz) return az - bz;
+            if (a.lang !== b.lang) return a.lang.localeCompare(b.lang);
+            return a.name.localeCompare(b.name);
+        });
+
+        voiceSelect.innerHTML = '';
+        voices.forEach((v, i) => {
+            const opt = document.createElement('option');
+            opt.value = String(i);
+            opt.textContent = v.name + ' — ' + v.lang + (v.localService ? '' : ' ☁');
+            voiceSelect.appendChild(opt);
+        });
+
+        // 优先恢复上次选择，否则选第一个中文语音
+        let idx = voices.findIndex(v => v.name === lastVoiceName);
+        if (idx < 0) idx = voices.findIndex(v => /^zh/i.test(v.lang));
+        if (idx < 0) idx = 0;
+        voiceSelect.value = String(idx);
+        lastVoiceName = voices[idx] ? voices[idx].name : '';
+    }
+
+    voiceSelect.addEventListener('change', () => {
+        const v = voices[Number(voiceSelect.value)];
+        lastVoiceName = v ? v.name : '';
+    });
+
+    if ('speechSynthesis' in window) {
+        speechSynthesis.addEventListener('voiceschanged', loadVoices);
+        loadVoices();
+        // 部分浏览器语音列表异步加载，做几次兜底轮询
+        let tries = 0;
+        const timer = setInterval(() => {
+            if (voices.length || ++tries > 12) { clearInterval(timer); return; }
+            loadVoices();
+        }, 200);
+    }
+
+    /* ==================== 滑块数值 ==================== */
+    [[rate, rateValue], [pitch, pitchValue], [volume, volumeValue]].forEach(([input, out]) => {
+        input.addEventListener('input', () => {
+            out.textContent = Number(input.value).toFixed(1);
+        });
+    });
+
+    /* ==================== 字数统计 & 快捷键 ==================== */
+    textInput.addEventListener('input', () => {
+        charCount.textContent = textInput.value.length;
+    });
+
+    textInput.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            if (!speakBtn.disabled) handleSpeak();
+        }
+    });
+
+    /* ==================== 录音 ==================== */
+    function pickMimeType() {
+        if (typeof MediaRecorder === 'undefined' || !MediaRecorder.isTypeSupported) return '';
+        const candidates = [
+            'audio/webm;codecs=opus',
+            'audio/webm',
+            'audio/ogg;codecs=opus',
+            'audio/mp4'
+        ];
+        for (const t of candidates) {
+            if (MediaRecorder.isTypeSupported(t)) return t;
+        }
+        return '';
+    }
+
+    async function startRecording(token) {
+        if (recording) return true;
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error('当前浏览器不支持音频录制');
+        }
+
+        // 关闭回声消除/降噪：否则系统播放的语音会被当成回声抹掉
+        stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false
             }
-        }
-
-        // 语音列表加载
-        speechSynthesis.onvoiceschanged = populateVoiceList;
-        if (speechSynthesis.getVoices().length > 0) {
-            populateVoiceList();
-        }
-
-        // 更新显示值
-        rate.addEventListener('input', () => {
-            rateValue.textContent = rate.value;
-        });
-        
-        pitch.addEventListener('input', () => {
-            pitchValue.textContent = pitch.value;
         });
 
-        // 开始录制音频
-        async function startRecording() {
-            if (isRecording) return;
-            
+        // 等待权限期间用户可能已点了停止
+        if (token !== session) {
+            stream.getTracks().forEach(t => t.stop());
+            stream = null;
+            return false;
+        }
+
+        chunks = [];
+        const mimeType = pickMimeType();
+        recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+        recorder.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+        recorder.onstop = handleRecorderStop;
+        recorder.start(100);
+        recording = true;
+        return true;
+    }
+
+    function stopRecording() {
+        if (!recording) return;
+        recording = false;
+        try {
+            if (recorder && recorder.state !== 'inactive') recorder.stop();
+        } catch (err) {
+            console.warn('停止录制失败：', err);
+        }
+    }
+
+    function releaseStream() {
+        if (stream) {
+            stream.getTracks().forEach(t => t.stop());
+            stream = null;
+        }
+    }
+
+    async function handleRecorderStop() {
+        releaseStream();
+        const rawType = (recorder && recorder.mimeType) || 'audio/webm';
+        const rawBlob = new Blob(chunks, { type: rawType });
+        chunks = [];
+
+        setStatus('正在处理音频…', 'info');
+
+        let finalBlob = rawBlob;
+        if (!/wav/i.test(rawType)) {
             try {
-                audioChunks = [];
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // 获取用户媒体设备（麦克风）
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                audioStream = stream;
-                
-                // 创建媒体录制器
-                mediaRecorder = new MediaRecorder(stream);
-                
-                mediaRecorder.ondataavailable = event => {
-                    if (event.data.size > 0) {
-                        audioChunks.push(event.data);
-                    }
-                };
-                
-                mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const audioUrl = URL.createObjectURL(audioBlob);
-                    audioPreview.src = audioUrl;
-                    
-                    // 停止所有轨道
-                    audioStream.getTracks().forEach(track => track.stop());
-                };
-                
-                mediaRecorder.start(100); // 每100ms收集一次数据
-                isRecording = true;
-                
-                status.textContent = "正在录制音频...";
-                stopBtn.disabled = false;
-                downloadBtn.disabled = true;
-            } catch (error) {
-                console.error('音频录制初始化失败:', error);
-                status.textContent = "音频录制初始化失败，请确保已授予麦克风权限";
+                finalBlob = await toWav(rawBlob);
+            } catch (err) {
+                console.warn('WAV 转换失败，保留原始格式：', err);
             }
         }
 
-        // 停止录制
-        function stopRecording() {
-            if (mediaRecorder && isRecording) {
-                mediaRecorder.stop();
-                if (audioContext) {
-                    audioContext.close();
-                }
-                isRecording = false;
-                
-                status.textContent = "音频录制完成，可以下载";
-                downloadBtn.disabled = false;
-                stopBtn.disabled = true;
+        recordedBlob = finalBlob;
+
+        if (audioPreview.src) URL.revokeObjectURL(audioPreview.src);
+        audioPreview.src = URL.createObjectURL(finalBlob);
+        previewCard.classList.remove('hidden');
+        downloadBtn.disabled = false;
+
+        if (finalBlob.size < 2048) {
+            setStatus('录制到的声音过短，请检查麦克风权限与系统音量', 'error');
+        } else {
+            setStatus('录制完成 · ' + formatSize(finalBlob.size) + ' · 可下载', 'success');
+        }
+    }
+
+    /* ==================== WAV 编码 ==================== */
+    async function toWav(blob) {
+        const arrayBuffer = await blob.arrayBuffer();
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new Ctx();
+        try {
+            const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+            return audioBufferToWav(audioBuffer);
+        } finally {
+            ctx.close();
+        }
+    }
+
+    function audioBufferToWav(buffer) {
+        const numCh   = buffer.numberOfChannels;
+        const len     = buffer.length;
+        const rate    = buffer.sampleRate;
+        const bps     = 2;                       // 16-bit
+        const block   = numCh * bps;
+        const dataLen = len * block;
+        const arrBuf  = new ArrayBuffer(44 + dataLen);
+        const view    = new DataView(arrBuf);
+        let offset = 0;
+
+        const writeStr = s => {
+            for (let i = 0; i < s.length; i++) view.setUint8(offset++, s.charCodeAt(i));
+        };
+
+        writeStr('RIFF');
+        view.setUint32(offset, 36 + dataLen, true); offset += 4;
+        writeStr('WAVE');
+        writeStr('fmt ');
+        view.setUint32(offset, 16, true);            offset += 4;
+        view.setUint16(offset, 1, true);             offset += 2;  // PCM
+        view.setUint16(offset, numCh, true);         offset += 2;
+        view.setUint32(offset, rate, true);          offset += 4;
+        view.setUint32(offset, rate * block, true);  offset += 4;
+        view.setUint16(offset, block, true);         offset += 2;
+        view.setUint16(offset, 16, true);            offset += 2;
+        writeStr('data');
+        view.setUint32(offset, dataLen, true);       offset += 4;
+
+        const channels = [];
+        for (let c = 0; c < numCh; c++) channels.push(buffer.getChannelData(c));
+
+        for (let i = 0; i < len; i++) {
+            for (let c = 0; c < numCh; c++) {
+                let s = channels[c][i];
+                s = s < -1 ? -1 : s > 1 ? 1 : s;
+                view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+                offset += 2;
             }
         }
 
-        // 下载音频
-        function downloadAudio() {
-            if (audioChunks.length === 0) {
-                status.textContent = "没有可下载的音频内容";
-                return;
-            }
-            
-            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-            const audioUrl = URL.createObjectURL(audioBlob);
-            
-            const a = document.createElement('a');
-            a.href = audioUrl;
-            a.download = `语音_${new Date().toISOString().slice(0,19).replace(/[:T]/g, '-')}.wav`;
-            document.body.appendChild(a);
-            a.click();
-            
-            setTimeout(() => {
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(audioUrl);
-            }, 100);
-            
-            status.textContent = "音频下载已开始";
+        return new Blob([arrBuf], { type: 'audio/wav' });
+    }
+
+    /* ==================== 朗读主流程 ==================== */
+    async function handleSpeak() {
+        const text = textInput.value.trim();
+
+        if (!text) {
+            setStatus('请先输入要朗读的文本', 'error');
+            textInput.focus();
+            return;
+        }
+        if (!('speechSynthesis' in window)) {
+            setStatus('当前浏览器不支持语音合成', 'error');
+            return;
         }
 
-        // 朗读按钮事件
-        speakBtn.addEventListener('click', () => {
-            speechSynthesis.cancel();
-            const text = textInput.value.trim();
-            
-            if (!text) {
-                status.textContent = "请输入要朗读的文本";
-                return;
-            }
-            
-            currentUtterance = new SpeechSynthesisUtterance(text);
-            const selectedOption = voiceSelect.selectedOptions[0];
-            const voices = speechSynthesis.getVoices();
-            const selectedVoice = voices.find(voice => 
-                voice.name === selectedOption.getAttribute('data-name'));
-            
-            currentUtterance.voice = selectedVoice;
-            currentUtterance.rate = parseFloat(rate.value);
-            currentUtterance.pitch = parseFloat(pitch.value);
-            
-            // 开始录制
-            startRecording();
-            
-            currentUtterance.onstart = () => {
-                status.textContent = "正在朗读文本...";
-                speakBtn.disabled = true;
-            };
-            
-            currentUtterance.onend = () => {
-                setTimeout(() => {
-                    stopRecording();
-                    speakBtn.disabled = false;
-                }, 500); // 留500ms缓冲时间
-            };
-            
-            currentUtterance.onerror = (event) => {
-                console.error('语音合成错误:', event);
-                status.textContent = "朗读过程中发生错误";
-                stopRecording();
-                speakBtn.disabled = false;
-            };
-            
-            speechSynthesis.speak(currentUtterance);
-        });
+        const token = ++session;
+        speechSynthesis.cancel();
+        clearTimeout(endTimer);
+        clearTimeout(maxTimer);
 
-        // 停止按钮事件
-        stopBtn.addEventListener('click', () => {
-            speechSynthesis.cancel();
-            stopRecording();
-            status.textContent = "已停止朗读和录制";
-            speakBtn.disabled = false;
-        });
+        setBusy(true);
+        downloadBtn.disabled = true;
+        recordedBlob = null;
+        setStatus('正在请求麦克风权限…', 'info');
 
-        // 下载按钮事件
-        downloadBtn.addEventListener('click', downloadAudio);
-    </script>
+        let ok = false;
+        try {
+            ok = await startRecording(token);
+        } catch (err) {
+            console.error('录音初始化失败：', err);
+            setBusy(false);
+            setStatus(
+                err && err.name === 'NotAllowedError'
+                    ? '麦克风权限被拒绝，无法录制音频'
+                    : '录音初始化失败：' + (err && err.message ? err.message : err),
+                'error'
+            );
+            return;
+        }
+
+        if (!ok || token !== session) return;
+
+        const selected = voices[Number(voiceSelect.value)];
+        const utter = new SpeechSynthesisUtterance(text);
+        if (selected) {
+            utter.voice = selected;
+            utter.lang = selected.lang;
+        }
+        utter.rate   = parseFloat(rate.value);
+        utter.pitch  = parseFloat(pitch.value);
+        utter.volume = parseFloat(volume.value);
+
+        utter.onstart = () => {
+            if (token !== session) return;
+            setStatus('正在朗读并录制…', 'recording');
+            clearTimeout(maxTimer);
+            maxTimer = setTimeout(() => {
+                if (token === session) finishRecording(token);
+            }, Math.max(30000, text.length * 1000));
+        };
+
+        utter.onend = () => {
+            if (token !== session) return;
+            clearTimeout(endTimer);
+            endTimer = setTimeout(() => finishRecording(token), 700); // 留一点余音
+        };
+
+        utter.onerror = e => {
+            if (e.error === 'interrupted' || e.error === 'canceled') return; // 用户主动停止
+            console.error('语音合成错误：', e);
+            finishRecording(token);
+            setStatus('朗读过程中发生错误：' + e.error, 'error');
+        };
+
+        speechSynthesis.speak(utter);
+    }
+
+    function finishRecording(token) {
+        if (token !== undefined && token !== session) return;
+        clearTimeout(endTimer);
+        clearTimeout(maxTimer);
+        speechSynthesis.cancel();
+        stopRecording();
+        setBusy(false);
+    }
+
+    function handleStop() {
+        session++;                  // 作废当前会话
+        clearTimeout(endTimer);
+        clearTimeout(maxTimer);
+        speechSynthesis.cancel();
+        stopRecording();
+        setBusy(false);
+        setStatus('已停止', 'info');
+    }
+
+    /* ==================== 下载 ==================== */
+    function downloadAudio() {
+        if (!recordedBlob) {
+            setStatus('还没有可下载的音频', 'error');
+            return;
+        }
+
+        const type = recordedBlob.type || '';
+        const ext = /wav/.test(type)  ? 'wav'
+                  : /mp4|m4a|aac/.test(type) ? 'm4a'
+                  : /ogg/.test(type) ? 'ogg'
+                  : 'webm';
+
+        const stamp = new Date()
+            .toLocaleString('zh-CN', { hour12: false })
+            .replace(/[\/\s:]/g, '-');
+        const filename = '语音_' + stamp + '.' + ext;
+
+        const url = URL.createObjectURL(recordedBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+        setStatus('已开始下载：' + filename, 'success');
+    }
+
+    /* ==================== 事件绑定 ==================== */
+    speakBtn.addEventListener('click', handleSpeak);
+    stopBtn.addEventListener('click', handleStop);
+    downloadBtn.addEventListener('click', downloadAudio);
+
+    window.addEventListener('pagehide', () => {
+        speechSynthesis.cancel();
+        releaseStream();
+    });
+})();
+</script>
 </body>
 </html>
