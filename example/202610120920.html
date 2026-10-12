@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>江苏省电厂分布图</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+
+  body {
+    background: #0a1020;
+    color: #dbe6f5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app { display: flex; flex-direction: column; height: 100%; }
+
+  /* ---------- 顶栏 ---------- */
+  .topbar {
+    flex: 0 0 54px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px;
+    background: linear-gradient(180deg, #121d33, #0d1627);
+    border-bottom: 1px solid #1e2d4a;
+    z-index: 50;
+  }
+  .topbar h1 {
+    margin: 0; font-size: 15px; font-weight: 600; letter-spacing: .5px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .topbar h1::before {
+    content: ''; width: 4px; height: 15px; border-radius: 2px;
+    background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+    box-shadow: 0 0 10px #38bdf8aa;
+  }
+  .stats { color: #7d92b3; font-size: 12px; }
+  .stats b { color: #38bdf8; font-weight: 600; }
+
+  /* ---------- 主体 ---------- */
+  .body { flex: 1; display: flex; min-height: 0; }
+
+  /* ---------- 侧栏 ---------- */
+  .sidebar {
+    flex: 0 0 262px; width: 262px;
+    background: #0e1728;
+    border-right: 1px solid #1e2d4a;
+    padding: 14px;
+    overflow-y: auto;
+  }
+  .sidebar::-webkit-scrollbar { width: 6px; }
+  .sidebar::-webkit-scrollbar-thumb { background: #22344f; border-radius: 3px; }
+
+  .search {
+    width: 100%; height: 34px; padding: 0 12px;
+    background: #131f36; border: 1px solid #22344f; border-radius: 7px;
+    color: #dbe6f5; font-size: 13px; outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .search:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px #38bdf822; }
+  .search::placeholder { color: #5d7291; }
+
+  .block { margin-top: 18px; }
+  .block-title {
+    font-size: 11px; letter-spacing: 1px; color: #6b81a3;
+    margin-bottom: 9px; display: flex; align-items: center; gap: 7px;
+  }
+  .block-title::after { content: ''; flex: 1; height: 1px; background: #1c2a44; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 9px; border-radius: 20px;
+    background: #131f36; border: 1px solid #22344f;
+    color: #6b81a3; font-size: 12px; cursor: pointer;
+    transition: all .18s; user-select: none;
+  }
+  .chip i { width: 7px; height: 7px; border-radius: 50%; display: block; }
+  .chip.active { color: #dbe6f5; border-color: #33507d; background: #17273f; }
+  .chip:not(.active) i { opacity: .3; }
+
+  .switch {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: #8ea3c2; cursor: pointer; user-select: none;
+  }
+  .switch input { accent-color: #38bdf8; width: 14px; height: 14px; cursor: pointer; }
+
+  .calib { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .calib label {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: #7d92b3;
+  }
+  .calib input {
+    width: 100%; min-width: 0; height: 28px; padding: 0 7px;
+    background: #131f36; border: 1px solid #22344f; border-radius: 6px;
+    color: #dbe6f5; font-size: 12px; outline: none;
+  }
+  .calib input:focus { border-color: #38bdf8; }
+
+  .btn {
+    width: 100%; margin-top: 9px; height: 30px;
+    background: #1d4ed8; border: none; border-radius: 6px;
+    color: #fff; font-size: 12px; cursor: pointer;
+    transition: background .18s;
+  }
+  .btn:hover { background: #2563eb; }
+
+  .tip { margin: 9px 0 0; font-size: 11px; line-height: 1.7; color: #5d7291; }
+
+  /* ---------- 地图区 ---------- */
+  .map-area {
+    position: relative; flex: 1; min-width: 0; overflow: hidden;
+    background: radial-gradient(ellipse at 50% 42%, #16233d 0%, #0a1020 72%);
+    cursor: grab; touch-action: none;
+  }
+  .map-area.dragging { cursor: grabbing; }
+
+  .stage {
+    position: absolute; top: 0; left: 0;
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+  .stage > img {
+    display: block; width: 100%; height: 100%;
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none;
+    opacity: .95;
+    filter: drop-shadow(0 0 40px #0ea5e933);
+  }
+
+  .markers { position: absolute; inset: 0; pointer-events: none; }
+
+  /* 关键：标记点用 0×0 定位锚点 + 反向缩放，保证任何缩放级别下大小恒定 */
+  .marker {
+    position: absolute;
+    width: 0; height: 0;
+    pointer-events: auto;
+    transform: scale(var(--inv, 1));
+    z-index: 1;
+  }
+  .marker:hover { z-index: 999; }
+
+  .dot {
+    position: absolute; left: -5px; top: -5px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--c, #38bdf8);
+    border: 1.5px solid rgba(255,255,255,.9);
+    box-shadow: 0 0 8px var(--c, #38bdf8), 0 1px 4px rgba(0,0,0,.6);
+    transition: transform .16s ease;
+    cursor: pointer;
+  }
+  .marker:hover .dot { transform: scale(1.7); }
+  .marker.selected .dot {
+    transform: scale(1.9);
+    box-shadow: 0 0 0 4px rgba(56,189,248,.25), 0 0 14px var(--c, #38bdf8);
+  }
+
+  .label {
+    position: absolute; left: 11px; top: 0;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-size: 11px; line-height: 1;
+    padding: 3px 7px; border-radius: 5px;
+    background: rgba(8,14,26,.94);
+    border: 1px solid #263a5c;
+    color: #cfe0f7;
+    opacity: 0; pointer-events: none;
+    transition: opacity .16s;
+  }
+  .marker:hover .label,
+  .markers.show-labels .label { opacity: 1; }
+
+  /* ---------- 控件 ---------- */
+  .zoom-ctrl {
+    position: absolute; right: 16px; bottom: 16px;
+    display: flex; flex-direction: column; gap: 6px; z-index: 20;
+  }
+  .zoom-ctrl button {
+    width: 34px; height: 34px;
+    background: rgba(16,26,45,.92);
+    border: 1px solid #263a5c; border-radius: 8px;
+    color: #9fb4d3; font-size: 17px; line-height: 1; cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: all .16s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .zoom-ctrl button:hover {
+    color: #38bdf8; border-color: #38bdf8; background: rgba(23,39,63,.95);
+  }
+
+  .hint {
+    position: absolute; left: 16px; bottom: 16px;
+    font-size: 11px; color: #4f6483;
+    background: rgba(10,16,32,.72);
+    padding: 5px 10px; border-radius: 6px;
+    border: 1px solid #1a2740;
+    pointer-events: none;
+  }
+
+  .detail {
+    position: absolute; right: 16px; top: 16px; width: 244px;
+    background: rgba(14,23,40,.96);
+    border: 1px solid #263a5c; border-radius: 10px;
+    padding: 14px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 32px rgba(0,0,0,.5);
+    transform: translateX(20px); opacity: 0; pointer-events: none;
+    transition: all .22s cubic-bezier(.4,0,.2,1);
+    z-index: 30;
+  }
+  .detail.show { transform: none; opacity: 1; pointer-events: auto; }
+  .detail h3 { margin: 0 0 12px; font-size: 14px; font-weight: 600; padding-right: 24px; }
+  .detail .row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0; font-size: 12px;
+    border-bottom: 1px dashed #1c2a44;
+  }
+  .detail .row:last-child { border-bottom: none; }
+  .detail .row span { color: #6b81a3; }
+  .detail .close {
+    position: absolute; right: 10px; top: 10px;
+    width: 22px; height: 22px; border-radius: 6px;
+    background: transparent; border: none; color: #6b81a3;
+    font-size: 16px; cursor: pointer; line-height: 1;
+  }
+  .detail .close:hover { color: #f87171; background: #1c2a44; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="topbar">
+    <h1>江苏省电厂分布图</h1>
+    <div class="stats">共 <b id="total">0</b> 座电厂 · 当前显示 <b id="shown">0</b> 座</div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <input id="search" class="search" type="text" placeholder="搜索电厂名称…">
+
+      <div class="block">
+        <div class="block-title">类型筛选</div>
+        <div class="chips" id="filters"></div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">显示选项</div>
+        <label class="switch">
+          <input type="checkbox" id="labelToggle"> 常显所有电厂名称
+        </label>
+      </div>
+
+      <div class="block">
+        <div class="block-title">地图标定</div>
+        <div class="calib">
+          <label>西<input id="bWest"  type="number" step="0.01"></label>
+          <label>东<input id="bEast"  type="number" step="0.01"></label>
+          <label>南<input id="bSouth" type="number" step="0.01"></label>
+          <label>北<input id="bNorth" type="number" step="0.01"></label>
+        </div>
+        <button class="btn" id="applyBounds">重新标定</button>
+        <p class="tip">
+          以上数值表示图片四边对应的经纬度。<br>
+          若所有标记整体偏移或挤压，说明图片实际覆盖范围与数值不符，微调后点“重新标定”即可。
+        </p>
+      </div>
+    </aside>
+
+    <main class="map-area" id="mapArea">
+      <div class="stage" id="stage">
+        <img id="mapImg" src="jiangsu-map.png" alt="江苏省地图" draggable="false">
+        <div class="markers" id="markers"></div>
+      </div>
+
+      <div class="zoom-ctrl">
+        <button id="zoomIn"  title="放大">＋</button>
+        <button id="zoomOut" title="缩小">－</button>
+        <button id="zoomFit" title="适应窗口">⤢</button>
+      </div>
+
+      <div class="hint">滚轮缩放 · 拖拽平移</div>
+
+      <div class="detail" id="detail"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+ *  1. 电厂数据（lon 经度 / lat 纬度 / type 类型）
+ *  —— 把这里替换成你的真实数据即可
+ * ========================================================= */
+const POWER_PLANTS = [
+  /* ── 南京 ── */
+  { name:'华能南京金陵发电厂',       lon:118.855, lat:32.190, type:'燃煤' },
+  { name:'华能南京电厂',             lon:118.742, lat:32.132, type:'燃煤' },
+  { name:'大唐南京发电厂',           lon:118.745, lat:32.086, type:'燃煤' },
+  { name:'南京化学工业园热电厂',     lon:118.830, lat:32.240, type:'燃煤' },
+  { name:'华润电力南京化工园热电厂', lon:118.845, lat:32.235, type:'燃煤' },
+  { name:'扬子石化自备电厂',         lon:118.795, lat:32.228, type:'燃气' },
+  { name:'南京协鑫燃气热电',         lon:118.750, lat:31.880, type:'燃气' },
+  { name:'南京浦口燃气热电',         lon:118.630, lat:32.100, type:'燃气' },
+  { name:'南京江宁滨江热电厂',       lon:118.680, lat:31.850, type:'燃煤' },
+  { name:'南京高淳热电厂',           lon:118.870, lat:31.330, type:'燃煤' },
+
+  /* ── 苏州 ── */
+  { name:'华能常熟发电厂',           lon:120.790, lat:31.700, type:'燃煤' },
+  { name:'华润电力常熟电厂',         lon:120.830, lat:31.680, type:'燃煤' },
+  { name:'张家港沙洲电力',           lon:120.620, lat:31.900, type:'燃煤' },
+  { name:'张家港华兴电力',           lon:120.550, lat:31.950, type:'燃煤' },
+  { name:'华能太仓电厂',             lon:121.140, lat:31.660, type:'燃煤' },
+  { name:'太仓港协鑫电厂',           lon:121.200, lat:31.620, type:'燃煤' },
+  { name:'大唐苏州热电（吴江）',     lon:120.680, lat:31.120, type:'燃气' },
+  { name:'望亭发电厂',               lon:120.440, lat:31.360, type:'燃煤' },
+  { name:'苏州工业园区北部燃机热电', lon:120.700, lat:31.340, type:'燃气' },
+  { name:'华电昆山热电',             lon:120.960, lat:31.390, type:'燃气' },
+  { name:'昆山瀛洲热电',             lon:120.940, lat:31.330, type:'燃煤' },
+  { name:'常熟金陵海虞热电',         lon:120.760, lat:31.760, type:'燃煤' },
+  { name:'吴江盛泽热电厂',           lon:120.680, lat:30.900, type:'燃煤' },
+  { name:'苏州东吴热电',             lon:120.620, lat:31.240, type:'燃煤' },
+  { name:'张家港骏马热电',           lon:120.580, lat:31.880, type:'燃煤' },
+  { name:'常熟苏源热电',             lon:120.750, lat:31.680, type:'燃煤' },
+  { name:'华能苏州燃机热电',         lon:120.680, lat:31.320, type:'燃气' },
+
+  /* ── 无锡 ── */
+  { name:'江阴利港发电厂',           lon:120.220, lat:31.920, type:'燃煤' },
+  { name:'江阴夏港电厂',             lon:120.150, lat:31.930, type:'燃煤' },
+  { name:'无锡惠联热电',             lon:120.280, lat:31.620, type:'燃煤' },
+  { name:'宜兴协联热电',             lon:119.820, lat:31.360, type:'燃煤' },
+  { name:'华润无锡热电',             lon:120.330, lat:31.560, type:'燃煤' },
+  { name:'江阴周庄热电',             lon:120.380, lat:31.840, type:'燃煤' },
+  { name:'无锡能达热电',             lon:120.360, lat:31.590, type:'燃煤' },
+  { name:'江阴华西热电',             lon:120.430, lat:31.850, type:'燃煤' },
+
+  /* ── 常州 ── */
+  { name:'国电常州发电厂',           lon:119.980, lat:31.850, type:'燃煤' },
+  { name:'华电戚墅堰发电厂',         lon:120.050, lat:31.720, type:'燃煤' },
+  { name:'大唐常州热电',             lon:119.960, lat:31.760, type:'燃气' },
+  { name:'金坛热电',                 lon:119.570, lat:31.740, type:'燃煤' },
+  { name:'溧阳热电',                 lon:119.490, lat:31.430, type:'燃煤' },
+  { name:'中天钢铁自备电厂',         lon:120.080, lat:31.730, type:'燃煤' },
+
+  /* ── 镇江 ── */
+  { name:'华能谏壁发电厂',           lon:119.600, lat:32.180, type:'燃煤' },
+  { name:'国电镇江发电',             lon:119.550, lat:32.200, type:'燃煤' },
+  { name:'华电句容发电厂',           lon:119.150, lat:31.960, type:'燃煤' },
+  { name:'丹阳热电',                 lon:119.590, lat:32.000, type:'燃煤' },
+  { name:'镇江大港热电',             lon:119.680, lat:32.190, type:'燃煤' },
+  { name:'扬中热电',                 lon:119.820, lat:32.240, type:'燃煤' },
+
+  /* ── 扬州 ── */
+  { name:'扬州第二发电厂',           lon:119.450, lat:32.300, type:'燃煤' },
+  { name:'华电扬州发电',             lon:119.400, lat:32.360, type:'燃煤' },
+  { name:'仪征热电',                 lon:119.180, lat:32.270, type:'燃煤' },
+  { name:'高邮热电',                 lon:119.440, lat:32.780, type:'燃煤' },
+  { name:'宝应热电',                 lon:119.310, lat:33.230, type:'燃煤' },
+  { name:'扬州港口环保热电',         lon:119.480, lat:32.280, type:'燃煤' },
+
+  /* ── 泰州 ── */
+  { name:'国电泰州发电厂',           lon:119.870, lat:32.280, type:'燃煤' },
+  { name:'靖江发电厂',               lon:120.250, lat:32.010, type:'燃煤' },
+  { name:'泰兴热电',                 lon:120.020, lat:32.170, type:'燃煤' },
+  { name:'姜堰热电',                 lon:120.150, lat:32.510, type:'燃煤' },
+  { name:'兴化热电',                 lon:119.850, lat:32.940, type:'燃煤' },
+  { name:'泰州梅兰热电',             lon:119.900, lat:32.470, type:'燃煤' },
+
+  /* ── 南通 ── */
+  { name:'华能南通电厂',             lon:120.860, lat:31.980, type:'燃煤' },
+  { name:'南通天生港发电',           lon:120.800, lat:32.030, type:'燃煤' },
+  { name:'大唐吕四港发电厂',         lon:121.600, lat:32.100, type:'燃煤' },
+  { name:'海门热电',                 lon:121.180, lat:31.900, type:'燃煤' },
+  { name:'如东热电',                 lon:121.190, lat:32.320, type:'燃煤' },
+  { name:'启东热电',                 lon:121.660, lat:31.810, type:'燃煤' },
+  { name:'南通观音山热电',           lon:120.950, lat:32.010, type:'燃煤' },
+  { name:'如皋热电',                 lon:120.570, lat:32.380, type:'燃煤' },
+  { name:'海安热电',                 lon:120.470, lat:32.540, type:'燃煤' },
+
+  /* ── 盐城 ── */
+  { name:'射阳港发电厂',             lon:120.450, lat:33.750, type:'燃煤' },
+  { name:'陈家港发电厂',             lon:120.050, lat:34.300, type:'燃煤' },
+  { name:'大丰港发电厂',             lon:120.750, lat:33.200, type:'燃煤' },
+  { name:'盐城热电',                 lon:120.150, lat:33.350, type:'燃煤' },
+  { name:'滨海发电厂',               lon:119.850, lat:34.030, type:'燃煤' },
+  { name:'阜宁热电',                 lon:119.800, lat:33.780, type:'燃煤' },
+  { name:'建湖热电',                 lon:119.800, lat:33.470, type:'燃煤' },
+  { name:'东台热电',                 lon:120.320, lat:32.850, type:'燃煤' },
+  { name:'响水热电',                 lon:119.580, lat:34.200, type:'燃煤' },
+
+  /* ── 淮安 ── */
+  { name:'华能淮阴发电厂',           lon:119.030, lat:33.600, type:'燃煤' },
+  { name:'淮安热电',                 lon:119.150, lat:33.550, type:'燃煤' },
+  { name:'金湖热电',                 lon:119.020, lat:33.020, type:'燃煤' },
+  { name:'盱眙热电',                 lon:118.540, lat:33.010, type:'燃煤' },
+  { name:'涟水热电',                 lon:119.260, lat:33.780, type:'燃煤' },
+
+  /* ── 连云港 ── */
+  { name:'田湾核电站',               lon:119.450, lat:34.680, type:'核电' },
+  { name:'连云港新海发电',           lon:119.200, lat:34.620, type:'燃煤' },
+  { name:'华能连云港电厂',           lon:119.380, lat:34.730, type:'燃煤' },
+  { name:'赣榆热电',                 lon:119.130, lat:34.830, type:'燃煤' },
+  { name:'东海热电',                 lon:118.760, lat:34.520, type:'燃气' },
+
+  /* ── 徐州 ── */
+  { name:'华润徐州发电厂',           lon:117.200, lat:34.300, type:'燃煤' },
+  { name:'徐塘发电厂',               lon:117.300, lat:34.350, type:'燃煤' },
+  { name:'彭城发电厂',               lon:117.100, lat:34.280, type:'燃煤' },
+  { name:'贾汪发电厂',               lon:117.450, lat:34.450, type:'燃煤' },
+  { name:'大屯煤电发电厂',           lon:116.950, lat:34.750, type:'燃煤' },
+  { name:'垞城发电厂',               lon:117.050, lat:34.400, type:'燃煤' },
+  { name:'徐州华鑫发电',             lon:117.250, lat:34.320, type:'燃煤' },
+  { name:'睢宁热电',                 lon:117.940, lat:33.910, type:'生物质' },
+  { name:'新沂热电',                 lon:118.350, lat:34.370, type:'燃煤' },
+  { name:'邳州热电',                 lon:117.960, lat:34.310, type:'生物质' },
+
+  /* ── 宿迁 ── */
+  { name:'国电宿迁发电厂',           lon:118.300, lat:33.950, type:'燃煤' },
+  { name:'泗阳热电',                 lon:118.700, lat:33.720, type:'生物质' },
+  { name:'沭阳热电',                 lon:118.800, lat:34.120, type:'生物质' },
+  { name:'泗洪热电',                 lon:118.220, lat:33.460, type:'生物质' },
+
+  /* ── 补充 ── */
+  { name:'宜兴热电（华润）',         lon:119.830, lat:31.380, type:'燃煤' },
+  { name:'太仓保利协鑫热电',         lon:121.170, lat:31.640, type:'燃气' },
+  { name:'江苏南热发电',             lon:118.780, lat:32.150, type:'燃煤' },
+  { name:'南京华润热电',             lon:118.830, lat:32.060, type:'燃煤' }
+];
+
+/* 类型 → 颜色 */
+const TYPE_COLOR = {
+  '燃煤':     '#f97316',
+  '燃气':     '#38bdf8',
+  '核电':     '#a855f7',
+  '风电':     '#22d3ee',
+  '光伏':     '#facc15',
+  '生物质':   '#4ade80',
+  '抽水蓄能': '#60a5fa',
+  '其他':     '#94a3b8'
+};
+
+/* =========================================================
+ *  2. 地图标定配置
+ * ========================================================= */
+const MAP_CFG = {
+  src: 'jiangsu-map.png',          // 地图图片路径
+  // ⚠️ 关键参数：图片四边对应的经纬度范围
+  bounds: { west: 116.18, east: 121.98, south: 30.75, north: 35.15 },
+  // 投影方式：'linear'（等经纬度，默认）| 'mercator'（墨卡托）
+  projection: 'linear',
+  // 地图内容在图中的区域（图片像素）。若图片四周有留白，填 {x,y,w,h}；
+  // null 表示整张图就是地图内容
+  content: null
+};
+
+/* =========================================================
+ *  3. DOM
+ * ========================================================= */
+const mapArea  = document.getElementById('mapArea');
+const stage    = document.getElementById('stage');
+const markersEl= document.getElementById('markers');
+const mapImg   = document.getElementById('mapImg');
+const detailEl = document.getElementById('detail');
+
+/* =========================================================
+ *  4. 状态
+ * ========================================================= */
+let IMG_W = 1000, IMG_H = 1150;   // 图片原始像素尺寸
+let fitScale = 1;                  // 适应窗口的基准缩放
+let userZoom = 1;                  // 用户缩放倍率
+let totalScale = 1;                // 实际总缩放 = fitScale * userZoom
+let panX = 0, panY = 0;            // 平移量（屏幕像素）
+
+let project = () => ({ x: 0, y: 0 });   // 经纬度 → 图片像素
+
+let activeTypes = new Set(Object.keys(TYPE_COLOR));
+let keyword = '';
+let selectedPlant = null;
+
+const drag = { active: false, sx: 0, sy: 0, px: 0, py: 0, moved: false };
+
+/* =========================================================
+ *  5. 投影：经纬度 → 图片像素坐标
+ * ========================================================= */
+function mercY(lat) {
+  return Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360));
+}
+
+function makeProjector() {
+  const { west, east, south, north } = MAP_CFG.bounds;
+  const c = MAP_CFG.content || { x: 0, y: 0, w: IMG_W, h: IMG_H };
+  const isMerc = MAP_CFG.projection === 'mercator';
+
+  const yTop = isMerc ? mercY(north) : north;
+  const yBot = isMerc ? mercY(south) : south;
+  const yRange = yTop - yBot || 1;
+
+  return function (lon, lat) {
+    // 经度方向线性映射
+    const nx = (lon - west) / ((east - west) || 1);
+    // 纬度方向：墨卡托或线性
+    const yv = isMerc ? mercY(lat) : lat;
+    const ny = (yTop - yv) / yRange;
+
+    return {
+      x: c.x + nx * c.w,
+      y: c.y + ny * c.h
+    };
+  };
+}
+
+/* =========================================================
+ *  6. 渲染标记点
+ * ========================================================= */
+function getVisiblePlants() {
+  return POWER_PLANTS.filter(p =>
+    activeTypes.has(p.type) &&
+    (!keyword || p.name.includes(keyword))
+  );
+}
+
+function renderMarkers() {
+  const list = getVisiblePlants();
+  const frag = document.createDocumentFragment();
+
+  list.forEach(p => {
+    const { x, y } = project(p.lon, p.lat);
+
+    const el = document.createElement('div');
+    el.className = 'marker';
+    // 用百分比定位，随 stage 尺寸自适应
+    el.style.left = (x / IMG_W * 100) + '%';
+    el.style.top  = (y / IMG_H * 100) + '%';
+
+    const color = TYPE_COLOR[p.type] || '#38bdf8';
+    el.innerHTML =
+      `<span class="dot" style="--c:${color}"></span>` +
+      `<span class="label">${p.name}</span>`;
+
+    el.addEventListener('click', ev => {
+      ev.stopPropagation();
+      if (drag.moved) return;          // 拖拽结束不算点击
+      showDetail(p, el);
+    });
+
+    frag.appendChild(el);
+  });
+
+  markersEl.innerHTML = '';
+  markersEl.appendChild(frag);
+
+  // 恢复选中态
+  if (selectedPlant) {
+    const idx = list.indexOf(selectedPlant);
+    if (idx >= 0) markersEl.children[idx].classList.add('selected');
+  }
+
+  document.getElementById('shown').textContent = list.length;
+}
+
+/* =========================================================
+ *  7. 详情卡片
+ * ========================================================= */
+function showDetail(p, el) {
+  // 清除旧选中
+  markersEl.querySelectorAll('.marker.selected').forEach(m => m.classList.remove('selected'));
+  if (el) el.classList.add('selected');
+  selectedPlant = p;
+
+  const { x, y } = project(p.lon, p.lat);
+  const color = TYPE_COLOR[p.type] || '#38bdf8';
+
+  detailEl.innerHTML = `
+    <button class="close" title="关闭">×</button>
+    <h3>${p.name}</h3>
+    <div class="row"><span>类型</span><b style="color:${color}">${p.type}</b></div>
+    <div class="row"><span>经度</span><b>${p.lon.toFixed(4)}° E</b></div>
+    <div class="row"><span>纬度</span><b>${p.lat.toFixed(4)}° N</b></div>
+    <div class="row"><span>图上像素</span><b>${x.toFixed(1)}, ${y.toFixed(1)}</b></div>
+  `;
+  detailEl.classList.add('show');
+  detailEl.querySelector('.close').onclick = () => {
+    detailEl.classList.remove('show');
+    markersEl.querySelectorAll('.marker.selected').forEach(m => m.classList.remove('selected'));
+    selectedPlant = null;
+  };
+}
+
+/* =========================================================
+ *  8. 视图变换（缩放 / 平移）
+ * ========================================================= */
+function applyTransform() {
+  totalScale = fitScale * userZoom;
+  stage.style.transform =
+    `translate3d(${panX}px, ${panY}px, 0) scale(${totalScale})`;
+  // 反向缩放系数：让标记点在屏幕上始终保持同样大小
+  markersEl.style.setProperty('--inv', String(1 / totalScale));
+}
+
+function fitToScreen() {
+  const rect = mapArea.getBoundingClientRect();
+  const pad = 36;
+
+  fitScale = Math.min(
+    (rect.width  - pad) / IMG_W,
+    (rect.height - pad) / IMG_H
+  );
+  userZoom = 1;
+  totalScale = fitScale;
+
+  panX = (rect.width  - IMG_W * totalScale) / 2;
+  panY = (rect.height - IMG_H * totalScale) / 2;
+
+  applyTransform();
+}
+
+/** 以指定屏幕点为锚点缩放到 targetZoom */
+function zoomTo(targetZoom, anchorX, anchorY) {
+  const rect = mapArea.getBoundingClientRect();
+  const ax = anchorX !== undefined ? anchorX : rect.width  / 2;
+  const ay = anchorY !== undefined ? anchorY : rect.height / 2;
+
+  const newZoom = Math.min(Math.max(targetZoom, 0.4), 25);
+  const newTotal = fitScale * newZoom;
+
+  // 锚点当前对应的"世界坐标"
+  const wx = (ax - panX) / totalScale;
+  const wy = (ay - panY) / totalScale;
+
+  userZoom = newZoom;
+  totalScale = newTotal;
+
+  panX = ax - wx * totalScale;
+  panY = ay - wy * totalScale;
+
+  applyTransform();
+}
+
+/* ---- 滚轮缩放 ---- */
+mapArea.addEventListener('wheel', e => {
+  e.preventDefault();
+  const rect = mapArea.getBoundingClientRect();
+  const factor = Math.exp(-e.deltaY * 0.0016);
+  zoomTo(userZoom * factor, e.clientX - rect.left, e.clientY - rect.top);
+}, { passive: false });
+
+/* ---- 拖拽平移 ---- */
+mapArea.addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  drag.active = true;
+  drag.moved = false;
+  drag.sx = e.clientX; drag.sy = e.clientY;
+  drag.px = panX;      drag.py = panY;
+  mapArea.classList.add('dragging');
+});
+
+window.addEventListener('pointermove', e => {
+  if (!drag.active) return;
+  const dx = e.clientX - drag.sx;
+  const dy = e.clientY - drag.sy;
+  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) drag.moved = true;
+  panX = drag.px + dx;
+  panY = drag.py + dy;
+  applyTransform();
+});
+
+window.addEventListener('pointerup', () => {
+  if (!drag.active) return;
+  drag.active = false;
+  mapArea.classList.remove('dragging');
+});
+
+/* ---- 缩放按钮 ---- */
+document.getElementById('zoomIn').onclick  = () => zoomTo(userZoom * 1.5);
+document.getElementById('zoomOut').onclick = () => zoomTo(userZoom / 1.5);
+document.getElementById('zoomFit').onclick = () => fitToScreen();
+
+/* ---- 窗口尺寸变化 ---- */
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const rect = mapArea.getBoundingClientRect();
+    // 保持视口中心对应的世界坐标不变
+    const cx = (rect.width  / 2 - panX) / totalScale;
+    const cy = (rect.height / 2 - panY) / totalScale;
+
+    fitScale = Math.min(
+      (rect.width  - 36) / IMG_W,
+      (rect.height - 36) / IMG_H
+    );
+    totalScale = fitScale * userZoom;
+    panX = rect.width  / 2 - cx * totalScale;
+    panY = rect.height / 2 - cy * totalScale;
+    applyTransform();
+  }, 120);
+});
+
+/* =========================================================
+ *  9. 筛选 / 搜索 / 标定
+ * ========================================================= */
+function buildFilters() {
+  const box = document.getElementById('filters');
+  box.innerHTML = '';
+
+  Object.entries(TYPE_COLOR).forEach(([type, color]) => {
+    // 跳过数据里没有的类型
+    if (!POWER_PLANTS.some(p => p.type === type)) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'chip active';
+    btn.innerHTML = `<i style="background:${color}"></i>${type}`;
+    btn.onclick = () => {
+      if (activeTypes.has(type)) {
+        activeTypes.delete(type);
+        btn.classList.remove('active');
+      } else {
+        activeTypes.add(type);
+        btn.classList.add('active');
+      }
+      renderMarkers();
+    };
+    box.appendChild(btn);
+  });
+}
+
+/* 搜索（防抖） */
+let searchTimer = null;
+document.getElementById('search').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    keyword = e.target.value.trim();
+    renderMarkers();
+  }, 180);
+});
+
+/* 常显名称 */
+document.getElementById('labelToggle').addEventListener('change', e => {
+  markersEl.classList.toggle('show-labels', e.target.checked);
+});
+
+/* 标定面板 */
+function syncBoundsInputs() {
+  const b = MAP_CFG.bounds;
+  document.getElementById('bWest').value  = b.west;
+  document.getElementById('bEast').value  = b.east;
+  document.getElementById('bSouth').value = b.south;
+  document.getElementById('bNorth').value = b.north;
+}
+
+document.getElementById('applyBounds').onclick = () => {
+  const w = parseFloat(document.getElementById('bWest').value);
+  const e = parseFloat(document.getElementById('bEast').value);
+  const s = parseFloat(document.getElementById('bSouth').value);
+  const n = parseFloat(document.getElementById('bNorth').value);
+
+  if ([w, e, s, n].some(v => Number.isNaN(v)) || e <= w || n <= s) {
+    alert('请填写有效的经纬度范围：东 > 西，北 > 南');
+    return;
+  }
+
+  MAP_CFG.bounds = { west: w, east: e, south: s, north: n };
+  project = makeProjector();
+  renderMarkers();
+
+  detailEl.classList.remove('show');
+  selectedPlant = null;
+};
+
+/* =========================================================
+ *  10. 启动
+ * ========================================================= */
+function setup() {
+  stage.style.width  = IMG_W + 'px';
+  stage.style.height = IMG_H + 'px';
+
+  project = makeProjector();
+  buildFilters();
+  renderMarkers();
+  syncBoundsInputs();
+
+  document.getElementById('total').textContent = POWER_PLANTS.length;
+
+  requestAnimationFrame(fitToScreen);
+}
+
+function onImageLoad() {
+  IMG_W = mapImg.naturalWidth;
+  IMG_H = mapImg.naturalHeight;
+  setup();
+}
+
+function onImageError() {
+  // 图片加载失败时使用默认尺寸，保证标记点依然可见（便于调试）
+  IMG_W = 1000;
+  IMG_H = 1150;
+  mapImg.style.display = 'none';
+  stage.style.background =
+    'repeating-linear-gradient(45deg,#101a2e 0 20px,#0d1627 20px 40px)';
+  stage.style.borderRadius = '8px';
+  setup();
+
+  const tip = document.createElement('div');
+  tip.style.cssText =
+    'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);' +
+    'color:#4f6483;font-size:13px;text-align:center;line-height:2;pointer-events:none;z-index:0';
+  tip.innerHTML = '未找到地图图片<br>请把江苏省地图保存为 <b>jiangsu-map.png</b> 放在同级目录';
+  stage.appendChild(tip);
+}
+
+if (mapImg.complete && mapImg.naturalWidth) {
+  onImageLoad();
+} else {
+  mapImg.addEventListener('load', onImageLoad);
+  mapImg.addEventListener('error', onImageError);
+}
+</script>
+</body>
+</html>
