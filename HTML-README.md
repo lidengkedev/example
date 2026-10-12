@@ -67,4 +67,5 @@
 - [文本转语音并下载工具](https://lidengkedev.github.io/example/pages/202509101034.html)
 - [文本转语音下载工具](https://lidengkedev.github.io/example/pages/202509101730.html)
 - [江苏省电厂分布图](https://lidengkedev.github.io/example/pages/202610120920.html)
+- [视频预览管理器](https://lidengkedev.github.io/example/pages/brower-video-preview.html)
 - [我的导航页](https://lidengkedev.github.io/example/index.html)

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="需要使用HTTP服务才可以访问，也可以通过github访问。">
+<title>视频预览管理器</title>
+<style>
+    :root {
+        --primary-color: #2196F3;
+        --background-color: #f5f5f5;
+        --card-bg: #fff;
+        --text-color: #333;
+        --muted-color: #888;
+        --watched-color: rgba(46, 204, 113, .9);
+        --radius: 12px;
+        --shadow: 0 4px 6px rgba(0, 0, 0, .1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    body.locked { overflow: hidden; }
+
+    /* ---------- 顶部工具栏 ---------- */
+    .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        max-width: 1600px;
+        margin: 0 auto 24px;
+    }
+
+    .btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        border-radius: 8px;
+        background: var(--primary-color);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        overflow: hidden;
+        user-select: none;
+        transition: filter .2s, transform .1s;
+    }
+    .btn:hover  { filter: brightness(1.08); }
+    .btn:active { transform: scale(.97); }
+
+    .btn input[type="file"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .search {
+        flex: 1 1 200px;
+        max-width: 320px;
+        padding: 10px 14px;
+        font: inherit;
+        font-size: 14px;
+        color: inherit;
+        background: var(--card-bg);
+        border: 1px solid rgba(0, 0, 0, .12);
+        border-radius: 8px;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+    }
+    .search:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, .15);
+    }
+
+    .count {
+        margin-left: auto;
+        font-size: 13px;
+        color: var(--muted-color);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* ---------- 网格 ---------- */
+    .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 24px;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .video-card {
+        position: relative;
+        background: var(--card-bg);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        outline: none;
+        transition: transform .2s, box-shadow .2s;
+    }
+    @media (hover: hover) {
+        .video-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, .16);
+        }
+    }
+    .video-card:focus-visible {
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, .55);
+    }
+
+    .video-card.watched::after {
+        content: "✓";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        background: var(--watched-color);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+        z-index: 3;
+    }
+
+    .thumbnail-container {
+        position: relative;
+        aspect-ratio: 16 / 9;
+        background: #1a1a1a;
+        overflow: hidden;
+    }
+
+    .thumbnail {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity .3s;
+    }
+    .thumbnail.loaded { opacity: 1; }
+
+    .preview-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s;
+    }
+    @media (hover: hover) {
+        .video-card:hover .preview-video.ready { opacity: 1; }
+    }
+
+    .video-title {
+        padding: 12px 14px;
+        font-size: 14px;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-word;
+    }
+
+    .loading-indicator {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 28px;
+        height: 28px;
+        margin: -14px 0 0 -14px;
+        border: 3px solid rgba(255, 255, 255, .25);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin .8s linear infinite;
+        pointer-events: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---------- 空状态 ---------- */
+    .empty-state {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 80px 20px;
+        text-align: center;
+        color: var(--muted-color);
+        font-size: 14px;
+        line-height: 2;
+    }
+    .empty-state strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 18px;
+        color: var(--text-color);
+    }
+
+    /* ---------- 全屏播放 ---------- */
+    .fullscreen-video {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        padding: 20px;
+        background: rgba(0, 0, 0, .95);
+        animation: fadeIn .2s ease;
+    }
+    .fullscreen-video.active { display: flex; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .fullscreen-header {
+        width: min(95%, 1200px);
+        color: #fff;
+    }
+
+    .fullscreen-title {
+        font-size: clamp(16px, 2vw, 22px);
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+    }
+
+    .fullscreen-video video {
+        width: min(95%, 1200px);
+        max-height: 80vh;
+        background: #000;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    .close-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 255, 255, .12);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background .25s, transform .25s;
+    }
+    .close-button:hover {
+        background: rgba(255, 255, 255, .22);
+        transform: rotate(90deg);
+    }
+    .close-button::before,
+    .close-button::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 2px;
+        background: #fff;
+        border-radius: 2px;
+    }
+    .close-button::before { transform: rotate(45deg); }
+    .close-button::after  { transform: rotate(-45deg); }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+<body>
+
+<header class="toolbar">
+    <label class="btn">
+        选择视频文件夹
+        <input type="file" id="folderInput" webkitdirectory directory multiple>
+    </label>
+    <input type="search" id="searchInput" class="search" placeholder="搜索视频标题…" hidden>
+    <span class="count" id="countInfo"></span>
+</header>
+
+<div class="container" id="videoContainer"></div>
+
+<div class="empty-state" id="emptyState">
+    <strong>还没有视频</strong>
+    <span>点击上方按钮选择包含视频的文件夹</span>
+</div>
+
+<!-- 全屏播放容器 -->
+<div class="fullscreen-video" id="fullscreenContainer">
+    <div class="fullscreen-header">
+        <div class="fullscreen-title" id="fullscreenTitle"></div>
+    </div>
+    <video controls playsinline preload="metadata" id="fullscreenVideo"></video>
+    <div class="close-button" id="closeButton" role="button" aria-label="关闭"></div>
+</div>
+
+<script>
+(() => {
+    'use strict';
+
+    /* ===================== 常量 ===================== */
+    const VIDEO_EXT = /\.(mp4|m4v|webm|ogv|ogg|mov|mkv|avi|3gp|flv|ts|m2ts)$/i;
+    const MAX_CONCURRENT_THUMBS = 3;   // 同时解码的缩略图数量
+    const THUMB_TIMEOUT = 15000;       // 单个缩略图超时
+    const THUMB_MAX_WIDTH = 640;       // 缩略图最大宽度
+    const HOVER_DELAY = 280;           // 悬停预览延迟
+
+    const FALLBACK_ICON = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#777">' +
+        '<path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1' +
+        'v-3.5l4 4v-11l-4 4z"/></svg>'
+    );
+
+    /* ===================== DOM ===================== */
+    const container      = document.getElementById('videoContainer');
+    const folderInput    = document.getElementById('folderInput');
+    const searchInput    = document.getElementById('searchInput');
+    const countInfo      = document.getElementById('countInfo');
+    const emptyState     = document.getElementById('emptyState');
+    const fsContainer    = document.getElementById('fullscreenContainer');
+    const fsVideo        = document.getElementById('fullscreenVideo');
+    const fsTitle        = document.getElementById('fullscreenTitle');
+    const closeButton    = document.getElementById('closeButton');
+
+    /* ===================== 状态 ===================== */
+    const items = [];            // 所有视频条目
+    const urls = new Set();      // 已创建的 ObjectURL，便于统一释放
+    const watched = new Set();   // 已观看（按相对路径记录）
+    const thumbQueue = [];
+    let runningThumbs = 0;
+    let generation = 0;          // 每次重新加载文件夹 +1，用于丢弃过期任务
+    let currentIndex = -1;
+
+    /* ===================== ObjectURL 管理 ===================== */
+    function createUrl(blob) {
+        const url = URL.createObjectURL(blob);
+        urls.add(url);
+        return url;
+    }
+    function revokeAllUrls() {
+        urls.forEach(url => URL.revokeObjectURL(url));
+        urls.clear();
+    }
+
+    /* ===================== 缩略图队列 ===================== */
+    const thumbObserver = new IntersectionObserver((entries, obs) => {
+        for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            obs.unobserve(entry.target);
+            const item = entry.target.__item;
+            if (item && item.gen === generation && !item.thumbDone) {
+                thumbQueue.push(item);
+            }
+        }
+        pumpThumbQueue();
+    }, { rootMargin: '300px 0px' });
+
+    function pumpThumbQueue() {
+        while (runningThumbs < MAX_CONCURRENT_THUMBS && thumbQueue.length) {
+            const item = thumbQueue.shift();
+            if (item.gen !== generation || item.thumbDone) continue;
+
+            runningThumbs++;
+            buildThumbnail(item).finally(() => {
+                runningThumbs--;
+                pumpThumbQueue();
+            });
+        }
+    }
+
+    function buildThumbnail(item) {
+        return new Promise(resolve => {
+            const img    = item.el && item.el.querySelector('.thumbnail');
+            const loader = item.el && item.el.querySelector('.loading-indicator');
+            let settled = false;
+
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.muted = true;
+            video.playsInline = true;
+
+            const timeoutId = setTimeout(() => finish(false), THUMB_TIMEOUT);
+
+            function finish(ok) {
+                if (settled) return;
+                settled = true;
+                clearTimeout(timeoutId);
+                video.removeAttribute('src');
+                video.load();                       // 中断解码 / 下载
+                item.thumbDone = true;
+                if (loader) loader.remove();
+                resolve(ok);
+            }
+
+            function paint() {
+                if (settled) return;
+                if (!video.videoWidth) { finish(false); return; }
+
+                const scale = Math.min(1, THUMB_MAX_WIDTH / video.videoWidth);
+                const canvas = document.createElement('canvas');
+                canvas.width  = Math.max(1, Math.round(video.videoWidth  * scale));
+                canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+
+                try {
+                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                } catch {
+                    finish(false);
+                    return;
+                }
+
+                canvas.toBlob(blob => {
+                    if (item.gen === generation && blob && img) {
+                        img.src = createUrl(blob);
+                        img.classList.add('loaded');
+                    }
+                    finish(true);
+                }, 'image/jpeg', 0.82);
+            }
+
+            video.addEventListener('loadeddata', () => {
+                const d = video.duration;
+                const t = Number.isFinite(d) && d > 1 ? Math.min(d * 0.1, 3) : 0.1;
+                try { video.currentTime = t; } catch { paint(); }
+            }, { once: true });
+
+            video.addEventListener('seeked', () => {
+                // 等两帧，确保画面已完成解码再取帧
+                requestAnimationFrame(() => requestAnimationFrame(paint));
+            }, { once: true });
+
+            video.addEventListener('error', () => {
+                if (img) {
+                    img.src = FALLBACK_ICON;
+                    img.classList.add('loaded');
+                }
+                finish(false);
+            }, { once: true });
+
+            video.src = item.url;
+        });
+    }
+
+    /* ===================== 卡片创建 ===================== */
+    function createCard(item) {
+        const card = document.createElement('article');
+        card.className = 'video-card';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', item.title);
+
+        const thumbWrap = document.createElement('div');
+        thumbWrap.className = 'thumbnail-container';
+
+        const img = document.createElement('img');
+        img.className = 'thumbnail';
+        img.alt = '';
+        img.decoding = 'async';
+        img.draggable = false;
+
+        const preview = document.createElement('video');
+        preview.className = 'preview-video';
+        preview.muted = true;
+        preview.loop = true;
+        preview.playsInline = true;
+        preview.preload = 'none';
+
+        const loader = document.createElement('div');
+        loader.className = 'loading-indicator';
+
+        const title = document.createElement('div');
+        title.className = 'video-title';
+        title.textContent = item.title;
+        title.title = item.title;
+
+        thumbWrap.append(img, preview, loader);
+        card.append(thumbWrap, title);
+
+        /* --- 悬停预览 --- */
+        let hoverTimer = 0;
+
+        card.addEventListener('mouseenter', () => {
+            clearTimeout(hoverTimer);
+            hoverTimer = setTimeout(() => {
+                if (!preview.src) {
+                    preview.src = item.url;
+                    preview.addEventListener('playing', () => {
+                        preview.classList.add('ready');
+                    }, { once: true });
+                }
+                try { preview.currentTime = 0; } catch {}
+                preview.play().catch(() => {});
+            }, HOVER_DELAY);
+        });
+
+        card.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimer);
+            if (!preview.paused) preview.pause();
+        });
+
+        /* --- 打开全屏 --- */
+        card.addEventListener('click', () => openFullscreen(item));
+        card.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                openFullscreen(item);
+            }
+        });
+
+        item.preview = preview;
+        card.__item = item;
+        return card;
+    }
+
+    /* ===================== 全屏播放 ===================== */
+    function openFullscreen(item) {
+        if (!items.includes(item)) return;
+        currentIndex = items.indexOf(item);
+
+        pauseAllPreviews();
+
+        if (!watched.has(item.key)) {
+            watched.add(item.key);
+            item.el.classList.add('watched');
+        }
+
+        fsTitle.textContent = item.title;
+        fsVideo.src = item.url;
+        fsContainer.classList.add('active');
+        document.body.classList.add('locked');
+
+        const p = fsVideo.play();
+        if (p) p.catch(() => {});
+    }
+
+    function exitFullscreen() {
+        if (!fsContainer.classList.contains('active')) return;
+        fsContainer.classList.remove('active');
+        document.body.classList.remove('locked');
+
+        fsVideo.pause();
+        fsVideo.removeAttribute('src');
+        fsVideo.load();
+        currentIndex = -1;
+    }
+
+    function pauseAllPreviews() {
+        for (const item of items) {
+            if (item.preview && !item.preview.paused) item.preview.pause();
+        }
+    }
+
+    closeButton.addEventListener('click', e => {
+        e.stopPropagation();
+        exitFullscreen();
+    });
+
+    fsContainer.addEventListener('click', e => {
+        // 点击视频本体（含原生控制条）不退出
+        if (e.target.closest('video')) return;
+        exitFullscreen();
+    });
+
+    fsVideo.addEventListener('click', e => e.stopPropagation());
+
+    /* ===================== 键盘快捷键 ===================== */
+    document.addEventListener('keydown', e => {
+        if (!fsContainer.classList.contains('active')) return;
+
+        switch (e.key) {
+            case 'Escape':
+                exitFullscreen();
+                break;
+
+            case ' ':
+            case 'Spacebar':
+                e.preventDefault();
+                if (fsVideo.paused) fsVideo.play().catch(() => {});
+                else fsVideo.pause();
+                break;
+
+            case 'f':
+            case 'F':
+                e.preventDefault();
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else if (fsVideo.requestFullscreen) {
+                    fsVideo.requestFullscreen().catch(() => {});
+                }
+                break;
+        }
+    });
+
+    /* ===================== 文件加载 ===================== */
+    folderInput.addEventListener('change', e => {
+        const files = Array.from(e.target.files || []);
+        e.target.value = '';              // 允许重复选择同一文件夹
+        loadFiles(files);
+    });
+
+    function loadFiles(fileList) {
+        reset();
+
+        const list = fileList.filter(f =>
+            f.type.startsWith('video/') || VIDEO_EXT.test(f.name)
+        );
+
+        if (!list.length) {
+            showEmpty('未找到视频文件');
+            return;
+        }
+
+        // 按相对路径自然排序，同一目录的视频聚在一起
+        list.sort((a, b) => {
+            const pa = a.webkitRelativePath || a.name;
+            const pb = b.webkitRelativePath || b.name;
+            return pa.localeCompare(pb, 'zh-Hans-CN', { numeric: true, sensitivity: 'base' });
+        });
+
+        const gen = generation;
+        const frag = document.createDocumentFragment();
+
+        for (const file of list) {
+            const item = {
+                file,
+                gen,
+                key: file.webkitRelativePath || file.name,
+                title: formatFileName(file.name),
+                url: createUrl(file),
+                el: null,
+                preview: null,
+                thumbDone: false
+            };
+            item.el = createCard(item);
+            items.push(item);
+            frag.appendChild(item.el);
+        }
+
+        container.appendChild(frag);
+
+        for (const item of items) thumbObserver.observe(item.el);
+
+        searchInput.hidden = false;
+        updateCount();
+    }
+
+    function reset() {
+        generation++;
+
+        thumbQueue.length = 0;
+        thumbObserver.disconnect();
+        container.innerHTML = '';
+        items.length = 0;
+        currentIndex = -1;
+
+        revokeAllUrls();
+
+        searchInput.value = '';
+        searchInput.hidden = true;
+        countInfo.textContent = '';
+        emptyState.hidden = true;
+    }
+
+    function showEmpty(text) {
+        emptyState.querySelector('strong').textContent = text;
+        emptyState.hidden = false;
+    }
+
+    /* ===================== 搜索 / 计数 ===================== */
+    searchInput.addEventListener('input', () => {
+        const kw = searchInput.value.trim().toLowerCase();
+        for (const item of items) {
+            item.el.hidden = !!kw && !item.title.toLowerCase().includes(kw);
+        }
+        updateCount();
+    });
+
+    function updateCount() {
+        if (!items.length) { countInfo.textContent = ''; return; }
+        const visible = items.reduce((n, it) => n + (it.el.hidden ? 0 : 1), 0);
+        countInfo.textContent = `${visible} / ${items.length} 个视频`;
+    }
+
+    /* ===================== 工具函数 ===================== */
+    function formatFileName(filename) {
+        return filename
+            .replace(/\.[^/.]+$/, '')
+            .replace(/[-_]+/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim() || filename;
+    }
+
+    /* ===================== 收尾 ===================== */
+    window.addEventListener('beforeunload', revokeAllUrls);
+})();
+</script>
+</body>
+</html>
