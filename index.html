@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的导航页</title>
+<style>
+  /* ========== 基础与主题变量 ========== */
+  * { box-sizing: border-box; }
+
+  :root {
+    --bg: #f4f6fb;
+    --card: rgba(255, 255, 255, .78);
+    --text: #1b2130;
+    --muted: #6b7385;
+    --border: rgba(20, 30, 60, .08);
+    --shadow: 0 6px 22px rgba(23, 35, 70, .07);
+    --accent: #4f7cff;
+    --accent-soft: rgba(79, 124, 255, .45);
+    --chip: rgba(255, 255, 255, .7);
+    --icon-bg: linear-gradient(135deg, rgba(79,124,255,.16), rgba(160,110,255,.18));
+  }
+
+  html[data-theme="dark"] {
+    --bg: #0d1117;
+    --card: rgba(28, 34, 46, .72);
+    --text: #e7ecf5;
+    --muted: #8f9bb0;
+    --border: rgba(255, 255, 255, .09);
+    --shadow: 0 6px 22px rgba(0, 0, 0, .35);
+    --accent: #6f93ff;
+    --accent-soft: rgba(111, 147, 255, .5);
+    --chip: rgba(255, 255, 255, .06);
+    --icon-bg: linear-gradient(135deg, rgba(111,147,255,.2), rgba(180,130,255,.16));
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 36px 20px 56px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background .35s ease, color .35s ease;
+  }
+
+  /* ========== 背景光斑装饰 ========== */
+  .glow {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: .55;
+    transition: opacity .35s ease;
+  }
+  .g1 { width: 420px; height: 420px; background: #7aa2ff; top: -150px; left: -130px; }
+  .g2 { width: 460px; height: 460px; background: #c08bff; bottom: -190px; right: -150px; }
+  html[data-theme="dark"] .glow { opacity: .28; }
+
+  /* ========== 布局容器 ========== */
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  /* ========== 顶部标题 ========== */
+  .header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .brand h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+    letter-spacing: .5px;
+  }
+  .brand p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .tools { display: flex; align-items: center; gap: 12px; }
+
+  .clock {
+    font-size: 14px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--chip);
+    backdrop-filter: blur(8px);
+  }
+  .icon-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--chip);
+    color: var(--text);
+    font-size: 17px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    backdrop-filter: blur(8px);
+    transition: transform .2s ease, background .2s ease;
+  }
+  .icon-btn:hover { transform: scale(1.08); }
+  .icon-btn:active { transform: scale(.95); }
+
+  /* ========== 搜索框 ========== */
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 56px;
+    padding: 0 18px;
+    margin-bottom: 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .search:focus-within {
+    border-color: var(--accent-soft);
+    box-shadow: 0 0 0 4px rgba(79, 124, 255, .12), var(--shadow);
+  }
+  .search svg {
+    width: 20px; height: 20px;
+    flex: 0 0 20px;
+    color: var(--muted);
+  }
+  .search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 16px;
+    color: var(--text);
+    font-family: inherit;
+  }
+  .search input::placeholder { color: var(--muted); }
+
+  /* ========== 分类标签 ========== */
+  .cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .cat {
+    padding: 7px 16px;
+    font-size: 14px;
+    font-family: inherit;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--chip);
+    color: var(--muted);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all .2s ease;
+  }
+  .cat:hover { color: var(--text); transform: translateY(-1px); }
+  .cat.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(79, 124, 255, .3);
+  }
+
+  /* ========== 卡片网格 ========== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: inherit;
+    text-decoration: none;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    animation: fadeUp .4s ease backwards;
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-soft);
+    box-shadow: 0 14px 32px rgba(79, 124, 255, .18);
+  }
+  .card:active { transform: translateY(-1px); }
+
+  .icon {
+    width: 46px; height: 46px;
+    flex: 0 0 46px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    border-radius: 13px;
+    background: var(--icon-bg);
+  }
+
+  .info { flex: 1; min-width: 0; }
+  .name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .arrow {
+    flex: 0 0 auto;
+    color: var(--accent);
+    font-size: 16px;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity .22s ease, transform .22s ease;
+  }
+  .card:hover .arrow { opacity: 1; transform: translateX(0); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ========== 空状态 & 页脚 ========== */
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: 15px;
+    padding: 60px 0;
+  }
+  .footer {
+    margin-top: 34px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .footer kbd {
+    font-family: inherit;
+    padding: 2px 7px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--chip);
+    font-size: 12px;
+  }
+
+  /* ========== 小屏适配 ========== */
+  @media (max-width: 560px) {
+    body { padding: 24px 14px 40px; }
+    .brand h1 { font-size: 23px; }
+    .clock { display: none; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .card { padding: 13px; gap: 10px; }
+    .icon { width: 40px; height: 40px; flex-basis: 40px; font-size: 19px; }
+    .desc { display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- 背景装饰 -->
+  <div class="glow g1"></div>
+  <div class="glow g2"></div>
+
+  <div class="wrap">
+    <!-- 顶部 -->
+    <header class="header">
+      <div class="brand">
+        <h1>我的导航页</h1>
+        <p>常用站点 · 一触即达</p>
+      </div>
+      <div class="tools">
+        <div class="clock" id="clock">--</div>
+        <button class="icon-btn" id="themeBtn" title="切换主题" aria-label="切换主题">🌙</button>
+      </div>
+    </header>
+
+    <!-- 搜索 -->
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-3.6-3.6"></path>
+      </svg>
+      <input type="text" id="searchInput" placeholder="搜索页面…  按 / 快速聚焦" autocomplete="off">
+    </div>
+
+    <!-- 分类 -->
+    <nav class="cats" id="cats"></nav>
+
+    <!-- 卡片列表 -->
+    <main class="grid" id="grid"></main>
+
+    <!-- 空状态 -->
+    <p class="empty" id="empty" hidden>😕 没有找到匹配的页面</p>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      当前显示 <span id="count">0</span> 个页面 · 按 <kbd>Enter</kbd> 打开第一个结果 · <kbd>Esc</kbd> 清空
+    </footer>
+  </div>
+
+<script>
+/* =========================================================
+ *  1. 导航数据 —— 修改这里即可换成你自己的页面
+ *     name: 标题   desc: 描述   url: 链接
+ *     icon: emoji 图标   category: 所属分类
+ * ========================================================= */
+const links = [
+  // ---- 常用 ----
+  { name: 'BMI-计算器',   desc: '计算BMI',        url: './202505252220-bmi.html',       icon: '🔍', category: '常用' },
+  { name: '知乎',   desc: '有问题，就会有答案',   url: 'https://www.zhihu.com',       icon: '💡', category: '常用' },
+  { name: '哔哩哔哩', desc: '年轻人的视频社区',   url: 'https://www.bilibili.com',    icon: '📺', category: '常用' },
+  { name: '微博',   desc: '随时随地发现新鲜事',   url: 'https://weibo.com',           icon: '🌐', category: '常用' },
+
+  // ---- 开发 ----
+  { name: 'GitHub', desc: '全球最大代码托管平台', url: 'https://github.com',          icon: '🐙', category: '开发' },
+  { name: 'MDN',    desc: 'Web 开发权威文档',     url: 'https://developer.mozilla.org', icon: '📚', category: '开发' },
+  { name: '掘金',   desc: '开发者技术社区',       url: 'https://juejin.cn',           icon: '⛏️', category: '开发' },
+  { name: 'Stack Overflow', desc: '技术问答社区', url: 'https://stackoverflow.com',   icon: '❓', category: '开发' },
+  { name: 'Can I use', desc: '浏览器兼容性查询', url: 'https://caniuse.com',         icon: '🧪', category: '开发' },
+
+  // ---- 工具 ----
+  { name: 'ChatGPT', desc: 'AI 对话助手',         url: 'https://chat.openai.com',     icon: '🤖', category: '工具' },
+  { name: '在线翻译', desc: '多语言互译',          url: 'https://translate.google.com', icon: '🌏', category: '工具' },
+  { name: 'TinyPNG', desc: '图片压缩',            url: 'https://tinypng.com',         icon: '🖼️', category: '工具' },
+  { name: 'Carbon',  desc: '代码转精美截图',      url: 'https://carbon.now.sh',       icon: '✂️', category: '工具' },
+
+  // ---- 学习 ----
+  { name: '菜鸟教程', desc: '入门级技术教程',     url: 'https://www.runoob.com',      icon: '📖', category: '学习' },
+  { name: 'LeetCode', desc: '算法刷题平台',       url: 'https://leetcode.cn',         icon: '🧠', category: '学习' },
+  { name: 'Coursera', desc: '海外名校在线课程',   url: 'https://www.coursera.org',    icon: '🎓', category: '学习' },
+];
+
+/* =========================================================
+ *  2. 获取元素 & 状态
+ * ========================================================= */
+const grid      = document.getElementById('grid');
+const catBar    = document.getElementById('cats');
+const emptyEl   = document.getElementById('empty');
+const searchEl  = document.getElementById('searchInput');
+const countEl   = document.getElementById('count');
+const clockEl   = document.getElementById('clock');
+const themeBtn  = document.getElementById('themeBtn');
+const root      = document.documentElement;
+
+const state = { keyword: '', category: '全部' };
+let firstRender = true;   // 首次渲染才播放入场动画
+
+/* =========================================================
+ *  3. 主题切换（记忆到 localStorage）
+ * ========================================================= */
+function applyTheme(theme) {
+  root.dataset.theme = theme;
+  themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  try { localStorage.setItem('theme', theme); } catch (e) { /* 隐私模式忽略 */ }
+}
+
+(function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('theme'); } catch (e) {}
+  if (!saved) {
+    saved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  applyTheme(saved);
+})();
+
+themeBtn.addEventListener('click', () => {
+  applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+});
+
+/* =========================================================
+ *  4. 实时时钟
+ * ========================================================= */
+const WEEK = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+function updateClock() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  clockEl.textContent =
+    `${d.getMonth() + 1}月${d.getDate()}日 ${WEEK[d.getDay()]} ` +
+    `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* =========================================================
+ *  5. 渲染分类标签
+ * ========================================================= */
+function renderCats() {
+  const categories = ['全部', ...new Set(links.map(item => item.category))];
+  catBar.innerHTML = '';
+
+  categories.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'cat' + (name === state.category ? ' active' : '');
+    btn.textContent = name;
+    btn.addEventListener('click', () => {
+      state.category = name;
+      renderCats();
+      renderGrid();
+    });
+    catBar.appendChild(btn);
+  });
+}
+
+/* =========================================================
+ *  6. 过滤 + 渲染卡片
+ * ========================================================= */
+function getFiltered() {
+  const kw = state.keyword.trim().toLowerCase();
+
+  return links.filter(item => {
+    const matchCat = state.category === '全部' || item.category === state.category;
+    const haystack = (item.name + ' ' + item.desc + ' ' + item.category).toLowerCase();
+    const matchKw  = !kw || haystack.includes(kw);
+    return matchCat && matchKw;
+  });
+}
+
+function createCard(item, index) {
+  const a = document.createElement('a');
+  a.className = 'card';
+  a.href = item.url;
+  a.target = '_blank';                       // 想去掉新标签页打开，删掉这一行即可
+  a.rel = 'noopener noreferrer';
+  a.title = `${item.name} — ${item.desc}`;
+  if (firstRender) a.style.animationDelay = Math.min(index * 35, 350) + 'ms';
+
+  const icon = document.createElement('div');
+  icon.className = 'icon';
+  icon.textContent = item.icon || '📄';
+
+  const info = document.createElement('div');
+  info.className = 'info';
+
+  const name = document.createElement('div');
+  name.className = 'name';
+  name.textContent = item.name;
+
+  const desc = document.createElement('div');
+  desc.className = 'desc';
+  desc.textContent = item.desc;
+
+  info.append(name, desc);
+
+  const arrow = document.createElement('span');
+  arrow.className = 'arrow';
+  arrow.textContent = '→';
+
+  a.append(icon, info, arrow);
+  return a;
+}
+
+function renderGrid() {
+  const list = getFiltered();
+
+  grid.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  list.forEach((item, i) => frag.appendChild(createCard(item, i)));
+  grid.appendChild(frag);
+
+  emptyEl.hidden = list.length > 0;
+  countEl.textContent = list.length;
+
+  firstRender = false;
+}
+
+/* =========================================================
+ *  7. 搜索交互
+ * ========================================================= */
+searchEl.addEventListener('input', e => {
+  state.keyword = e.target.value;
+  renderGrid();
+});
+
+/* 键盘快捷键 */
+document.addEventListener('keydown', e => {
+  const isTyping = document.activeElement === searchEl;
+
+  // "/" 聚焦搜索框
+  if (e.key === '/' && !isTyping) {
+    e.preventDefault();
+    searchEl.focus();
+    searchEl.select();
+    return;
+  }
+
+  // Esc 清空并失焦
+  if (e.key === 'Escape') {
+    searchEl.value = '';
+    state.keyword = '';
+    renderGrid();
+    searchEl.blur();
+    return;
+  }
+
+  // Enter 打开第一个匹配结果
+  if (e.key === 'Enter' && isTyping) {
+    const first = getFiltered()[0];
+    if (first) window.open(first.url, '_blank', 'noopener');
+  }
+});
+
+/* =========================================================
+ *  8. 启动
+ * ========================================================= */
+renderCats();
+renderGrid();
+</script>
+</body>
+</html>
