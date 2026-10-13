@@ -105,16 +105,22 @@ function copyFileSync(filename_path, new_filename_path) {
  */
 function setHtmlReadmeFile(filename_path, readme_file) {
     if (filename_path.includes('.html')) {
+
         // 读取每一个html文件，返回文本内容
         const file_steams = fs.readFileSync(resolve(filename_path), { encoding: 'utf-8' })
+
         // 正则表达式：匹配 html 中 title 标签中的 文本内容
         const reg = new RegExp('(.*)<title>(.*?)</title>(.*)')
+
         // 字符串分割：获取 html 中 title 标签中的 文本内容
         const newFileName = file_steams.replace(reg, '$1(000)$2(000)$3').split('(000)')[1]
+
         // 读取 HTML-README.md 文件，返回 HTML-README.md 文件的文本内容
         let htmlReadmeMdFileSteam = fs.readFileSync(resolve(readme_file), { encoding: 'utf-8' })
+
         // 追加 HTML-README.md 文本内容
         htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/${filename_path})\r\n`
+
         // 写入文本内容
         fs.writeFileSync(resolve(readme_file), htmlReadmeMdFileSteam)
     }
@@ -136,6 +142,12 @@ function createHtmlReadmeFile() {
 // 写入文件链接
 createHtmlReadmeFile()
 
+// 根文件：导航页
+copyFileSync('index.html', 'dist/index.html')
+console.log('========================================================')
+console.log('index.html => dist/index.html is complate.')
+console.log('========================================================')
+
 // 复制文件夹
 copyDirSync('htmls', 'dist/htmls')
 console.log('================================')
@@ -152,10 +164,4 @@ console.log('==============================================')
 copyDirSync('pages', 'dist/pages')
 console.log('========================================================')
 console.log('pages => dist/pages is complate.')
-console.log('========================================================')
-
-// 根文件
-copyFileSync('index.html', 'dist/index.html')
-console.log('========================================================')
-console.log('index.html => dist/index.html is complate.')
 console.log('========================================================')
