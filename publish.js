@@ -15,6 +15,14 @@ function resolve(url) {
     return path.resolve(__dirname, url)
 }
 
+// 目录准备
+const DIST_DIR = path.join(__dirname, 'dist')
+
+// 1. 首先判断 dist 文件夹是否存在，如果不存在则创建一个空的 dist 文件夹
+if (!fs.existsSync(DIST_DIR)) {
+    fs.mkdirSync(DIST_DIR, { recursive: true })
+}
+
 /**
  * 递归删除文件夹所有文件
  * 1. 首先判断当前文件夹是否存在
