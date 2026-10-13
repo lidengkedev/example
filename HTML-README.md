@@ -3,6 +3,7 @@
 
 - [我的导航页](https://lidengkedev.github.io/example/index.html)
 - [@ant/g6：使用 @ant/G6 制作一个网络拓扑图，并且支持动态变更状态。](https://lidengkedev.github.io/example/html/2024-11-06-antg6.html)
+- [贪吃蛇优化版](https://lidengkedev.github.io/example/html/202503181633-snoke-game.html)
 - [SVG：使用 svg 绘制一个圆环占比](https://lidengkedev.github.io/example/html/20250525-svg-circle.html)
 - [BMI 计算器](https://lidengkedev.github.io/example/html/202505252220-bmi.html)
 - [语音转文本](https://lidengkedev.github.io/example/html/202505252220-speech_to_text.html)
@@ -74,6 +75,6 @@
 - [使用 CSS3 制作一个3D的水平旋转的福字](https://lidengkedev.github.io/example/202001201356-3d-fu/index.html)
 - [图片放大镜-cloud-zoom](https://lidengkedev.github.io/example/cloud-zoom/index.html)
 - [](https://lidengkedev.github.io/example/canvas/canvas-base.html)
-- [undefined](https://lidengkedev.github.io/example/canvas/canvas-fill.html)
+- [canvas 绘制线条](https://lidengkedev.github.io/example/canvas/canvas-fill.html)
 - [将图片添加到画布中](https://lidengkedev.github.io/example/canvas/canvas-img.html)
-- [undefined](https://lidengkedev.github.io/example/canvas/canvas-stroke.html)
+- [canvas 绘制线条](https://lidengkedev.github.io/example/canvas/canvas-stroke.html)

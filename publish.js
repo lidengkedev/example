@@ -18,42 +18,13 @@ function resolve(url) {
 // 目录准备
 const DIST_DIR = path.join(__dirname, 'dist')
 
-// 1. 首先判断 dist 文件夹是否存在，如果不存在则创建一个空的 dist 文件夹
+// 1. 清空 dist 文件夹的所有文件
+fs.rmSync(DIST_DIR, { recursive: true, force: true })
+
+// 2. 判断 dist 文件夹是否存在，如果不存在则创建一个空的 dist 文件夹
 if (!fs.existsSync(DIST_DIR)) {
     fs.mkdirSync(DIST_DIR, { recursive: true })
 }
-
-/**
- * 递归删除文件夹所有文件
- * 1. 首先判断当前文件夹是否存在
- * 2. 遍历文件夹中的文件和子文件夹
- * 3. 删除当前文件中的文件
- * 4. 递归调用删除子文件夹中的文件
- * @param {*} dir 
- */
-function removeDirSync(dir) {
-    // 判断文件夹是否存在
-    if (fs.existsSync(resolve(dir))) {
-        // 读取文件夹中的文件和文件夹
-        fs.readdirSync(resolve(dir)).forEach(filename => {
-            const current_filename_path = `${dir}/${filename}` // dist/html/xxx.[ext]
-            // 如果是文件，则删除文件
-            if (filename.includes('.')) {
-                // 删除文件
-                fs.rmSync(resolve(current_filename_path))
-            } else {
-                // 如果是文件夹则递归删除
-                removeDirSync(current_filename_path)
-            }
-        })
-        // 删除文件夹中的文件后，并删除文件夹
-        fs.rmdirSync(resolve(dir))
-    }
-}
-
-// 清空 dist/html 文件夹
-// fs.rmdirSync(path.resolve(__dirname, 'dist/html/'), { recursive: true })
-removeDirSync('dist/html/')
 
 /**
  * 复制文件夹
