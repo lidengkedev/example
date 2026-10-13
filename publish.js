@@ -1,7 +1,7 @@
 /**
- * 1. 新建一个文件夹 htmls，用于存放一些原生的 html
- * 2. 获取 /dist/htmls 文件夹中所有的文件，并复制到 /dist/htmls 文件夹中
- * 3. 获取 /dist/htmls 中每个 html 文件中的 title 的内容和文件名，并保存在 /HTML-README.md 文件中
+ * 1. 新建一个文件夹 html，用于存放一些原生的 html
+ * 2. 获取 /dist/html 文件夹中所有的文件，并复制到 /dist/html 文件夹中
+ * 3. 获取 /dist/html 中每个 html 文件中的 title 的内容和文件名，并保存在 /HTML-README.md 文件中
  */
 const path = require('path')
 const fs = require('node:fs')
@@ -28,7 +28,7 @@ function removeDirSync(dir) {
     if (fs.existsSync(resolve(dir))) {
         // 读取文件夹中的文件和文件夹
         fs.readdirSync(resolve(dir)).forEach(filename => {
-            const current_filename_path = `${dir}/${filename}` // dist/htmls/xxx.[ext]
+            const current_filename_path = `${dir}/${filename}` // dist/html/xxx.[ext]
             // 如果是文件，则删除文件
             if (filename.includes('.')) {
                 // 删除文件
@@ -43,9 +43,9 @@ function removeDirSync(dir) {
     }
 }
 
-// 清空 dist/htmls 文件夹
-// fs.rmdirSync(path.resolve(__dirname, 'dist/htmls/'), { recursive: true })
-removeDirSync('dist/htmls/')
+// 清空 dist/html 文件夹
+// fs.rmdirSync(path.resolve(__dirname, 'dist/html/'), { recursive: true })
+removeDirSync('dist/html/')
 
 /**
  * 复制文件夹
@@ -61,12 +61,12 @@ removeDirSync('dist/htmls/')
  */
 function copyDirSync (dir, new_dir) {
     if (!fs.existsSync(resolve(new_dir))) {
-        fs.mkdirSync(new_dir)// dist/htmls
+        fs.mkdirSync(new_dir)// dist/html
     }
     // 获取文件中的所有文件，返回一个包含所有文件名和后缀的数组
     fs.readdirSync(resolve(dir)).forEach(filename => {
-        const current_filename_path = `${dir}/${filename}`// htmls/xxx.html
-        const new_dir_filename_path = `${new_dir}/${filename}`// dist/htmls/xxx.html
+        const current_filename_path = `${dir}/${filename}`// html/xxx.html
+        const new_dir_filename_path = `${new_dir}/${filename}`// dist/html/xxx.html
         if (!filename.includes('.')) {
             // 复制子文件夹
             if (fs.existsSync(resolve(current_filename_path))) {
@@ -142,26 +142,32 @@ function createHtmlReadmeFile() {
 // 写入文件链接
 createHtmlReadmeFile()
 
-// 根文件：导航页
+// index.html 导航页
 copyFileSync('index.html', 'dist/index.html')
-console.log('========================================================')
-console.log('index.html => dist/index.html is complate.')
-console.log('========================================================')
+console.log('==============================================')
+console.log('index.html         => dist/index.html is complate.')
 
-// 复制文件夹
-copyDirSync('htmls', 'dist/htmls')
-console.log('================================')
-console.log('htmls => dist/htmls is complate.')
-console.log('================================')
+// html
+copyDirSync('html', 'dist/html')
+console.log('html               => dist/html is complate.')
 
 // 卫星地图
 copyDirSync('gis-map-demo', 'dist/gis-map-demo')
-console.log('==============================================')
-console.log('gis-map-demo => dist/gis-map-demo is complate.')
-console.log('==============================================')
+console.log('gis-map-demo       => dist/gis-map-demo is complate.')
 
-// 常规页面
-copyDirSync('pages', 'dist/pages')
-console.log('========================================================')
-console.log('pages => dist/pages is complate.')
-console.log('========================================================')
+// 科目三模拟考试
+copyDirSync('car-subject-three', 'dist/car-subject-three')
+console.log('car-subject-three  => dist/car-subject-three is complate.')
+
+// CSS3 3d立体福字
+copyDirSync('202001201356-3d-fu', 'dist/202001201356-3d-fu')
+console.log('202001201356-3d-fu => dist/202001201356-3d-fu is complate.')
+
+// 图片悬浮放大细节
+copyDirSync('cloud-zoom', 'dist/cloud-zoom')
+console.log('cloud-zoom         => dist/cloud-zoom is complate.')
+
+// canvas 画布
+copyDirSync('canvas', 'dist/canvas')
+console.log('canvas             => dist/canvas is complate.')
+console.log('==============================================')

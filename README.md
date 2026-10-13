@@ -19,9 +19,8 @@
 
 - [HTML 示例文件访问链接汇总目录](./HTML-README.md)
 - [CSS 示例文件访问链接汇总目录](./CSS-README.md)
-- [TypeScript 封装视频播放器](https://lidengkedev.github.io/example/typescript-video/)
+- [TypeScript 封装视频播放器](https://lidengkedev.github.io/typescript-video/)
 - [科目三夜间行驶灯光模拟考试](https://lidengkedev.github.io/example/car-subject-three/)
-- [乐吾乐2D可视化网络拓扑图](https://lidengkedev.github.io/example/le5le-meta2d-demo/)
 - 卫星地图
     - [谷歌地图](https://lidengkedev.github.io/example/gis-map-demo/bigemap.html)
     - [天地图](https://lidengkedev.github.io/example/gis-map-demo/tianditu.html)
