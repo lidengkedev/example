@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用 js 制作一本万年历</title>
+  <style>
+    .select-warpper {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .select-warpper .current-year {
+      padding: 0 20px;
+    }
+    .calendar-warpper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 5px;
+    }
+    .calendar-month-warpper {
+      border: 1px solid #ddd;
+      padding: 5px;
+    }
+    .calendar-month-warpper .calendar-month-header {
+      text-align: center;
+      padding-bottom: 5px;
+    }
+    .calendar-month-warpper .calendar-month-body {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      gap: 5px;
+    }
+    .calendar-day {
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    .calendar-day.is-header {
+      color: #fff;
+      background-color: #52ccba;
+    }
+    .calendar-day.is-empty {
+      color: #ddd;
+      border-color: transparent;
+    }
+    .calendar-day.is-disabled {
+      color: #ddd;
+      cursor: not-allowed;
+    }
+    .calendar-day.is-today {
+      color: #fff;
+      background-color: green;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="select-warpper">
+    <button class="prev-year">上一年</button>
+    <span class="current-year"></span>
+    <button class="next-year">下一年</button>
+  </div>
+  <div class="calendar-warpper"></div>
+  <script>
+    const calendar_warpper_elem = document.querySelector('.calendar-warpper')
+    const current_year_elem = document.querySelector('.current-year')
+    const prev_year_elem = document.querySelector('.prev-year')
+    const next_year_elem = document.querySelector('.next-year')
+    let current_year = new Date().getFullYear()
+
+    current_year_elem.innerText = current_year
+
+    calendar_warpper_elem.innerHTML = getCalendarMonths(current_year)
+
+    prev_year_elem.onclick = function () {
+      current_year = current_year - 1
+      current_year_elem.innerText = current_year
+      calendar_warpper_elem.innerHTML = getCalendarMonths(current_year)
+    }
+    next_year_elem.onclick = function () {
+      current_year = current_year + 1
+      current_year_elem.innerText = current_year
+      calendar_warpper_elem.innerHTML = getCalendarMonths(current_year)
+    }
+
+    function getCalendarMonths(year) {
+      let calendar_month_html = ''
+      for (let i = 1; i <= 12; i++) {
+        calendar_month_html += `<div class="calendar-month-warpper">
+          <div class="calendar-month-header">${year}年${i}月</div>
+          <div class="calendar-month-body">${ getCalendarDays(year, i) }</div>
+        </div>`
+      }
+      return calendar_month_html
+    }
+    function getCalendarDayHeader(year, month, day) {
+      let calendar_day_header_html = ''
+      for (let i = 0; i <= 6; i++) {
+        const header_text = ['日', '一', '二', '三', '四', '五', '六'][i]
+        calendar_day_header_html += `<div class="calendar-day is-header">${header_text}</div>`
+      }
+      return calendar_day_header_html
+    }
+    function getCalendarDays(year, month) {
+      let calendar_day_html = getCalendarDayHeader(year, month, 1) + getClaendarBeforeDays(year, month)
+      const daysInMonth = new Date(year, month, 0).getDate()
+      for (let i = 1; i <= daysInMonth; i++) {
+        const is_disabled = isDisabledDay(year, month, i)? 'is-disabled' : ''
+        const is_today = isToday(year, month, i)? 'is-today' : ''
+        calendar_day_html += `<div class="calendar-day ${is_disabled} ${is_today}">${i}</div>`
+      }
+      return calendar_day_html + getCalendarAfterDays(year, month)
+
+    }
+    function getClaendarBeforeDays(year, month) {
+      let calendar_before_day_html = ''
+      const before_days = new Date(year, month - 1, 1).getDay()
+      for (let i = 0; i < before_days; i++) {
+        calendar_before_day_html += `<div class="calendar-day is-empty"></div>`
+      }
+      return calendar_before_day_html
+    }
+    function getCalendarAfterDays(year, month) {
+      let calendar_after_day_html = ''
+      const last_day = new Date(year, month, 0).getDate()
+      const after_days = new Date(year, month - 1, last_day).getDay()
+      for (let i = 0; i < 6 - after_days; i++) {
+        calendar_after_day_html += `<div class="calendar-day is-empty"></div>`
+      }
+      return calendar_after_day_html
+    }
+    function isDisabledDay(year, month, day) {
+      const date = new Date(year, month - 1, day)
+      const today = new Date()
+      return date < today
+    }
+    function isToday(year, month, day) {
+      const date = new Date(year, month - 1, day)
+      const today = new Date()
+      return date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()
+    }
+  </script>
+</body>
+</html>

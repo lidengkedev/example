@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用 js 实现在输入框内输入文本，输出打字机效果</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        h1 { text-align: center; }
+        .warpper { width: 750px; margin: 0 auto; }
+        .form-warpper {
+            margin: 20px 0;
+        }
+        .form-text {
+            width: 100%;
+            padding: 5px 7px;
+            border: 1px solid #EAEAEA;
+            border-radius: 3px;
+            caret-color: red;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-size: 16px;
+        }
+        .form-text:hover, .form-text:focus { border-color: #409EFF; }
+        .form-btn { width: 100%; height: 32px; border: 1px solid #409EFF; border-radius: 3px; color: #FFF; background-color: #409EFF; cursor: pointer; }
+        .form-btn:hover { opacity: .8; }
+        .form-btn:active { opacity: 1; }
+        .event-style {
+            color: #409EFF;
+            animation: text cubic-bezier(0.18, 0.89, 0.32, 1.28) 1000ms infinite;
+        }
+        .setting-btn {
+            padding: 5px 15px;
+            border: 1px solid #EAEAEA;
+            border-right-color: transparent;
+            border-bottom-width: 0;
+            background-color: transparent;
+            cursor: pointer;
+        }
+        .setting-btn.horizontal-tb {
+            border-top-left-radius: 3px;
+        }
+        .setting-btn.vertical-rl {
+            border-top-right-radius: 3px;
+            border-right-color: #EAEAEA;
+        }
+        .setting-btn.is-active {
+            border-color: #409EFF;
+            color: #FFF;
+            background-color: #409EFF;
+        }
+        .text-print-warpper {
+            width: 100%;
+            height: 350px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #000;
+            border-radius: 3px;
+            border-top-left-radius: 0;
+            letter-spacing: 3px;
+            color: #FFF;
+            background-color: #000;
+        }
+        .text-print-warpper.vertical-lr {
+            writing-mode: vertical-lr;
+        }
+        .text-print-warpper.vertical-rl {
+            writing-mode: vertical-rl;
+        }
+        .text-print-warpper.horizontal-tb {
+            writing-mode: horizontal-tb;
+        }
+        @keyframes text {
+            from { visibility: visible; }
+            to { visibility: hidden; }
+        }
+    </style>
+</head>
+<body>
+    <div class="warpper">
+        <h1>在输入框内输入文本，输出打字机效果</h1>
+        <div class="form-warpper">
+            <textarea name="" id="form-text" cols="30" rows="5" class="form-text" placeholder="请输入您要打印的文本内容！&#10;例如：这是一段打印信息！"></textarea><br>
+            <button class="form-btn">确定</button>
+        </div>
+        <button class="setting-btn horizontal-tb is-active">H</button><button class="setting-btn vertical-lr">L</button><button class="setting-btn vertical-rl">R</button>
+        <div class="text-print-warpper">
+            <span class="text-print-content"></span><span class="event-style">|</span>
+        </div>
+    </div>
+</body>
+<script>
+    let timer = null
+    const form_btn = document.querySelector('.form-btn')
+    const horizontal_tb_btn = document.querySelector('.horizontal-tb')
+    const vertical_lr_btn = document.querySelector('.vertical-lr')
+    const vertical_rl_btn = document.querySelector('.vertical-rl')
+    const text_print_warpper = document.querySelector('.text-print-warpper')
+    const text_print_content = document.querySelector('.text-print-content')
+    form_btn.onclick = function () {
+        printText(document.getElementById('form-text').value)
+    }
+    horizontal_tb_btn.onclick = function () {
+        horizontal_tb_btn.classList.add('is-active')
+        vertical_lr_btn.classList.remove('is-active')
+        vertical_rl_btn.classList.remove('is-active')
+        text_print_warpper.setAttribute('class', 'text-print-warpper horizontal-tb')
+        printText(document.getElementById('form-text').value)
+    }
+    vertical_lr_btn.onclick = function () {
+        horizontal_tb_btn.classList.remove('is-active')
+        vertical_lr_btn.classList.add('is-active')
+        vertical_rl_btn.classList.remove('is-active')
+        text_print_warpper.setAttribute('class', 'text-print-warpper vertical-lr')
+        printText(document.getElementById('form-text').value)
+    }
+    vertical_rl_btn.onclick = function () {
+        horizontal_tb_btn.classList.remove('is-active')
+        vertical_lr_btn.classList.remove('is-active')
+        vertical_rl_btn.classList.add('is-active')
+        text_print_warpper.setAttribute('class', 'text-print-warpper vertical-rl')
+        printText(document.getElementById('form-text').value)
+    }
+    function printText(text) {
+        text_print_content.innerHTML = ''
+        let len = text.length
+        clearInterval(timer)
+        timer = setInterval(() => {
+            if (len <= 0) {
+                clearInterval(timer)
+            }
+            text_print_content.innerHTML = text.slice(0, text.length - (len - 1))
+            len--
+        }, 100)
+    }
+</script>
+</html>

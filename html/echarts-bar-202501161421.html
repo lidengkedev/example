@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eacherts-示例：3D柱状图效果实现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    #echarts {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="echarts"></div>
+  <!-- <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.3/echarts.min.js"></script> -->
+   <script src="./plugins/echarts@5.4.1.min.js"></script>
+  <script>
+    const options = {
+      tooltip: {
+        trigger: 'axis'
+      },
+      title: {
+        left: 'center',
+        text: '3D柱状图效果实现',
+      },
+      xAxis: {
+        type: 'category',
+      },
+      yAxis: {
+        type: 'value',
+      },
+      series: [{
+        type: 'custom',
+        name: '自定义形状',
+        renderItem: function(params, api) {
+          const xValue = api.value(0)
+          const yValue = api.value(1)
+          const start = api.coord([xValue, yValue])
+          const size = api.size([1, yValue])
+          const style = api.style()
+          return {
+            type: 'group',
+            children: [{
+              type: 'CubeLeft',
+              shape: {
+                x: start[0],
+                y: start[1],
+                width: size[0],
+                height: size[1],
+                xAxisPoint: api.coord([xValue, 0])
+              },
+              style: {
+                fill: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: 'green' },
+                  { offset: 1, color: 'blue' }
+                ]),
+              }
+            }, {
+              type: 'CubeRight',
+              shape: {
+                x: start[0],
+                y: start[1],
+                width: size[0],
+                height: size[1],
+                xAxisPoint: api.coord([xValue, 0])
+              },
+              style: {
+                fill: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: 'green' },
+                  { offset: 1, color: 'blue' }
+                ]),
+              }
+            }, {
+              type: 'CubeTop',
+              shape: {
+                x: start[0],
+                y: start[1],
+                width: size[0],
+                height: size[1],
+                xAxisPoint: api.coord([xValue, 0])
+              },
+              style: {
+                // fill: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                //   { offset: 0, color: 'orange' },
+                //   { offset: 1, color: 'rgba(0,0,0,0)' }
+                // ]),
+                fill: 'green'
+              }
+            }]
+          }
+        },
+        data: [
+          { value: ['A', 12] },
+          { value: ['B', 0] },
+          { value: ['C', 9] },
+          { value: ['D', 23] },
+          { value: ['E', 32] },
+        ]
+      }]
+    }
+    var wid = 40
+    var w1 = Math.sin(Math.PI / 6) * wid
+    var w2 = Math.sin(Math.PI / 3) * wid
+    var shapeHeight = wid / 2
+    var CubeLeft = echarts.graphic.extendShape({
+      shape: { x: 0, y: 0 },
+      buildPath: function(ctx, shape) {
+        ctx.moveTo(shape.x, shape.y)
+        ctx.lineTo(shape.x - w2, shape.y)
+        ctx.lineTo(shape.x - w2, shape.xAxisPoint[1])
+        ctx.lineTo(shape.x, shape.xAxisPoint[1])
+        ctx.closePath()
+      }
+    })
+    echarts.graphic.registerShape('CubeLeft', CubeLeft)
+
+    var CubeRight = echarts.graphic.extendShape({
+      shape: { x: 0, y: 0 },
+      buildPath: function(ctx, shape) {
+        ctx.moveTo(shape.x, shape.y)
+        ctx.lineTo(shape.x, shape.xAxisPoint[1])
+        ctx.lineTo(shape.x + w1, shape.xAxisPoint[1] - w2 + shapeHeight)
+        ctx.lineTo(shape.x + w1, shape.y - w2 + shapeHeight)
+        ctx.closePath()
+      }
+    })
+    echarts.graphic.registerShape('CubeRight', CubeRight)
+    
+    var CubeTop = echarts.graphic.extendShape({
+      shape: { x: 0, y: 0 },
+      buildPath: function(ctx, shape) {
+        ctx.moveTo(shape.x, shape.y)
+        ctx.lineTo(shape.x + w1, shape.y - w2 + shapeHeight)
+        ctx.lineTo(shape.x + w1 - w2, shape.y - w2 + shapeHeight)
+        ctx.lineTo(shape.x - w2, shape.y)
+        ctx.closePath()
+      }
+    })
+    echarts.graphic.registerShape('CubeTop', CubeTop)
+    
+    window.onload = function() {
+      const echart = echarts.init(document.getElementById('echarts'))
+      echart.setOption(options)
+    }
+  </script>
+</body>
+</html>

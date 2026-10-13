@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="科目三,灯光模拟考试,在线灯光模拟考试,科目三灯光模拟考试,科目三在线灯光模拟考试,科目三灯光模拟考试在线,科目三灯光模拟考试在线考试,科目三灯光模拟考试在线模拟考试,科目三灯光模拟考试在线模拟考试系统">
+  <meta name="description" content="科目三在线灯光模拟考试">
+  <title>科目三在线灯光模拟考试</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { width: 500px; margin: 0 auto; }
+    h1 { text-align: center; margin: 20px auto; }
+    .lighting { display: flex; width: 500px; height: 200px; justify-content: center; align-items: center; background-color: #000; }
+    .lighting div { width: 100px; height: 100px; margin: 10px; }
+    .actions { display: flex; justify-content: center; align-items: center; }
+    .actions button { width: 100%; height: 50px; margin-top: 10px; cursor: pointer; }
+    .exam button { display: block; width: 100%; height: 50px; margin-top: 10px; cursor: pointer; }
+    .exam button:disabled { cursor: not-allowed; }
+    #result { margin-top: 10px; font-size: 24px; text-align: center; }
+    .success { color: green; }
+    .error { color: red; }
+    #jgd, #ygd, #skd, #ss { background-size: cover; background-repeat: no-repeat; background-position: center; }
+    #jgd.close { background-image: url('./lighting/jgd-close.png'); }
+    #ygd.close { background-image: url('./lighting/ygd-close.png'); }
+    #skd.close { background-image: url('./lighting/skd-close.png'); }
+    #ss.close { background-image: url('./lighting/ss-close.png'); }
+    #jgd.open { background-image: url('./lighting/jgd-open.png'); }
+    #ygd.open { background-image: url('./lighting/ygd-open.png'); }
+    #skd.open { background-image: url('./lighting/skd-open.png'); }
+    #ss.open { background-image: url('./lighting/ss-open.png'); animation: blink ease-in-out 300ms infinite; }
+    #jgd.open ~ #ygd.open { animation: blink ease-in-out 500ms infinite; }
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+  </style>
+</head>
+<body>
+  <h1>科目三在线灯光模拟考试</h1>
+  <audio id="audio" src="" autoplay></audio>
+  <div class="lighting">
+    <div id="jgd" class="close"></div>
+    <div id="ygd" class="close"></div>
+    <div id="skd" class="close"></div>
+    <div id="ss" class="close"></div>
+  </div>
+  <p id="question"></p>
+  <div class="actions">
+    <button id="action-off">关闭</button>
+    <button id="action-jgd">近光灯</button>
+    <button id="action-ygd">远光灯</button>
+    <button id="action-skd">示廓灯</button>
+    <button id="action-ss">双闪</button>
+  </div>
+  <div class="exam">
+    <button id="action-start">开始考试</button>
+    <button id="action-stop" disabled>终止考试</button>
+  </div>
+  <div id="answer"></div>
+  <div id="result"></div>
+  <script>
+    const action_start = document.getElementById('action-start')
+    const action_stop = document.getElementById('action-stop')
+    const result = document.getElementById('result')
+    const audio = document.getElementById('audio')
+    const question = document.getElementById('question')
+    const lighting_jgd = document.getElementById('jgd')
+    const lighting_ygd = document.getElementById('ygd')
+    const lighting_skd = document.getElementById('skd')
+    const lighting_ss = document.getElementById('ss')
+
+    const exam_question_list = [
+      { id: '001', answer: [], question: '请开始考试，请关闭所有灯光', duration: 3000 },
+      { id: '002', answer: [], question: '下面将进行模拟夜间行驶灯光的考试，请在5秒内做出相关的灯光操作', duration: 7000 },
+      { id: '003', answer: ['jgd'], question: '请开启前照灯', duration: 1000 },
+      { id: '004', answer: ['jgd', 'ygd'], question: '夜间超车', duration: 1000 },
+      { id: '005', answer: ['jgd', 'ygd'], question: '夜间超越前方车辆', duration: 2000 },
+      { id: '006', answer: ['jgd', 'ygd'], question: '夜间通过急弯拱桥', duration: 2000 },
+      { id: '007', answer: ['jgd', 'ygd'], question: '夜间通过没有交通信号灯控制的路口', duration: 3000 },
+      { id: '008', answer: ['jgd', 'ygd'], question: '夜间通过坡路', duration: 1000 },
+      { id: '009', answer: ['jgd', 'ygd'], question: '夜间通过人行横道', duration: 2000 },
+      { id: '010', answer: ['jgd'], question: '夜间发生会车', duration: 1000 },
+      { id: '011', answer: ['jgd'], question: '夜间同方向近距离跟车行驶', duration: 3000 },
+      { id: '012', answer: ['jgd'], question: '夜间直行通过路口', duration: 2000 },
+      { id: '013', answer: ['jgd'], question: '夜间路口左转弯', duration: 2000 },
+      { id: '014', answer: ['jgd'], question: '夜间路口右转弯', duration: 2000 },
+      { id: '015', answer: ['jgd'], question: '夜间在有路灯照明条件良好的道路上行驶', duration: 4000 },
+      { id: '016', answer: ['jgd'], question: '夜间在照明良好的道路上行驶', duration: 3000 },
+      { id: '017', answer: ['ygd'], question: '夜间在没有照明的道路上行驶', duration: 3000 },
+      { id: '018', answer: ['ygd'], question: '夜间在照明不良的道路上行驶', duration: 3000 },
+      { id: '019', answer: ['skd', 'ss'], question: '路边临时停车', duration: 1000 },
+      { id: '020', answer: ['skd', 'ss'], question: '车辆发生故障', duration: 1000 },
+      { id: '021', answer: [], question: '模拟夜间灯光考试完成，请关闭所有灯光', duration: 4000 }
+    ]
+    let current_question = null // 当前考试项
+    let timer = null // 考试倒计时计时器
+    let lighting_status = [] // 当前灯光状态
+    document.getElementById('action-off').onclick = () => {
+      lighting_jgd.className = 'close'
+      lighting_ygd.className = 'close'
+      lighting_skd.className = 'close'
+      lighting_ss.className = 'close'
+    }
+    document.getElementById('action-jgd').onclick = () => {
+      lighting_skd.className = 'close'
+      if (lighting_jgd.className === 'close') {
+        lighting_jgd.className = 'open'
+      } else {
+        lighting_jgd.className = 'close'
+      }
+    }
+    document.getElementById('action-ygd').onclick = () => {
+      lighting_skd.className = 'close'
+      if (lighting_ygd.className === 'close') {
+        lighting_ygd.className = 'open'
+      } else {
+        lighting_ygd.className = 'close'
+      }
+    }
+    document.getElementById('action-skd').onclick = () => {
+      lighting_jgd.className = 'close'
+      lighting_ygd.className = 'close'
+      if (lighting_skd.className === 'close') {
+        lighting_skd.className = 'open'
+      } else {
+        lighting_skd.className = 'close'
+      }
+    }
+    document.getElementById('action-ss').onclick = () => {
+      if (lighting_ss.className === 'close') {
+        lighting_ss.className = 'open'
+      } else {
+        lighting_ss.className = 'close'
+      }
+    }
+    
+    let index = 0
+    // 开始考试
+    action_start.addEventListener('click', async () => {
+      action_start.innerText = '正在考试'
+      action_start.disabled = true
+      action_stop.disabled = false
+      result.innerHTML = ''
+      index = 0
+      document.getElementById('answer').innerText = ''
+      await randomExam()
+      clearTimeout(timer)
+      success()
+    })
+    // 终止考试
+    action_stop.addEventListener('click', () => {
+      action_start.innerText = '考试开始'
+      action_start.disabled = false
+      clearTimeout(timer)
+      error()
+    })
+
+    // 获取灯光状态
+    function getLightingStatus() {
+      const status = []
+      // 遍历所有灯光，如果是开启状态，则添加到 status 数组中
+      const jgd = document.getElementById('jgd')
+      const ygd = document.getElementById('ygd')
+      const skd = document.getElementById('skd')
+      const ss = document.getElementById('ss')
+      if (jgd.className === 'open') status.push('jgd')
+      if (ygd.className === 'open') status.push('ygd')
+      if (skd.className === 'open') status.push('skd')
+      if (ss.className === 'open') status.push('ss')
+      return status
+    }
+
+    // 随机选择一项考试
+    async function randomExam() {
+      if (index < exam_question_list.length) {
+        current_question = exam_question_list[index]
+        audio.src = './audio/' + current_question.question + '.mp3'
+        question.innerText = current_question.question
+        index++
+        await new Promise(resolve => {
+          timer = setTimeout(() => {
+            lighting_status = getLightingStatus()
+            // 如果当前考试项没有灯光操作，则直接进入下一项考试
+            if (lighting_status.length === current_question.answer.length) {
+              if (current_question.answer.every(v => lighting_status.includes(v))) {
+                resolve()
+              } else {
+                clearTimeout(timer)
+                error()
+              }
+            } else {
+              clearTimeout(timer)
+              error()
+            }
+          }, 5000 + current_question.duration)
+        })
+        return randomExam()
+      }
+    }
+    function success() {
+      action_start.innerText = '考试开始'
+      action_start.disabled = false
+      action_stop.disabled = true
+      audio.src = './audio/考试合格.mp3'
+      question.innerText = ''
+      result.innerHTML = '<span style="color: green;">考试合格！</span>'
+      result.classname = 'success'
+    }
+    function error() {
+      action_start.innerText = '考试开始'
+      action_start.disabled = false
+      action_stop.disabled = true
+      audio.src = './audio/考试不合格.mp3'
+      question.innerText = ''
+      result.innerHTML = '<span style="color: red;">考试不合格！</span>'
+      result.classname = 'error'
+      const answer_text = { jgd: '近光灯', ygd: '远光灯', skd: '示廓灯', ss: '双闪' }
+      document.getElementById('answer').innerText = (
+        '正确答案：' + (current_question.answer.map(key => answer_text[key]).join('、') || '请关闭所有灯光'))
+      console.log({ current_question, lighting_status })
+    }
+  </script>
+</body>
+</html>

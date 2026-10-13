@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件上传</title>
+  <style>
+    .file-box {
+      padding: 10px;
+      border: 1px solid #eaeaea;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="file-box">
+    <label for="">文件夹上传</label>
+    <input id="file" type="file" webkitdirectory>
+  </div>
+  <script>
+    window.onload = function() {
+      const input = document.getElementById('file')
+      input.onchange = function (event) {
+        console.log(event)
+      }
+    }
+  </script>
+</body>
+</html>

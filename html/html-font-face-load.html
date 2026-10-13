@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>由于字体文件过大导致页面加载缓慢，通过在HTML中动态加载FontFace字体文件来缓解字体文件加载过慢问题</title>
+  <style>
+    .font-face {
+      font-size: 40px;
+      font-family: 'HYRunYuan';
+    }
+  </style>
+</head>
+<body>
+  <div class="font-face">这是一个字体测试文本内容。</div>
+  <script>
+    window.onload = function () {
+      setTimeout(() => {
+        // FontFace 的二个参数必须加 url否则无法解析字体文件，url的地址可以是绝对路径、相对路径、远程路径。
+        // const FontFamily_HYRunYuan = new FontFace('HYRunYuan','url(/HYRunYuan-75W.ttf)')
+        // const FontFamily_HYRunYuan = new FontFace('HYRunYuan','url(./HYRunYuan-75W.ttf)')
+        const FontFamily_HYRunYuan = new FontFace('HYRunYuan','url(https://image-1252680882.cos.ap-shanghai.myqcloud.com/act/2020/HYRunYuan-75W.ttf)')
+        document.fonts.add(FontFamily_HYRunYuan)
+        FontFamily_HYRunYuan.load().then(res => {
+          console.log(res)
+        }).catch(err => {
+          console.log(err)
+        })
+      }, 0);
+    }
+  </script>
+</body>
+</html>

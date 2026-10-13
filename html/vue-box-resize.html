@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用 Vue 框架添加 容器分屏拖动功能</title>
+  <style>
+    .container { width: 400px;  height: 100px; margin: auto; user-select: none; }
+    .container > div { float: left; height: 100%; width: 50%; }
+    .container .left { background-color: lightcoral; }
+    .container .right { background-color: lightblue; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <v-resize-right></v-resize-right>
+  </div>
+  <script src="./plugins/vue@2.7.16.js"></script>
+  <script>
+    const VResizeRight = Vue.extend({
+      template: '<div class="container"><div v-resize.right class="left">左</div><div class="right">右</div></div>',
+      directives: {
+        resize: {
+          inserted: function (el, binding) {
+            el.addEventListener('pointermove', event => {
+              const { right } = el.getBoundingClientRect()
+              if (right - event.clientX < 8) {
+                el.style.cursor = 'col-resize'
+              } else {
+                el.style.cursor = ''
+              }
+            })
+            const MIN_WIDTH = 10
+            el.addEventListener('pointerdown', event => {
+              const rightDom = el.nextElementSibling
+              const startX = event.clientX
+              const { width } = el.getBoundingClientRect()
+              const { width: nextWidth } = rightDom.getBoundingClientRect()
+              el.setPointerCapture(event.pointerId)
+              const onDocumentMousemove = event => {
+                const offsetX = event.clientX - startX
+                if (width + offsetX < MIN_WIDTH || nextWidth - offsetX < MIN_WIDTH) {
+                  return
+                }
+                el.style.width = width + offsetX + 'px'
+                rightDom.style.width = nextWidth - offsetX + 'px'
+              }
+              document.addEventListener('mousemove', onDocumentMousemove)
+              el.addEventListener('pointerup', event => {
+                el.releasePointerCapture(event.pointerId)
+                document.removeEventListener('mousemove', onDocumentMousemove)
+              })
+            })
+          }
+        }
+      }
+    })
+    window.onload = function () {
+      const vm = new Vue({
+        components: {
+          'v-resize-right': VResizeRight
+        }
+      }).$mount('#app')
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用 CSS 中的 background-image、background-clip 或 mask-image 实现 文本线性渐变效果</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { width: 1200px; margin: 0 auto; }
+    .box { width: 800px; margin: 0 auto; }
+    .text { font-size: 24px; border: 1px solid red; margin-bottom: 10px; }
+    .text-1 { background-image: linear-gradient(to bottom, red, yellow); background-clip: text; color: transparent; }
+    .text-2 { background-image: linear-gradient(to top, red, yellow); background-clip: text; color: transparent; }
+    .text-3 { background-image: linear-gradient(to right, red, yellow); background-clip: text; color: transparent; }
+    .text-4 { background-image: linear-gradient(to left, red, yellow); background-clip: text; color: transparent; }
+    .text-5, .text-6, .text-7, .text-8 { position: relative; color: transparent; }
+    .text-5::after, .text-6::after, .text-7::after, .text-8::after { content: attr(data-text); position: absolute; top: 0; left: 0; z-index: 1; color: red; }
+    .text-5::after { mask-image: linear-gradient(to bottom, red, transparent);}
+    .text-6::after { mask-image: linear-gradient(to top, red, transparent);}
+    .text-7::after { mask-image: linear-gradient(to right, red, transparent);}
+    .text-8::after { mask-image: linear-gradient(to left, red, transparent);}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <p class="text text-1" title="从上到下渐变">这是一段使用 background-image 和 background-clip 实现的渐变文字！</p>
+    <p class="text text-2" title="从下到上渐变">这是一段使用 background-image 和 background-clip 实现的渐变文字！</p>
+    <p class="text text-3" title="从左到右渐变">这是一段使用 background-image 和 background-clip 实现的渐变文字！</p>
+    <p class="text text-4" title="从右到左渐变">这是一段使用 background-image 和 background-clip 实现的渐变文字！</p>
+    <p>mask-image 渐变只能渐变一种颜色，如 linear-gradient(to bottom, red, transparent)</p>
+    <p class="text text-5" data-text="这是一段使用 mask-image 实现的渐变文字！" title="从上到下渐变">这是一段使用 mask-image 实现的渐变文字！</p>
+    <p class="text text-6" data-text="这是一段使用 mask-image 实现的渐变文字！" title="从下到上渐变">这是一段使用 mask-image 实现的渐变文字！</p>
+    <p class="text text-7" data-text="这是一段使用 mask-image 实现的渐变文字！" title="从左到右渐变">这是一段使用 mask-image 实现的渐变文字！</p>
+    <p class="text text-8" data-text="这是一段使用 mask-image 实现的渐变文字！" title="从右到左渐变">这是一段使用 mask-image 实现的渐变文字！</p>
+  </div>
+</body>
+</html>

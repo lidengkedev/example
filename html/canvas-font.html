@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用 canvas 实现电子签名</title>
+  <style>
+    h1 { text-align: center; }
+   .signature-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+    #signature-pad { border: 1px solid #ccc; }
+    #clear { margin-top: 10px; }
+   .controls { margin-top: 10px; }
+   #stroke-style { margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <h1>电子签名</h1>
+  <div class="signature-container">
+    <canvas id="signature-pad" width="400" height="200"></canvas>
+    <div class="controls">
+      <select name="" id="stroke-style">
+        <option value="pen">钢笔</option>
+        <option value="brush">刷子</option>
+      </select>
+      <button id="clear">清除</button>
+      <button id="export-png">导出PNG格式</button>
+      <button id="export-jpeg">导出JPEG格式</button>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var signaturePad = document.getElementById('signature-pad');
+      var clearButton = document.getElementById('clear');
+      var ctx = signaturePad.getContext('2d');
+      var isDrawing = false;  // 标记是否正在绘制
+      var strokeStyle = 'pen'; // 默认为钢笔
+      var signatrueData = []; // 存储签名数据
+
+      // 鼠标按下事件
+      signaturePad.addEventListener('mousedown', function(e) {
+        isDrawing = true;
+        ctx.beginPath();
+        ctx.moveTo(e.clientX - signaturePad.offsetLeft, e.clientY - signaturePad.offsetTop);
+      });
+
+      // 鼠标移动事件
+      signaturePad.addEventListener('mousemove', function(e) {
+        if (isDrawing) {
+          ctx.lineTo(e.clientX - signaturePad.offsetLeft, e.clientY - signaturePad.offsetTop);
+          ctx.stroke();
+        }
+      });
+
+      // 鼠标抬起事件
+      signaturePad.addEventListener('mouseup', function() {
+        isDrawing = false;
+      });
+
+      // 鼠标移出画布事件
+      signaturePad.addEventListener('mouseout', function() {
+        isDrawing = false;
+      });
+
+      // 清除按钮点击事件
+      clearButton.addEventListener('click', function() {
+        ctx.clearRect(0, 0, signaturePad.width, signaturePad.height);
+      });
+
+      // 触摸开始事件
+      signaturePad.addEventListener('touchstart', function(e) {
+        isDrawing = true;
+        ctx.beginPath();
+        ctx.moveTo(e.touches[0].clientX - signaturePad.offsetLeft, e.touches[0].clientY - signaturePad.offsetTop);
+      });
+
+      // 触摸移动事件
+      signaturePad.addEventListener('touchmove', function(e) {
+        if (isDrawing) {
+          ctx.lineTo(e.touches[0].clientX - signaturePad.offsetLeft, e.touches[0].clientY - signaturePad.offsetTop);
+          ctx.stroke();
+        }
+      });
+
+      // 触摸结束事件
+      signaturePad.addEventListener('touchend', function() {
+        isDrawing = false;
+      });
+
+      // 触摸取消事件
+      signaturePad.addEventListener('touchcancel', function() {
+        isDrawing = false;
+      });
+
+      // 选择画笔样式
+      document.getElementById('stroke-style').addEventListener('change', function() {
+        strokeStyle = this.value;
+        setStrokeStyle()
+      })
+
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      function resizeCanvas() {
+        if (signatrueData) {
+          var img = new Image();
+          img.src = signatrueData;
+          img.onload = function() {
+            ctx.clearRect(0, 0, signaturePad.width, signaturePad.height);
+            signaturePad.width = signaturePad.offsetWidth;
+            signaturePad.height = signaturePad.offsetHeight;
+            ctx.drawImage(img, 0, 0, signaturePad.width, signaturePad.height);
+          }
+        }
+        signaturePad.width = signaturePad.offsetWidth;
+        signaturePad.height = signaturePad.offsetHeight;
+        setStrokeStyle()
+      }
+      // 设置画笔样式
+      function setStrokeStyle() {
+        if (strokeStyle === 'pen') {
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+        } else if (strokeStyle === 'brush') {
+          ctx.lineWidth = 10;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+        }
+      }
+
+      function exportCanvas(format) {
+        var exportCanvas = document.createElement('canvas');
+        exportCanvas.width = signaturePad.width;
+        exportCanvas.height = signaturePad.height;
+        var exportCtx = exportCanvas.getContext('2d');
+        exportCtx.fillStyle = format === 'png'? 'transparent' : '#FFF';
+        exportCtx.fillRect(0, 0, signaturePad.width, signaturePad.height);
+        exportCtx.drawImage(signaturePad, 0, 0, signaturePad.width, signaturePad.height);
+
+        var dataURL = exportCanvas.toDataURL('image/' + format);
+        var link = document.createElement('a');
+        link.href = dataURL;
+        link.download ='signature.' + format;
+        link.click();
+      }
+
+      // 导出PNG格式
+      document.getElementById('export-png').addEventListener('click', function() {
+        exportCanvas('png')
+      });
+
+      // 导出JPEG格式
+      document.getElementById('export-jpeg').addEventListener('click', function() {
+        exportCanvas('jpeg')
+      });
+
+      // 初始化画布大小
+      resizeCanvas()
+      window.addEventListener('resize', resizeCanvas)
+      window.removeEventListener('resize', resizeCanvas)
+    })
+  </script>
+</body>
+</html>

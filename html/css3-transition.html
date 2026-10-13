@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用 CSS 的属性 transition 绘制多种动画效果</title>
+    <style>
+        * {margin: 0;padding: 0;box-sizing: border-box;}
+        ::selection { background-color: hsl(328 60% 58% / 40%); }
+        :root {
+            --circle-center-center-out: circle(0%);
+            --circle-center-center-in: circle(125%);
+            --circle-hesitate: circle(40%);
+            --circle-top-left-out: circle(0% at top left);
+            --circle-top-right-out: circle(0% at top right);
+            --circle-bottom-right-out: circle(0% at bottom right);
+            --circle-bottom-left-out: circle(0% at bottom left);
+            --circle-top-left-in: circle(150% at top left);
+            --circle-top-right-in: circle(150% at top right);
+            --circle-bottom-right-in: circle(150% at bottom right);
+            --circle-bottom-left-in: circle(150% at bottom left);
+            --wipe-in: inset(0 0 0 0);
+            --wipe-bottom: inset(100% 0 0 0);
+            --wipe-left: inset(0 100% 0 0);
+            --wipe-top: inset(0 0 100% 0);
+            --wipe-right: inset(0 0 0 100%);
+            --wipe-top-left-in: polygon(50% -50%,150% 50%,50% 150%,-50% 50%);
+            --wipe-top-right-in: polygon(50% -50%,150% 50%,50% 150%,-50% 50%);
+            --wipe-bottom-left-in: polygon(50% -50%,150% 50%,50% 150%,-50% 50%);
+            --wipe-bottom-right-in: polygon(-50% 0%,200% 0,0 200%,0 -50%);
+            --wipe-top-left-out: polygon(0 0,0 0,0 0,0 50%);
+            --wipe-top-right-out: polygon(50% -50%,150% 50%,150% 50%,50% -50%);
+            --wipe-bottom-left-out: polygon(-50% 50%,50% 150%,50% 150%,-50% 50%);
+            --wipe-bottom-right-out: polygon(150% 50%,150% 50%,50% 150%,50% 150%);
+            --square-hesitate: inset(33% 33% 33% 33%);
+            --square-out: inset(100% 100% 100% 100%);
+            --square-in: var(--wipe-in);
+            --square-top-left-out: inset(0 100% 100% 0);
+            --square-top-right-out: inset(0 0 100% 100%);
+            --square-bottom-left-out: inset(100% 100% 0 0);
+            --square-bottom-right-out: inset(100% 0 0 100%);
+            --diamond-center-in: polygon(-50% 50%,50% -50%,150% 50%,50% 150%);
+            --diamond-center-out: polygon(50% 50%,50% 50%,50% 50%,50% 50%);
+            --diamond-hesitate: polygon(45% 50%,50% 25%,55% 50%,50% 75%);
+            --opposing-corners-in: polygon(0 0,0 100%,100% 100%,100% 0);
+            --opposing-corners-out: polygon(0 0,50% 50%,100% 100%,50% 50%);
+        }
+        body {
+            background-color: var(--surface);
+            color: var(--text);
+        }
+        .section-warpper {
+            width: 750px; margin: 0 auto; color: #808080;
+            display: grid;
+            grid: [stack] 1fr / [stack] 1fr [sidebar] auto;
+        }
+        .section-warpper .section-item {
+            height: 300px;
+            grid-area: stack;
+            background-color: hsl(var(--brandHSL));
+            color: var(--white);
+            flex: 2;
+            inline-size: 100%;
+            max-block-size: 100vh;
+            overflow: hidden;
+            display: grid;
+            place-content: center;
+            border-bottom: 5px solid green;
+            cursor: pointer;
+        }
+        .section-warpper .section-bg {
+            background-color: unset;
+        }
+        .section-warpper .section-bg h1 span,
+        .section-warpper .section-bg p {
+            color: var(--text);
+        }
+        
+        .section-warpper .section-item h1 {
+            font-size: min(13vmin, 7rem);
+            font-weight: 700;
+            display: flex;
+            color: var(--white);
+            margin: 0;
+        }
+        .section-warpper .section-item p {text-align: center;}
+        .section-main {
+            cursor: pointer;
+        }
+    </style>
+    <style>
+        [transition-style] {
+            animation-delay: var(--transition__delay,0);
+            animation-duration: var(--transition__duration,2.5s);
+            animation-timing-function: var(--transition__easing,cubic-bezier(.25,1,.3,1));
+            animation-fill-mode: both;
+            will-change: clip-path;
+        }
+        [transition-style="in:wipe:left"] {
+            animation-name: wipe-in-left;
+        }
+        [transition-style="out:wipe:left"] {
+            animation-name: wipe-out-left;
+        }
+        [transition-style="in:wipe:down"] {
+            animation-name: wipe-in-top;
+        }
+        [transition-style="out:wipe:down"] {
+            animation-name: wipe-out-top;
+        }
+        [transition-style="in:circle:hesitate"] {
+            animation-name: circle-in-hesitate;
+        }
+        [transition-style="out:circle:hesitate"] {
+            animation-name: circle-out-hesitate;
+        }
+        
+        [transition-style="in:square:center"] {
+            animation-name: square-in-center;
+        }
+        [transition-style="out:square:center"] {
+            animation-name: square-out-center;
+        }
+    </style>
+    <style>
+        @media (prefers-color-scheme: light) {
+            :root {
+                --surface: hsl(216 80% 100%);
+                --surfaceHSL: 0 0% 100%;
+                --text: hsl(208 25% 35%);
+                --white: hsl(0 0% 100%);
+                --brand: hsl(216 60% 54%);
+                --brandHSL: 216 60% 54%;
+                --brand-alt: hsl(205 100% 86%);
+                --pink: deeppink;
+                --high-contrast: hsl(205 100% 10%);
+            }
+        }
+    </style>
+    <style>
+        @keyframes wipe-in-left {
+            0% { clip-path: var(--wipe-right); }
+            100% { clip-path: var(--wipe-in); }
+        }
+        @keyframes wipe-out-left {
+            0% { clip-path: var(--wipe-in); }
+            100% { clip-path: var(--wipe-right); }
+        }
+        @keyframes wipe-in-top {
+            0% { clip-path: var(--wipe-in); }
+            100% { clip-path: var(--wipe-top); }
+        }
+        @keyframes wipe-out-top {
+            0% { clip-path: var(--wipe-top); }
+            100% { clip-path: var(--wipe-in); }
+        }
+        @keyframes circle-in-hesitate {
+            0% { clip-path: var(--circle-center-center-out); }
+            40% { clip-path: var(--circle-hesitate); }
+            100% { clip-path: var(--circle-center-center-in); }
+        }
+        @keyframes circle-out-hesitate {
+            0% { clip-path: var(--circle-center-center-in); }
+            40% { clip-path: var(--circle-hesitate); }
+            100% { clip-path: var(--circle-center-center-out); }
+        }
+        @keyframes square-in-center {
+            0% { clip-path: var(--square-out); }
+            100% { clip-path: var(--square-in); }
+        }
+        @keyframes square-out-center {
+            0% { clip-path: var(--square-in); }
+            100% { clip-path: var(--square-out); }
+        }
+    </style>
+</head>
+<body>
+    <section class="section-warpper section-1">
+        <div class="section-item section-bg">
+            <header>
+                <h1>
+                    <span>transition</span>
+                    <span>.</span>
+                    <span>style</span>
+                </h1>
+                <p>Drop-in CSS transitions</p>
+            </header>
+        </div>
+        <div class="section-item section-main" transition-style="in:wipe:left">
+            <header>
+                <h1>
+                    <span>transition</span>
+                    <span>.</span>
+                    <span>style</span>
+                </h1>
+                <p>Drop-in CSS transitions</p>
+            </header>
+        </div>
+    </section>
+    <section class="section-warpper section-2">
+        <div class="section-item section-bg">
+            <header>
+                <h1>
+                    <span>transition</span>
+                    <span>.</span>
+                    <span>style</span>
+                </h1>
+                <p>Drop-in CSS transitions</p>
+            </header>
+        </div>
+        <div class="section-item section-main" transition-style="in:wipe:down">
+            <header>
+                <h1>
+                    <span>transition</span>
+                    <span>.</span>
+                    <span>style</span>
+                </h1>
+                <p>Drop-in CSS transitions</p>
+            </header>
+        </div>
+    </section>
+    <section class="section-warpper section-3">
+        <div class="section-item section-bg">
+            <header>
+                <h1>
+                    <span>transition</span>
+                    <span>.</span>
+                    <span>style</span>
+                </h1>
+                <p>Drop-in CSS transitions</p>
+            </header>
+        </div>
+        <div class="section-item section-main" transition-style="in:circle:hesitate">
+            <header>
+                <h1>
+                    <span>transition</span>
+                    <span>.</span>
+                    <span>style</span>
+                </h1>
+                <p>Drop-in CSS transitions</p>
+            </header>
+        </div>
+    </section>
+    <section class="section-warpper section-4">
+        <div class="section-item section-bg">
+            <header>
+                <h1>
+                    <span>transition</span>
+                    <span>.</span>
+                    <span>style</span>
+                </h1>
+                <p>Drop-in CSS transitions</p>
+            </header>
+        </div>
+        <div class="section-item section-main" transition-style="in:square:center">
+            <header>
+                <h1>
+                    <span>transition</span>
+                    <span>.</span>
+                    <span>style</span>
+                </h1>
+                <p>Drop-in CSS transitions</p>
+            </header>
+        </div>
+    </section>
+</body>
+<script>
+    function transition_animation (selector, options) {
+        const section_main_elem = document.querySelector(selector + ' .section-main')
+        const section_bg_elem = document.querySelector(selector + ' .section-bg')
+        const transition_toggle = () => {
+            const key = section_main_elem.getAttribute('transition-style')
+            if (key === options[0]) {
+                section_main_elem.setAttribute('transition-style', options[1])
+            } else {
+                section_main_elem.setAttribute('transition-style', options[0])
+            }
+        }
+        section_main_elem.onclick = section_bg_elem.onclick = transition_toggle
+    }
+    transition_animation('.section-1', ['in:wipe:left', 'out:wipe:left'])
+    transition_animation('.section-2', ['in:wipe:down', 'out:wipe:down'])
+    transition_animation('.section-3', ['in:circle:hesitate', 'out:circle:hesitate'])
+    transition_animation('.section-4', ['in:square:center','out:square:center'])
+</script>
+</html>

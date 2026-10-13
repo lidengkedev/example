@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>原生JS实现轮播图效果</title>
+  <style>
+    * { margin: 0px; padding: 0px; }
+    .clearfix:after { content: ""; clear: both; display: block; overflow: hidden; height: 0px; }
+    .clearfix { zoom:1; }
+    .box { width:750px; height: 300px; margin: 100px auto; position: relative; }
+    .box>img { position: absolute; left:0px; top:0px; }
+    .box>.indicator { position: absolute; right: 0px; bottom: 0px; z-index: 1000; }
+    .box>.indicator>ul>li { float: left; list-style: none; width: 30px;height: 30px; background-color: lightgray; text-align: center; line-height: 30px; margin-left: 1px; }
+    .box .indicator .active { background-color: red; color:yellow; }
+    .box .banner { width: 750px; height: 300px; position: absolute; left: 0; top: 0; display: flex; justify-content: center; align-items: center; font-size: 80px; }
+    .box .banner-1 { background-color: pink; }
+    .box .banner-2 { background-color: gray; }
+    .box .banner-3 { background-color: blue; }
+    .box .banner-4 { background-color: orange; }
+    .box .banner-5 { background-color: green; }
+    .box .banner-6 { background-color: aqua; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="banner banner-1" style="z-index: 100">1</div>
+    <div class="banner banner-2">2</div>
+    <div class="banner banner-3">3</div>
+    <div class="banner banner-4">4</div>
+    <div class="banner banner-5">5</div>
+    <div class="banner banner-6">6</div>
+  
+    <div class="indicator">
+      <ul class="clearfix">
+        <li class="active">1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    window.onload = function(){
+      //指示显示的次序
+      var showIndex = 0;
+      
+      //获取图片的列表，修改z-Index显示图片
+      var imageList = document.querySelectorAll('.banner');
+      
+      //获取li的列表，设置class='active'高亮
+      var liList = document.getElementsByTagName('li');
+      
+      //生成定时器，每隔一秒变换一次
+      setInterval(function(){
+        //高亮显示第5张 0 1 2 3 4 5  
+        
+        showIndex++; //6
+        
+        if( showIndex == 6 ){
+        //最后一张时，把次序调整为0
+        showIndex = 0;
+        }
+        
+        //显示当前次序的图片,并且把对应的指示标识高亮
+        showImage( showIndex );
+      },1000);
+      
+      function showImage( index ){
+        for( var i = 0; i < imageList.length; i++ ){
+          if( i == index ){
+            //把图片的z-index提高，显示图片
+            imageList[i].style.zIndex = 100;
+            //把对应的li元素设置class为active，高亮指示符用
+            liList[i].className = 'active';
+          }else{
+            //降低图片的z-index 
+            imageList[i].style.zIndex = 1;
+            
+            //取消高亮状态
+            liList[i].className = '';
+          }
+        }
+      }
+  }
+  </script>
+</body>
+</html>

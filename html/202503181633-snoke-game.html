@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="keywords" content="贪吃蛇,小游戏,canvas">
+    <meta name="description" content="贪吃蛇优化版，使用原生 JavaScript 和 Canvas 实现。">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Deepseek">
+    <meta name="theme-color" content="#52ccba">
+    <title>贪吃蛇优化版</title>
+    <style>
+        /* 合并相同样式 */
+        canvas, body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 2px solid #333;
+            background: #fff;
+        }
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        #score {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h2>贪吃蛇优化版</h2>
+        <div id="score">得分: 0</div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+    </div>
+
+    <script>
+        // 常量定义
+        const CELL_SIZE = 20;
+        const GRID_COUNT = 20;
+        const INITIAL_SPEED = 150;
+        const SPEED_INCREMENT = 2;
+        
+        // 游戏状态
+        const gameState = {
+            snake: [{x: 10, y: 10}],
+            food: null,
+            direction: {x: 1, y: 0},
+            score: 0,
+            gameSpeed: INITIAL_SPEED,
+            isGameOver: false
+        };
+
+        // 元素引用
+        const elements = {
+            canvas: document.getElementById('gameCanvas'),
+            ctx: document.getElementById('gameCanvas').getContext('2d'),
+            scoreElement: document.getElementById('score')
+        };
+
+        // 初始化
+        function init() {
+            document.addEventListener('keydown', handleInput);
+            generateFood();
+            gameLoop();
+        }
+
+        // 输入处理
+        function handleInput(event) {
+            const keyActions = {
+                ArrowLeft:  () => setDirection(-1, 0),
+                ArrowRight: () => setDirection(1, 0),
+                ArrowUp:    () => setDirection(0, -1),
+                ArrowDown:  () => setDirection(0, 1)
+            };
+            
+            if (keyActions[event.key]) {
+                event.preventDefault();
+                keyActions[event.key]();
+            }
+        }
+
+        function setDirection(x, y) {
+            if (gameState.direction.x === -x || gameState.direction.y === -y) return;
+            gameState.direction = {x, y};
+        }
+
+        // 游戏循环
+        function gameLoop() {
+            if (gameState.isGameOver) return;
+            
+            update();
+            draw();
+            
+            setTimeout(gameLoop, gameState.gameSpeed);
+        }
+
+        // 游戏逻辑更新
+        function update() {
+            const head = {
+                x: gameState.snake[0].x + gameState.direction.x,
+                y: gameState.snake[0].y + gameState.direction.y
+            };
+
+            gameState.snake.unshift(head);
+
+            if (checkCollision(head)) {
+                endGame();
+                return;
+            }
+
+            if (head.x === gameState.food.x && head.y === gameState.food.y) {
+                handleFoodCollision();
+            } else {
+                gameState.snake.pop();
+            }
+        }
+
+        // 绘制函数
+        function draw() {
+            // 清空画布
+            elements.ctx.fillStyle = '#ffffff';
+            elements.ctx.fillRect(0, 0, elements.canvas.width, elements.canvas.height);
+
+            // 绘制网格线
+            elements.ctx.strokeStyle = '#eee';
+            for(let i = 0; i <= GRID_COUNT; i++) {
+                elements.ctx.beginPath();
+                elements.ctx.moveTo(i * CELL_SIZE, 0);
+                elements.ctx.lineTo(i * CELL_SIZE, elements.canvas.height);
+                elements.ctx.stroke();
+                elements.ctx.beginPath();
+                elements.ctx.moveTo(0, i * CELL_SIZE);
+                elements.ctx.lineTo(elements.canvas.width, i * CELL_SIZE);
+                elements.ctx.stroke();
+            }
+
+            // 绘制蛇
+            gameState.snake.forEach((segment, index) => {
+                elements.ctx.fillStyle = index === 0 ? '#2ecc71' : '#27ae60';
+                elements.ctx.fillRect(
+                    segment.x * CELL_SIZE + 1,
+                    segment.y * CELL_SIZE + 1,
+                    CELL_SIZE - 2,
+                    CELL_SIZE - 2
+                );
+            });
+
+            // 绘制食物
+            elements.ctx.fillStyle = '#e74c3c';
+            elements.ctx.beginPath();
+            elements.ctx.arc(
+                gameState.food.x * CELL_SIZE + CELL_SIZE/2,
+                gameState.food.y * CELL_SIZE + CELL_SIZE/2,
+                CELL_SIZE/2 - 2,
+                0,
+                Math.PI * 2
+            );
+            elements.ctx.fill();
+        }
+
+        // 食物相关逻辑
+        function generateFood() {
+            do {
+                gameState.food = {
+                    x: Math.floor(Math.random() * GRID_COUNT),
+                    y: Math.floor(Math.random() * GRID_COUNT)
+                };
+            } while (gameState.snake.some(segment => 
+                segment.x === gameState.food.x && 
+                segment.y === gameState.food.y
+            ));
+        }
+
+        function handleFoodCollision() {
+            gameState.score += 10;
+            gameState.gameSpeed = Math.max(50, gameState.gameSpeed - SPEED_INCREMENT);
+            elements.scoreElement.textContent = `得分: ${gameState.score}`;
+            generateFood();
+        }
+
+        // 碰撞检测
+        function checkCollision(head) {
+            // 边界检测
+            if (head.x < 0 || head.x >= GRID_COUNT || 
+                head.y < 0 || head.y >= GRID_COUNT) {
+                return true;
+            }
+            
+            // 自碰检测
+            return gameState.snake.some((segment, index) => 
+                index !== 0 && 
+                segment.x === head.x && 
+                segment.y === head.y
+            );
+        }
+
+        // 游戏结束
+        function endGame() {
+            gameState.isGameOver = true;
+            elements.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            elements.ctx.fillRect(0, 0, elements.canvas.width, elements.canvas.height);
+            elements.ctx.fillStyle = 'white';
+            elements.ctx.font = '30px Arial';
+            elements.ctx.textAlign = 'center';
+            elements.ctx.fillText(
+                `游戏结束！得分: ${gameState.score}`,
+                elements.canvas.width/2,
+                elements.canvas.height/2
+            );
+        }
+
+        // 启动游戏
+        init();
+    </script>
+</body>
+</html>

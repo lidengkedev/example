@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用svg实现文本不同渐变方向的线性渐变效果和径向渐变效果</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { width: 1200px; margin: 0 auto; }
+    .box { width: 800px; margin: 0 auto; }
+    svg { width: 100%; height: 48px; border: 1px solid red; }
+    svg text { font-size: 48px; }
+  </style>
+</head>
+<body>
+  <!-- 
+    <defs>标签用于自定义形状，它内部的代码不会显示，仅供引用。
+    <text>标签用于绘制文本。
+    <text>的x属性和y属性，表示文本区块基线（baseline）起点的横坐标和纵坐标。文字的样式可以用class或style属性指定。
+    x1 渐变的开始位置
+    y1 渐变的开始位置
+    x2 渐变的结束位置
+    y2 渐变的结束位置
+   -->
+  <div class="box">
+    <svg>
+      <defs>
+        <linearGradient id="grad-1" x1="0" y1="0" x2="0" y2="100%">
+          <stop offset="0%" style="stop-color: brown;"></stop>
+          <stop offset="100%" style="stop-color: gold;"></stop>
+        </linearGradient>
+      </defs>
+      <text fill="url(#grad-1)" x="0" y="40">这是一段从上到下的渐变文字！</text>
+    </svg>
+    <svg>
+      <defs>
+        <linearGradient id="grad-2" x1="0" y1="100%" x2="0" y2="0">
+          <stop offset="0%" style="stop-color: brown;"></stop>
+          <stop offset="100%" style="stop-color: gold;"></stop>
+        </linearGradient>
+      </defs>
+      <text fill="url(#grad-2)" x="0" y="40">这是一段从下到上的渐变文字！</text>
+    </svg>
+    <svg>
+      <defs>
+        <linearGradient id="grad-3" x1="0" y1="0" x2="100%" y2="0">
+          <stop offset="0%" style="stop-color: brown;"></stop>
+          <stop offset="100%" style="stop-color: gold;"></stop>
+        </linearGradient>
+      </defs>
+      <text fill="url(#grad-3)" x="0" y="40">这是一段从左到右的渐变文字！</text>
+    </svg>
+    <svg>
+      <defs>
+        <linearGradient id="grad-4" x1="100%" y1="0" x2="0" y2="0">
+          <stop offset="0%" style="stop-color: brown;"></stop>
+          <stop offset="100%" style="stop-color: gold;"></stop>
+        </linearGradient>
+      </defs>
+      <text fill="url(#grad-4)" x="0" y="40">这是一段从右到左的渐变文字！</text>
+    </svg>
+    <!-- 
+      r 圆的半径
+      cx 渐变的中心点 x 坐标，要移动渐变的位置，可以改变这个值
+      cy 渐变的中心点 y 坐标，要移动渐变的位置，可以改变这个值
+      fx 渐变的焦点 x 坐标，可以用于移动渐变第一个颜色结点的位置
+      fy 渐变的焦点 y 坐标，可以用于移动渐变第一个颜色结点的位置
+      fr 定义径向渐变的焦点的半径，默认值为 0%
+     -->
+    <svg>
+      <defs>
+        <radialGradient id="grad-5" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+          <stop offset="0%" style="stop-color: brown;"></stop>
+          <stop offset="100%" style="stop-color: gold;"></stop>
+        </radialGradient>
+      </defs>
+      <text fill="url(#grad-5)" x="0" y="40">这是一段径向渐变文字！</text>
+    </svg>
+  </div>
+</body>
+</html>
