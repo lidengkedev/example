@@ -15,30 +15,22 @@ function resolve(url) {
   return path.resolve(__dirname, url)
 }
 
-// 目录准备
+/****************************************************************
+ * 1. 准备
+ ****************************************************************/
+const HTML_README_PATH = path.join(__dirname, 'HTML-README.md')
 const DIST_DIR = path.join(__dirname, 'dist')
 
-// 1. 清空 dist 文件夹的所有文件
+// HTML_README.md 文件内容
+let HTML_README_CONTENT = '# HTML 示例\r\n\r\n'
+
+// 1.1. 清空 dist 文件夹的所有文件
 fs.rmSync(DIST_DIR, { recursive: true, force: true })
 
-// 2. 判断 dist 文件夹是否存在，如果不存在则创建一个空的 dist 文件夹
+// 1.2. 判断 dist 文件夹是否存在，如果不存在则创建一个空的 dist 文件夹
 if (!fs.existsSync(DIST_DIR)) {
   fs.mkdirSync(DIST_DIR, { recursive: true })
 }
-
-// 初始化 HTML-README.md 文件的内容
-function createHTMLReadmeFile() {
-
-  // 定义 HTML-README.md 文件的标题内容
-  const HTML_README_MD = '# HTML 示例文件访问链接汇总目录\r\n\r\n'
-
-  // 初始化写入 HTML-README.md 文件的标题内容
-  fs.writeFileSync(resolve('HTML-README.md'), HTML_README_MD)
-  
-}
-
-// 初始化 HTML-README.md 文件的内容
-createHTMLReadmeFile()
 
 /**
  * 把新文件的链接地址写入到 HTML-README.md 文件中
@@ -49,7 +41,7 @@ createHTMLReadmeFile()
  * @param {*} filename_path 
  * @param {*} readme_file 
  */
-function setHtmlReadmeFile(filename_path, readme_file) {
+function setHtmlReadmeFile(filename_path) {
   if (filename_path.includes('.html')) {
 
     // 读取每一个html文件，返回文本内容
@@ -68,7 +60,7 @@ function setHtmlReadmeFile(filename_path, readme_file) {
     const description = file_steams.replace(reg2, '$1(000)$2(000)$3').split('(000)')[1]
 
     // 读取 HTML-README.md 文件，返回 HTML-README.md 文件的文本内容
-    let htmlReadmeMdFileSteam = fs.readFileSync(resolve(readme_file), { encoding: 'utf-8' })
+    // let htmlReadmeMdFileSteam = fs.readFileSync(HTML_README_PATH, { encoding: 'utf-8' })
 
     // 默认的链接地址
     let list_link_str = `- [${newFileName}](https://lidengkedev.github.io/example/${filename_path})\r\n`
@@ -79,10 +71,13 @@ function setHtmlReadmeFile(filename_path, readme_file) {
     }
 
     // 追加 HTML-README.md 文本内容
-    htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + list_link_str
+    // htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + list_link_str
+
+    // 逐条拼接 超链接 地址
+    HTML_README_CONTENT = HTML_README_CONTENT + list_link_str
 
     // 写入文本内容
-    fs.writeFileSync(resolve(readme_file), htmlReadmeMdFileSteam)
+    // fs.writeFileSync(HTML_README_PATH, htmlReadmeMdFileSteam)
   }
 }
 
@@ -129,7 +124,7 @@ function copyDirSync(dir, new_dir) {
  * @param {*} newFilename 复制后的文件相对路径
  */
 function copyFileSync(filename_path, new_filename_path) {
-  setHtmlReadmeFile(filename_path, 'HTML-README.md')
+  setHtmlReadmeFile(filename_path)
   fs.copyFileSync(resolve(filename_path), resolve(new_filename_path))
 }
 
@@ -162,3 +157,7 @@ console.log('cloud-zoom         => dist/cloud-zoom is complate.')
 copyDirSync('canvas', 'dist/canvas')
 console.log('canvas             => dist/canvas is complate.')
 console.log('==============================================')
+
+// 生成 HTML-README.md 文件
+fs.writeFileSync(HTML_README_PATH, HTML_README_CONTENT)
+console.log('生成 HTML-README.md 文件.')
