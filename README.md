@@ -1,5 +1,7 @@
 # example
 
+[HTML示例目录](./HTML-README.md) | [CSS示例目录](./CSS-README.md)
+
 ## 文件
 
 ```text
@@ -10,19 +12,4 @@
 - game-pacman             # HTML5 贪吃蛇
 - game-react              # HTML5 俄罗斯方块
 - gis-map-demo            # 卫星地图
-- node-run-select         # 命令行选项工具
-- typescript-video        # 视频播放器
-- vue-node-deploy-publish # 在线发布
 ```
-
-## 示例目录
-
-- [HTML 示例文件访问链接汇总目录](./HTML-README.md)
-- [CSS 示例文件访问链接汇总目录](./CSS-README.md)
-- [TypeScript 封装视频播放器](https://lidengkedev.github.io/typescript-video/)
-- [科目三夜间行驶灯光模拟考试](https://lidengkedev.github.io/example/car-subject-three/)
-- 卫星地图
-    - [谷歌地图](https://lidengkedev.github.io/example/gis-map-demo/bigemap.html)
-    - [天地图](https://lidengkedev.github.io/example/gis-map-demo/tianditu.html)
-    - [leaflet 地图绘制](https://lidengkedev.github.io/example/gis-map-demo/leaflet.html)
-

@@ -1,18 +1,17 @@
 # HTML 示例文件访问链接汇总目录
-## HTML 文件示例
 
-- [我的导航页](https://lidengkedev.github.io/example/index.html)
+- [我的导航页](https://lidengkedev.github.io/example/index.html): 这是一个导航页面
 - [@ant/g6：使用 @ant/G6 制作一个网络拓扑图，并且支持动态变更状态。](https://lidengkedev.github.io/example/html/2024-11-06-antg6.html)
-- [贪吃蛇优化版](https://lidengkedev.github.io/example/html/202503181633-snoke-game.html)
+- [贪吃蛇优化版](https://lidengkedev.github.io/example/html/202503181633-snoke-game.html): 贪吃蛇优化版，使用原生 JavaScript 和 Canvas 实现。
 - [SVG：使用 svg 绘制一个圆环占比](https://lidengkedev.github.io/example/html/20250525-svg-circle.html)
 - [BMI 计算器](https://lidengkedev.github.io/example/html/202505252220-bmi.html)
-- [语音转文本](https://lidengkedev.github.io/example/html/202505252220-speech_to_text.html)
-- [文本转语音并下载工具](https://lidengkedev.github.io/example/html/202509101034.html)
-- [文本转语音下载工具](https://lidengkedev.github.io/example/html/202509101730.html)
+- [语音转文本](https://lidengkedev.github.io/example/html/202505252220-speech_to_text.html): 基于 Web Speech API 的浏览器语音转文本工具，需在 HTTPS 或 localhost 环境下运行。
+- [文本转语音并下载工具](https://lidengkedev.github.io/example/html/202509101034.html): 将文本转为语音并录制下载到本地的工具
+- [文本转语音下载工具](https://lidengkedev.github.io/example/html/202509101730.html): 输入文字，调节语速音调，朗读并导出音频文件
 - [测评 · 自主掌控者 | 外物掌控者](https://lidengkedev.github.io/example/html/2026-07-31.html)
-- [江苏省电厂分布图](https://lidengkedev.github.io/example/html/202610120920.html)
+- [江苏省电厂分布图](https://lidengkedev.github.io/example/html/202610120920.html): 在图片上映射江苏省电厂经纬坐标的位置
 - [通过浏览器选择本地视频文件并播放本地视频的播放器](https://lidengkedev.github.io/example/html/brower-video-player.html)
-- [视频预览管理器](https://lidengkedev.github.io/example/html/brower-video-preview.html)
+- [视频预览管理器](https://lidengkedev.github.io/example/html/brower-video-preview.html): 需要使用HTTP服务才可以访问，也可以通过github访问。
 - [使用 js 制作一本万年历](https://lidengkedev.github.io/example/html/calendar.html)
 - [使用 Canvas 绘制一个类似于 Echarts 的柱状图](https://lidengkedev.github.io/example/html/canvas-bar.html)
 - [使用 canvas 绘制一个转动的罗马表盘时钟](https://lidengkedev.github.io/example/html/canvas-clock-02.html)
@@ -68,13 +67,13 @@
 - [Web Worker 通信](https://lidengkedev.github.io/example/html/web-worker.html)
 - [在线运行JS程序，并查看执行效果](https://lidengkedev.github.io/example/html/zai-xian-yun-xing-js.html)
 - [Google Map Streets](https://lidengkedev.github.io/example/gis-map-demo/bigemap.html)
-- [Leaflet 地图瓦片控制编辑](https://lidengkedev.github.io/example/gis-map-demo/leaflet.html)
+- [Leaflet 地图瓦片控制编辑](https://lidengkedev.github.io/example/gis-map-demo/leaflet.html): https://leafletjs.cn/
 - [GIS 天地图 2D 在地图上完成地理空间目标（点、线、面、圆、多边形）操作](https://lidengkedev.github.io/example/gis-map-demo/tianditu.html)
-- [科目三在线灯光模拟考试](https://lidengkedev.github.io/example/car-subject-three/car-3-light-audio.html)
-- [科目三上路行驶模拟考试过程](https://lidengkedev.github.io/example/car-subject-three/car-3-road-audio.html)
+- [科目三在线灯光模拟考试](https://lidengkedev.github.io/example/car-subject-three/car-3-light-audio.html): 科目三在线灯光模拟考试
+- [科目三上路行驶模拟考试过程](https://lidengkedev.github.io/example/car-subject-three/car-3-road-audio.html): 科目三上路行驶模拟考试过程
 - [使用 CSS3 制作一个3D的水平旋转的福字](https://lidengkedev.github.io/example/202001201356-3d-fu/index.html)
 - [图片放大镜-cloud-zoom](https://lidengkedev.github.io/example/cloud-zoom/index.html)
-- [](https://lidengkedev.github.io/example/canvas/canvas-base.html)
-- [canvas 绘制线条](https://lidengkedev.github.io/example/canvas/canvas-fill.html)
+- [Canvas 画布](https://lidengkedev.github.io/example/canvas/canvas-base.html): canvas 简单绘制线条、矩形、圆形、文字、线条粗细。
+- [canvas 绘制线条](https://lidengkedev.github.io/example/canvas/canvas-fill.html): 简单的使用 canvas 练习 绘制线条、多边形、填充颜色。
 - [将图片添加到画布中](https://lidengkedev.github.io/example/canvas/canvas-img.html)
-- [canvas 绘制线条](https://lidengkedev.github.io/example/canvas/canvas-stroke.html)
+- [canvas 绘制线条](https://lidengkedev.github.io/example/canvas/canvas-stroke.html): 使用 canvas 练习 绘制线条

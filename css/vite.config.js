@@ -4,11 +4,7 @@ import path, { resolve } from 'path'
 import fs from 'fs'
 
 // 定义 CSS-README.md 文件的标题内容
-const CSS_README_MD = `
-# CSS 示例文件访问链接汇总目录
-
-## CSS 文件示例
-`
+const CSS_README_MD = '# CSS 示例文件访问链接汇总目录\r\n\r\n'
 // 初始化写入 HTML-README.md 文件的标题内容
 fs.writeFileSync(resolve(__dirname, '../CSS-README.md'), CSS_README_MD)
 
@@ -34,7 +30,7 @@ function setRollupOptionsInput () {
             let htmlReadmeMdFileSteam = fs.readFileSync(resolve(__dirname, '../CSS-README.md'), { encoding: 'utf-8' })
 
             // 追加 HTML-README.md 文本内容
-            htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/css/pages/${file})\n`
+            htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/css/pages/${file})\r\n`
 
             // 写入文本内容
             fs.writeFileSync(resolve(__dirname, '../CSS-README.md'), htmlReadmeMdFileSteam)

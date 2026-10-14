@@ -12,7 +12,7 @@ const fs = require('node:fs')
  * @returns url
  */
 function resolve(url) {
-    return path.resolve(__dirname, url)
+  return path.resolve(__dirname, url)
 }
 
 // 目录准备
@@ -23,7 +23,67 @@ fs.rmSync(DIST_DIR, { recursive: true, force: true })
 
 // 2. 判断 dist 文件夹是否存在，如果不存在则创建一个空的 dist 文件夹
 if (!fs.existsSync(DIST_DIR)) {
-    fs.mkdirSync(DIST_DIR, { recursive: true })
+  fs.mkdirSync(DIST_DIR, { recursive: true })
+}
+
+// 初始化 HTML-README.md 文件的内容
+function createHTMLReadmeFile() {
+
+  // 定义 HTML-README.md 文件的标题内容
+  const HTML_README_MD = '# HTML 示例文件访问链接汇总目录\r\n\r\n'
+
+  // 初始化写入 HTML-README.md 文件的标题内容
+  fs.writeFileSync(resolve('HTML-README.md'), HTML_README_MD)
+  
+}
+
+// 初始化 HTML-README.md 文件的内容
+createHTMLReadmeFile()
+
+/**
+ * 把新文件的链接地址写入到 HTML-README.md 文件中
+ * 1. 判断文件是否是一个 html 文件
+ * 2. 读取文件的流
+ * 3. 通过正则校验和字符串分割获取文件的标题文本
+ * 4. 追加文件的标题文本和对应的文件链接地址到 HTML-README.md 文件中
+ * @param {*} filename_path 
+ * @param {*} readme_file 
+ */
+function setHtmlReadmeFile(filename_path, readme_file) {
+  if (filename_path.includes('.html')) {
+
+    // 读取每一个html文件，返回文本内容
+    const file_steams = fs.readFileSync(resolve(filename_path), { encoding: 'utf-8' })
+
+    // 正则表达式：匹配 html 中 title 标签中的 文本内容
+    const reg = new RegExp('(.*)<title>(.*?)</title>(.*)')
+
+    // 字符串分割：获取 html 中 title 标签中的 文本内容
+    const newFileName = file_steams.replace(reg, '$1(000)$2(000)$3').split('(000)')[1]
+
+    // 正则表达式：匹配 html 中的 <meta name="description" content=""> 中的文本内容
+    const reg2 = new RegExp('(.*)<meta name="description" content="(.*)">(.*)')
+
+    // 字符串分割：获取 html 中 description 文本内容
+    const description = file_steams.replace(reg2, '$1(000)$2(000)$3').split('(000)')[1]
+
+    // 读取 HTML-README.md 文件，返回 HTML-README.md 文件的文本内容
+    let htmlReadmeMdFileSteam = fs.readFileSync(resolve(readme_file), { encoding: 'utf-8' })
+
+    // 默认的链接地址
+    let list_link_str = `- [${newFileName}](https://lidengkedev.github.io/example/${filename_path})\r\n`
+
+    // 如果存在描述信息，给每个链接地址添加上描述信息
+    if (description) {
+      list_link_str = `- [${newFileName}](https://lidengkedev.github.io/example/${filename_path}): ${description}\r\n`
+    }
+
+    // 追加 HTML-README.md 文本内容
+    htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + list_link_str
+
+    // 写入文本内容
+    fs.writeFileSync(resolve(readme_file), htmlReadmeMdFileSteam)
+  }
 }
 
 /**
@@ -38,27 +98,27 @@ if (!fs.existsSync(DIST_DIR)) {
  * @param {*} dir 要复制的文件夹相对路径
  * @param {*} new_dir 复制后的文件夹行对路径
  */
-function copyDirSync (dir, new_dir) {
-    if (!fs.existsSync(resolve(new_dir))) {
-        fs.mkdirSync(new_dir)// dist/html
+function copyDirSync(dir, new_dir) {
+  if (!fs.existsSync(resolve(new_dir))) {
+    fs.mkdirSync(new_dir)// dist/html
+  }
+  // 获取文件中的所有文件，返回一个包含所有文件名和后缀的数组
+  fs.readdirSync(resolve(dir)).forEach(filename => {
+    const current_filename_path = `${dir}/${filename}`// html/xxx.html
+    const new_dir_filename_path = `${new_dir}/${filename}`// dist/html/xxx.html
+    if (!filename.includes('.')) {
+      // 复制子文件夹
+      if (fs.existsSync(resolve(current_filename_path))) {
+        copyDirSync(current_filename_path, new_dir_filename_path)
+      } else {
+        // 复制文件
+        copyFileSync(current_filename_path, new_dir_filename_path)
+      }
+    } else {
+      // 复制文件
+      copyFileSync(current_filename_path, new_dir_filename_path)
     }
-    // 获取文件中的所有文件，返回一个包含所有文件名和后缀的数组
-    fs.readdirSync(resolve(dir)).forEach(filename => {
-        const current_filename_path = `${dir}/${filename}`// html/xxx.html
-        const new_dir_filename_path = `${new_dir}/${filename}`// dist/html/xxx.html
-        if (!filename.includes('.')) {
-            // 复制子文件夹
-            if (fs.existsSync(resolve(current_filename_path))) {
-                copyDirSync(current_filename_path, new_dir_filename_path)
-            } else {
-                // 复制文件
-                copyFileSync(current_filename_path, new_dir_filename_path)
-            }
-        } else {
-            // 复制文件
-            copyFileSync(current_filename_path, new_dir_filename_path)
-        }
-    })
+  })
 }
 
 /**
@@ -69,57 +129,9 @@ function copyDirSync (dir, new_dir) {
  * @param {*} newFilename 复制后的文件相对路径
  */
 function copyFileSync(filename_path, new_filename_path) {
-    setHtmlReadmeFile(filename_path, 'HTML-README.md')
-    fs.copyFileSync(resolve(filename_path), resolve(new_filename_path))
+  setHtmlReadmeFile(filename_path, 'HTML-README.md')
+  fs.copyFileSync(resolve(filename_path), resolve(new_filename_path))
 }
-
-/**
- * 把新文件的链接地址写入到 HTML-README.md 文件中
- * 1. 判断文件是否是一个 html 文件
- * 2. 读取文件的流
- * 3. 通过正则校验和字符串分割获取文件的标题文本
- * 4. 追加文件的标题文本和对应的文件链接地址到 HTML-README.md 文件中
- * @param {*} filename_path 
- * @param {*} readme_file 
- */
-function setHtmlReadmeFile(filename_path, readme_file) {
-    if (filename_path.includes('.html')) {
-
-        // 读取每一个html文件，返回文本内容
-        const file_steams = fs.readFileSync(resolve(filename_path), { encoding: 'utf-8' })
-
-        // 正则表达式：匹配 html 中 title 标签中的 文本内容
-        const reg = new RegExp('(.*)<title>(.*?)</title>(.*)')
-
-        // 字符串分割：获取 html 中 title 标签中的 文本内容
-        const newFileName = file_steams.replace(reg, '$1(000)$2(000)$3').split('(000)')[1]
-
-        // 读取 HTML-README.md 文件，返回 HTML-README.md 文件的文本内容
-        let htmlReadmeMdFileSteam = fs.readFileSync(resolve(readme_file), { encoding: 'utf-8' })
-
-        // 追加 HTML-README.md 文本内容
-        htmlReadmeMdFileSteam = htmlReadmeMdFileSteam + `- [${newFileName}](https://lidengkedev.github.io/example/${filename_path})\r\n`
-
-        // 写入文本内容
-        fs.writeFileSync(resolve(readme_file), htmlReadmeMdFileSteam)
-    }
-}
-
-/**
- * 写入 HTML-README.md 文件初始化的内容
- */
-function createHtmlReadmeFile() {
-    // 定义 HTML-README.md 文件的标题内容
-    const HTML_README_MD = (
-        '# HTML 示例文件访问链接汇总目录\r\n' +
-        '## HTML 文件示例\n\n'
-    )
-    // 初始化写入 HTML-README.md 文件的标题内容
-    fs.writeFileSync(resolve('HTML-README.md'), HTML_README_MD)
-}
-
-// 写入文件链接
-createHtmlReadmeFile()
 
 // index.html 导航页
 copyFileSync('index.html', 'dist/index.html')
